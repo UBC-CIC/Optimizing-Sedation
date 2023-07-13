@@ -1,32 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
 
+// Material UI
+import Button from '@mui/material/Button';
+
 export default function Dashboard(){
-
-    // Resolver funcitons
-    async function onResolve(client) {
-        console.log("Request Patient");
-        await client.request(`Patient/${client.patient.id}`).then((patient) => {
-            console.log("Patient name: ", patient.name[0].text);
-            console.log("Patient birthday: ", patient.birthDate);
-        }).catch(onErr);
-
-        console.log("Request Observation");
-        await client.request(`Observation?subject%3APatient=${client.patient.id}`).then((mr) => {
-            console.log("Medical Request: ", mr);
-        }).catch(onErr);
-    }
+    const [clientReady, setClientReady] = useState(false);
+    const [text, setText] = useState(undefined);
+    const [client, setClient] = useState(null);
     
+    useEffect(() => {
+        // Resolver funcitons
+        async function onResolve(client) {
+            // Server succefully connected
+            setClientReady(true);
+            setClient(client);
+
+            // Operations
+            console.log(client);
+            console.log("Request Patient");
+            await client.request(`Patient/${client.patient.id}`).then((patient) => {
+                console.log("Patient name: ", patient.name[0].text);
+                console.log("Patient birthday: ", patient.birthDate);
+            }).catch(onErr);
+
+            console.log("Request Observation");
+            await client.request(`Observation?patient=${client.patient.id}`).then((mr) => {
+                console.log("Observation: ", mr);
+            }).catch(onErr);
+
+            console.log("Request Immunizations");
+            await client.request(`Immunization?patient=${client.patient.id}`).then((mr) => {
+                console.log("Immunizations: ", mr);
+            }).catch(onErr);
+
+            console.log("Request DiagnosticReport");
+            await client.request(`DiagnosticReport?patient=${client.patient.id}`).then((mr) => {
+                console.log("DiagnosticReport: ", mr);
+            }).catch(onErr);
+
+            console.log("Request MedicationRequest");
+            await client.request(`MedicationRequest?patient=${client.patient.id}`).then((mr) => {
+                console.log("MedicationRequest: ", mr);
+            }).catch(onErr);
+            
+        }
+
+        // Wait for authrization status
+        FHIR.oauth2.ready().then(onResolve).catch(onErr);
+    }, []);
+
     function onErr(err) {
-        console.log("### Error, ", err);
+        console.log("Error, ", err);
     }
 
-    // Wait for authrization status
-    FHIR.oauth2.ready().then(onResolve).catch(onErr);
+    async function loadPatientHandler(){
+        if(clientReady){
+            setText("Loading data...");
+            await client.request(`Patient/${client.patient.id}`).then((patient) => {
+                setText("Patient name: " + patient.name[0].text + " Patient birthday: " + patient.birthDate);
+            }).catch(onErr);
+        }
+    }
 
     return(
         <div>
-            <h1>Hello World, Dashboard!</h1>
+            {clientReady && 
+            <React.Fragment>
+                <h1>Hello World, Dashboard!</h1>
+                <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
+                <p>{text}</p>
+            </React.Fragment>
+            }
+
+            {!clientReady && 
+                <h1>Waiting for server to connect...</h1>
+            }
         </div>
     );
 }
