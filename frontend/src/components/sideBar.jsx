@@ -3,12 +3,8 @@ import React, { useState } from 'react';
 
 // Material UI
 import {Grid, Typography} from '@mui/material';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import ListItemText from '@mui/material/ListItemText';
 
 
 export default function SideBar(){
