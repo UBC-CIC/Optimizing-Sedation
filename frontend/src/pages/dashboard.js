@@ -3,6 +3,7 @@ import FHIR from 'fhirclient';
 
 // Components
 import SideBar from '../components/sideBar';
+import SearchBar from '../components/searchBar';
 
 // Material UI
 import Button from '@mui/material/Button';
@@ -75,18 +76,30 @@ export default function Dashboard(){
                 <Grid container spacing={0}>
                     <Grid sm={4}>
                         <div style={{
-                            marginTop: '5vh',
+                            marginTop: '4vh',
                         }}>
                             <SideBar />
                         </div>
                     </Grid>
                     <Grid sm={8}>
                         <div style={{
-                            marginTop: '5vh',
+                            marginTop: '4vh',
                         }}>
-                            <h1>Hello World, Dashboard!</h1>
-                            <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
-                            <p>{text}</p>
+                            <Grid container spacing={0}>
+                                {/* <Grid sm={1} /> */}
+                                <Grid sm={11} >
+                                    <SearchBar />
+                                </Grid>
+                                <Grid sm={1} />
+
+                                <Grid sm={1} />
+                                <Grid sm={10} >
+                                    <h1>Hello World, Dashboard!</h1>
+                                    <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
+                                    <p>{text}</p>
+                                </Grid>
+                                <Grid sm={1} />
+                            </Grid>
                         </div>
                     </Grid>
                 </Grid>

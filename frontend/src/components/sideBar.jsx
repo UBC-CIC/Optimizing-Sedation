@@ -34,8 +34,8 @@ export default function SideBar(){
             borderRadius: 10, 
             border: '2px solid #3e92fb', 
             backgroundColor:'#3e92fb', 
-            marginTop: '0.7vh',
-            marginBottom: '0.7vh',
+            // marginTop: '0.7vh',
+            marginBottom: '1vh',
             boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.1)'
         },
 
