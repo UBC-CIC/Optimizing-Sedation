@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
 
+// Components
+import SideBar from '../components/sideBar';
+
 // Material UI
 import Button from '@mui/material/Button';
+import {Grid} from '@mui/material';
 
 export default function Dashboard(){
     const [clientReady, setClientReady] = useState(false);
@@ -20,8 +24,9 @@ export default function Dashboard(){
             console.log(client);
             console.log("Request Patient");
             await client.request(`Patient/${client.patient.id}`).then((patient) => {
-                console.log("Patient name: ", patient.name[0].text);
-                console.log("Patient birthday: ", patient.birthDate);
+                console.log("Patient: ", patient);
+                // console.log("Patient name: ", patient.name[0].text);
+                // console.log("Patient birthday: ", patient.birthDate);
             }).catch(onErr);
 
             console.log("Request Observation");
@@ -67,14 +72,29 @@ export default function Dashboard(){
         <div>
             {clientReady && 
             <React.Fragment>
-                <h1>Hello World, Dashboard!</h1>
-                <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
-                <p>{text}</p>
+                <Grid container spacing={0}>
+                    <Grid sm={4}>
+                        <div style={{
+                            marginTop: '5vh',
+                        }}>
+                            <SideBar />
+                        </div>
+                    </Grid>
+                    <Grid sm={8}>
+                        <div style={{
+                            marginTop: '5vh',
+                        }}>
+                            <h1>Hello World, Dashboard!</h1>
+                            <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
+                            <p>{text}</p>
+                        </div>
+                    </Grid>
+                </Grid>
             </React.Fragment>
             }
 
             {!clientReady && 
-                <h1>Waiting for server to connect...</h1>
+                <h1>Waiting for server to response...</h1>
             }
         </div>
     );
