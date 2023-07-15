@@ -57,25 +57,25 @@ export default function SideBar(){
         }}>
             <Grid container spacing={0}>
                 <Grid sm={2} />
-                <Grid sm={8} >
+                <Grid sm={9} >
                     <div style={style.roundBoxNoHorizontalSpace}>
                         <Typography variant={"subtitle1"} component="h6">Patient Name</Typography>
                         <Typography variant={"h5"} component="h6">Peter Parker</Typography>
                     </div>
                 </Grid>
-                <Grid sm={2} />
+                <Grid sm={1} />
 
                 <Grid sm={2} />
-                <Grid sm={8} >
+                <Grid sm={9} >
                     <div style={style.roundBoxNoHorizontalSpace}>
                         <Typography variant={"subtitle1"}>Patient MRN</Typography>
                         <Typography variant={"h5"}>#12345678</Typography>
                     </div>
                 </Grid>
-                <Grid sm={2} />
+                <Grid sm={1} />
 
                 <Grid sm={2} />
-                <Grid sm={8} >
+                <Grid sm={9} >
                     <div style={{
                         marginTop: '10vh'
                     }}>
@@ -84,10 +84,10 @@ export default function SideBar(){
                         <Typography variant={"h6"}>604-325-4824</Typography>
                     </div>
                 </Grid>
-                <Grid sm={2} />
+                <Grid sm={1} />
 
                 <Grid sm={2} />
-                <Grid sm={8} >
+                <Grid sm={9} >
                     <div style={{
                         marginTop: '5vh'
                     }}>
@@ -105,10 +105,10 @@ export default function SideBar(){
                         </div>}
                     </div>
                 </Grid>
-                <Grid sm={2} />
+                <Grid sm={1} />
 
                 <Grid sm={2} />
-                <Grid sm={8} >
+                <Grid sm={9} >
                     <div style={style.dropDown} onClick={openDiagnoseHandle}>
                         <Typography variant={"h6"}>View list of diagnoses</Typography>
                         {openDiagnose ? <ExpandLess /> : <ExpandMore />}
@@ -121,7 +121,7 @@ export default function SideBar(){
                         <Typography variant={"subtitle1"}>Diagnose C</Typography>
                     </div>}
                 </Grid>
-                <Grid sm={2} />
+                <Grid sm={1} />
             </Grid>
         </div>
     );
