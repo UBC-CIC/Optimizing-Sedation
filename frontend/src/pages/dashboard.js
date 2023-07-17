@@ -97,7 +97,7 @@ export default function Dashboard(){
                                     <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
                                     <p>{text}</p>
 
-                                    <PatientTable />
+                                    <PatientTable fhirData={[]}/>
                                 </Grid>
                                 <Grid sm={1} />
                             </Grid>
