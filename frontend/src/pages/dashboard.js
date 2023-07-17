@@ -4,6 +4,7 @@ import FHIR from 'fhirclient';
 // Components
 import SideBar from '../components/sideBar';
 import SearchBar from '../components/searchBar';
+import PatientTable from '../components/table';
 
 // Material UI
 import Button from '@mui/material/Button';
@@ -74,29 +75,29 @@ export default function Dashboard(){
             {clientReady && 
             <React.Fragment>
                 <Grid container spacing={0}>
-                    <Grid sm={4}>
+                    <Grid sm={4} xs={12}>
                         <div style={{
                             marginTop: '4vh',
                         }}>
                             <SideBar />
                         </div>
                     </Grid>
-                    <Grid sm={8}>
+                    <Grid sm={8} xs={12}>
                         <div style={{
                             marginTop: '4vh',
                         }}>
                             <Grid container spacing={0}>
-                                {/* <Grid sm={1} /> */}
                                 <Grid sm={11} >
                                     <SearchBar />
                                 </Grid>
                                 <Grid sm={1} />
 
-                                <Grid sm={1} />
-                                <Grid sm={10} >
+                                <Grid sm={11} >
                                     <h1>Hello World, Dashboard!</h1>
                                     <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
                                     <p>{text}</p>
+
+                                    <PatientTable />
                                 </Grid>
                                 <Grid sm={1} />
                             </Grid>

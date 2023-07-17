@@ -2,9 +2,7 @@ import React, { useState, useRef, useEffect} from 'react';
 
 
 // Material UI
-import {Grid, Typography, InputBase, Paper} from '@mui/material';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+import {Grid, InputBase, Paper} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { useTheme } from '@mui/material/styles';
@@ -118,14 +116,15 @@ export default function SearchBar(){
     useEffect(() => {
         // Set fixed height for all sibiling
         const siblingHeight = ref1.current.clientHeight;
+
         ref2.current.style.height = `${siblingHeight}px`;
         ref3.current.style.height = `${siblingHeight}px`;
     }, []);
 
     return(
         <div>
-            <Grid container spacing={0}>
-                <Grid sm={4}>
+            <Grid container justify="center" alignItems="center" spacing={0} >
+                <Grid sm={4} xs={12}>
                     <Paper
                         ref={ref1}
                         component="form"
@@ -141,7 +140,7 @@ export default function SearchBar(){
                     </Paper>
                 </Grid>
 
-                <Grid sm={4}>
+                <Grid sm={4} xs={12}>
                     <Paper style={{marginLeft:'10px', marginRight:'10px', backgroundColor:'#e7e8eb'}}>
                         <FormControl fullWidth>
                             <InputLabel id="demo-multiple-chip-label">Type of Assessment</InputLabel>
@@ -179,7 +178,7 @@ export default function SearchBar(){
                     </Paper>
                 </Grid>
 
-                <Grid sm={4}>
+                <Grid sm={4} xs={12}>
                     <Paper style={{marginLeft:'10px', marginRight:'10px', backgroundColor:'#e7e8eb'}}>
                         <FormControl fullWidth >
                             <InputLabel id="demo-multiple-chip-label">Flag Type</InputLabel>
