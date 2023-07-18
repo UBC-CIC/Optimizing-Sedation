@@ -10,10 +10,26 @@ import PatientTable from '../components/table';
 import Button from '@mui/material/Button';
 import {Grid, Typography} from '@mui/material';
 
+
+// Data structuring
+function createPatientData(fullname, MRN, contactFullname, contactNumber){
+    return {
+        fullname, 
+        MRN,
+        contactFullname,
+        contactNumber
+    };
+}
+
 export default function Dashboard(){
     const [clientReady, setClientReady] = useState(false);
     const [text, setText] = useState(undefined);
     const [client, setClient] = useState(null);
+    
+    // Data stream line State Variables
+    const [dataReady, setDataReady] = useState(false);
+    const [patientData, setPatientData] = useState(null);
+
 
     // Search Filter State Variables
     const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
@@ -32,8 +48,52 @@ export default function Dashboard(){
             console.log("Request Patient");
             await client.request(`Patient/${client.patient.id}`).then((patient) => {
                 console.log("Patient: ", patient);
-                // console.log("Patient name: ", patient.name[0].text);
-                // console.log("Patient birthday: ", patient.birthDate);
+                let fullname = "";
+                let MRN = "";
+                let contactFullname = ""; 
+                let contactNumber = "";
+                
+                for(let i in patient.name){
+                    const name = patient.name[i];
+
+                    if(name.use == 'official'){
+                        fullname = name.text;
+                    }
+                }
+
+                if(fullname == ""){
+                    fullname = patient.name[0].text;
+                }
+
+                for(let i in patient.identifier){
+                    const identifier = patient.identifier[i];
+
+                    if(identifier.type.text == 'MRN'){
+                        MRN = identifier.value;
+                    }
+                }
+                if(MRN == ""){
+                    MRN = patient.identifier[0].value;
+                }
+
+                for(let i in patient.contact){
+                    const identifier = patient.identifier[i];
+
+                    if(identifier.type.text == 'MRN'){
+                        MRN = identifier.value;
+                    }
+                }
+                
+                if(patient.contact){
+                    contactFullname = patient.contact[0].name.text;
+                    contactNumber = patient.contact[0].telecom[0].value;
+                    contactNumber = `(${contactNumber.slice(0, 3)}) ${contactNumber.slice(3, 6)}-${contactNumber.slice(6)}`;
+
+                }
+
+                const patient_dataCleanUp = createPatientData(fullname, MRN, contactFullname, contactNumber);
+                setPatientData(patient_dataCleanUp);
+
             }).catch(onErr);
 
             console.log("Request Observation");
@@ -55,6 +115,8 @@ export default function Dashboard(){
             await client.request(`MedicationRequest?patient=${client.patient.id}`).then((mr) => {
                 console.log("MedicationRequest: ", mr);
             }).catch(onErr);
+
+            setDataReady(true);
             
         }
 
@@ -102,14 +164,15 @@ export default function Dashboard(){
 
     return(
         <div>
-            {clientReady && 
+            {clientReady && dataReady &&
             <React.Fragment>
                 <Grid container spacing={0}>
                     <Grid sm={4} xs={12}>
                         <div style={{
                             marginTop: '4vh',
                         }}>
-                            <SideBar />
+                            <SideBar 
+                            patientData = {patientData}/>
                         </div>
                     </Grid>
                     <Grid sm={8} xs={12}>
@@ -153,6 +216,10 @@ export default function Dashboard(){
 
             {!clientReady && 
                 <h1>Waiting for server to response...</h1>
+            }
+            
+            {!dataReady && 
+                <h1>Fetching data from server...</h1>
             }
         </div>
     );

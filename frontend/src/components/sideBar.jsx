@@ -7,7 +7,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
 
-export default function SideBar(){
+export default function SideBar({patientData}){
     const [clientReady, setClientReady] = useState(false);
     const [openMedication, setOpenMedication] = React.useState(false);
     const [openDiagnose, setOpenDiagnose] = React.useState(false);
@@ -60,7 +60,7 @@ export default function SideBar(){
                 <Grid sm={9} xs={12}>
                     <div style={style.roundBoxNoHorizontalSpace}>
                         <Typography variant={"subtitle1"} component="h6">Patient Name</Typography>
-                        <Typography variant={"h5"} component="h6">Peter Parker</Typography>
+                        <Typography variant={"h5"} component="h6">{patientData.fullname}</Typography>
                     </div>
                 </Grid>
                 <Grid sm={1} xs={0}/>
@@ -69,7 +69,7 @@ export default function SideBar(){
                 <Grid sm={9} xs={12}>
                     <div style={style.roundBoxNoHorizontalSpace}>
                         <Typography variant={"subtitle1"}>Patient MRN</Typography>
-                        <Typography variant={"h5"}>#12345678</Typography>
+                        <Typography variant={"h5"}>#{patientData.MRN}</Typography>
                     </div>
                 </Grid>
                 <Grid sm={1} xs={0}/>
@@ -80,8 +80,8 @@ export default function SideBar(){
                         marginTop: '10vh'
                     }}>
                         <Typography variant={"subtitle1"}>Contact</Typography>
-                        <Typography variant={"h6"}>Mary Parker</Typography>
-                        <Typography variant={"h6"}>604-325-4824</Typography>
+                        <Typography variant={"h6"}>{patientData.contactFullname}</Typography>
+                        <Typography variant={"h6"}>{patientData.contactNumber}</Typography>
                     </div>
                 </Grid>
                 <Grid sm={1} xs={0}/>
