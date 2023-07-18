@@ -8,12 +8,17 @@ import PatientTable from '../components/table';
 
 // Material UI
 import Button from '@mui/material/Button';
-import {Grid} from '@mui/material';
+import {Grid, Typography} from '@mui/material';
 
 export default function Dashboard(){
     const [clientReady, setClientReady] = useState(false);
     const [text, setText] = useState(undefined);
     const [client, setClient] = useState(null);
+
+    // Search Filter State Variables
+    const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
+    const [selectAssessmentType, setSelectAssessmentType] = useState([]);             // Current selection for assessment type
+    const [searchInput, setSearchInput] = useState("");
     
     useEffect(() => {
         // Resolver funcitons
@@ -61,6 +66,7 @@ export default function Dashboard(){
         console.log("Error, ", err);
     }
 
+    //// Handler Functions////
     async function loadPatientHandler(){
         if(clientReady){
             setText("Loading data...");
@@ -69,6 +75,30 @@ export default function Dashboard(){
             }).catch(onErr);
         }
     }
+
+    const statusTypeHandle = (event) => {
+        const { target: { value }, } = event;
+        setSelectStatusType(
+        // On autofill we get a stringified value.
+        typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+
+
+    const assessmentTypeHandle = (event) => {
+        const { target: { value }, } = event;
+        setSelectAssessmentType(
+        // On autofill we get a stringified value.
+        typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+
+    const searchInputHandle = (event) => {
+        setSearchInput(event.target.value);
+    };
+
+    //// End of Handler Functions ////
+
 
     return(
         <div>
@@ -88,16 +118,30 @@ export default function Dashboard(){
                         }}>
                             <Grid container spacing={0}>
                                 <Grid sm={11} >
-                                    <SearchBar />
+                                    <SearchBar 
+                                    selectStatusType = {selectStatusType}
+                                    statusTypeHandle = {statusTypeHandle}
+                                    selectAssessmentType = {selectAssessmentType}
+                                    assessmentTypeHandle = {assessmentTypeHandle}
+                                    searchInput = {searchInput}
+                                    searchInputHandle = {searchInputHandle}
+                                    />
                                 </Grid>
                                 <Grid sm={1} />
 
                                 <Grid sm={11} >
-                                    <h1>Hello World, Dashboard!</h1>
-                                    <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
-                                    <p>{text}</p>
-
-                                    <PatientTable fhirData={[]}/>
+                                    <div style={{paddingTop:'2vh'}}>
+                                        {/* <h1>Hello World, Dashboard!</h1>
+                                        <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
+                                        <p>{text}</p> */}
+                                        <h1>Patient Assessment Information</h1>
+                                        <PatientTable 
+                                        fhirData = {[]} 
+                                        selectStatusType = {selectStatusType}
+                                        selectAssessmentType = {selectAssessmentType}
+                                        searchInput = {searchInput}
+                                        />
+                                    </div>
                                 </Grid>
                                 <Grid sm={1} />
                             </Grid>

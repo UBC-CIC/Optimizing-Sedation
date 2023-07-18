@@ -69,7 +69,7 @@ function convertData(input){
 // Custome Row Design
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
+      backgroundColor: '#164780',
       color: theme.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
@@ -150,16 +150,16 @@ function Row(props){
     )
 }
 
-export default function PatientTable(props){
-    const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
+export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput}){
+    // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
 
     // Convert input data into current format of this table
-    if(!Array.isArray(props.fhirData))
+    if(!Array.isArray(fhirData))
         return (
             <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
         );
     
-    const data = convertData(props.data);
+    const data = convertData(fhirData);
     console.log("data: ", data);
 
     const style = {
@@ -210,7 +210,41 @@ export default function PatientTable(props){
                     </TableHead>
                     <TableBody>
                         {
-                            data.map((row)=>(
+                            // Filter data before displaying in the .map() function
+                            data
+                            .filter(row => {
+                                if(selectAssessmentType.length == 0){
+                                    return true;
+                                } else {
+                                    for(let status_i in selectAssessmentType)
+                                        if(row.assessment == selectAssessmentType[status_i])
+                                            return true;
+                                }
+
+                                return false;
+                            })
+                            .filter(row => {
+                                if(selectStatusType.length == 0){
+                                    return true;
+                                } else {
+                                    for(let status_i in selectStatusType)
+                                        if(row.status == selectStatusType[status_i])
+                                            return true;
+                                }
+
+                                return false;
+                            })
+                            .filter(row => {
+                                if(row.others != null)
+                                    for(let i in row.others){
+                                        if(row.others[i].title.toLowerCase().includes(searchInput.toLowerCase())){
+                                            return true;
+                                        }
+                                    }
+
+                                return row.assessment.toLowerCase().includes(searchInput.toLowerCase()) || row.status.toLowerCase().includes(searchInput.toLowerCase());
+                            })
+                            .map((row)=>(
                                 <Row info={row}/>
                             ))
                         }

@@ -34,52 +34,36 @@ function getStyles(name, list, theme) {
     };
 }
 
-export default function SearchBar(){
-    const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
-    const [selectAssessmentType, setSelectAssessmentType] = useState([]);             // Current selection for assessment type
-    const [searchInput, setSearchInput] = useState(undefined);
-
+export default function SearchBar({selectStatusType, statusTypeHandle, selectAssessmentType, assessmentTypeHandle, searchInput, searchInputHandle}){
 
     const ref1 = useRef(null);
     const ref2 = useRef(null);
     const ref3 = useRef(null);
 
-    // Selector
-    const names = [
-        'Oliver Hansen',
-        'Van Henry',
-        'April Tucker',
-        'Ralph Hubbard',
-        'Omar Alexander',
-        'Carlos Abbott',
-        'Miriam Wagner',
-        'Bradley Wilkerson',
-        'Virginia Andrews',
-        'Kelly Snyder',
+    // Selector Options
+    const statusTypes = [
+        'Not done',
+        'Up to date',
+        'Done',
+        'Seen',
+        'Yes',
+        'No',
+        'Done/Not done',
+    ];
+
+    const assessmentTypes = [
+        'Labs',
+        'Vaccinations',
+        'ECG',
+        'EEG',
+        'ENT',
+        'Ophthalmologist',
+        'ASD',
+        'Previous Sedation',
+        'Additional Assessment'
     ];
 
     const theme = useTheme();
-
-    const statusTypeHandle = (event) => {
-        const { target: { value }, } = event;
-        setSelectStatusType(
-        // On autofill we get a stringified value.
-        typeof value === 'string' ? value.split(',') : value,
-        );
-    };
-
-    const assessmentTypeHandle = (event) => {
-        const { target: { value }, } = event;
-        setSelectAssessmentType(
-        // On autofill we get a stringified value.
-        typeof value === 'string' ? value.split(',') : value,
-        );
-    };
-
-    const searchInputHandle = (event) => {
-        setSearchInput(event.target.value);
-    };
-
 
     const style = {
         dropDown: {
@@ -112,6 +96,12 @@ export default function SearchBar(){
         },
     }
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault(); // Prevent the default Enter key behavior
+        }
+      };
+
 
     useEffect(() => {
         // Set fixed height for all sibiling
@@ -135,7 +125,9 @@ export default function SearchBar(){
                             sx={{ ml: 1, flex: 1 }}
                             placeholder="Search"
                             inputProps={{ 'aria-label': 'search' }}
+                            value={searchInput}
                             onChange={searchInputHandle}
+                            onKeyDown={ handleKeyDown }
                         />
                     </Paper>
                 </Grid>
@@ -164,7 +156,7 @@ export default function SearchBar(){
                             )}
                             MenuProps={MenuProps}
                             >
-                            {names.map((name) => (
+                            {assessmentTypes.map((name) => (
                                 <MenuItem
                                 key={name}
                                 value={name}
@@ -203,7 +195,7 @@ export default function SearchBar(){
 
                             MenuProps={MenuProps}
                             >
-                            {names.map((name) => (
+                            {statusTypes.map((name) => (
                                 <MenuItem
                                 key={name}
                                 value={name}
