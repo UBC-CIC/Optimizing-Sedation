@@ -1,5 +1,6 @@
 function processConditionData(ConditionData) {
     const results = [];
+    const uniqueEntries = new Set();
   
     if (ConditionData && ConditionData.entry[0].resource) {
       ConditionData.entry.forEach((entry) => {
@@ -13,12 +14,16 @@ function processConditionData(ConditionData) {
             ? entry.resource.clinicalStatus.coding[0].code
             : 'N/A';
 
-            const ConditionTime =
-            entry.resource.recordedDate
-              ? entry.resource.recordedDate
-              : 'N/A';
+        const ConditionTime =
+          entry.resource.recordedDate
+            ? entry.resource.recordedDate
+            : 'N/A';
   
-        results.push({ConditionType, ConditionStatus, ConditionTime});
+        const entryString = `${ConditionType}-${ConditionStatus}-${ConditionTime}`;
+          if (!uniqueEntries.has(entryString)) {
+            uniqueEntries.add(entryString);
+            results.push({ ConditionType, ConditionStatus, ConditionTime });
+          }
       });
     }
     

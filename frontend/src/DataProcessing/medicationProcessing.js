@@ -1,5 +1,6 @@
 function processMedicationData(MedicationData) {
     const results = [];
+    const uniqueEntries = new Set();
   
     if (MedicationData && MedicationData.entry[0].resource) {
       MedicationData.entry.forEach((entry) => {
@@ -13,12 +14,16 @@ function processMedicationData(MedicationData) {
             ? entry.resource.status
             : 'N/A';
 
-            const MedicationTime =
-            entry.resource.authoredOn
-              ? entry.resource.authoredOn
-              : 'N/A';
+        const MedicationTime =
+          entry.resource.authoredOn
+            ? entry.resource.authoredOn
+            : 'N/A';
   
-        results.push({MedicationType, MedicationStatus, MedicationTime});
+        const entryString = `${MedicationType}-${MedicationStatus}-${MedicationTime}`;
+        if (!uniqueEntries.has(entryString)) {
+          uniqueEntries.add(entryString);
+          results.push({ MedicationType, MedicationStatus, MedicationTime });
+        }
       });
     }
     
