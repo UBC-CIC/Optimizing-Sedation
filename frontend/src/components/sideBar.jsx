@@ -51,10 +51,7 @@ export default function SideBar({patientData}){
     }
 
     return(
-        <div style={{
-            overflow: 'scroll',
-            
-        }}>
+        <div>
             <Grid container spacing={0}>
                 <Grid sm={2} xs={0}/>
                 <Grid sm={9} xs={12}>

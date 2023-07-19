@@ -21,6 +21,32 @@ function createPatientData(fullname, MRN, contactFullname, contactNumber){
     };
 }
 
+function createPatientMedicalSummaryData(listOfMedications, listOfDiagnoses){
+    if (listOfMedications != null && !Array.isArray(listOfMedications))
+        return null;
+    
+    if (listOfDiagnoses != null && !Array.isArray(listOfDiagnoses))
+        return null;
+
+    return {
+        listOfMedications, 
+        listOfDiagnoses
+    };
+}
+
+// function createPatientMedicalSummaryData(listOfMedications, listOfDiagnoses){
+//     if (listOfMedications != null && !Array.isArray(listOfMedications))
+//         return null;
+    
+//     if (listOfDiagnoses != null && !Array.isArray(listOfDiagnoses))
+//         return null;
+        
+//     return {
+//         listOfMedications, 
+//         listOfDiagnoses
+//     };
+// }
+
 export default function Dashboard(){
     const [clientReady, setClientReady] = useState(false);
     const [text, setText] = useState(undefined);
