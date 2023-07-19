@@ -39,6 +39,7 @@ function processPatientData(PatientData) {
                     for (const telecom of contact.telecom){
                         if (telecom.rank && telecom.rank === 1){
                             PatientContactInfo = telecom.value
+                            PatientContactInfo = `(${PatientContactInfo.slice(0, 3)}) ${PatientContactInfo.slice(3, 6)}-${PatientContactInfo.slice(6)}`;
                             break;
                         }
                     }
