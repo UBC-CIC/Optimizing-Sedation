@@ -51,6 +51,12 @@ export default function Dashboard(){
     const [clientReady, setClientReady] = useState(false);
     const [text, setText] = useState(undefined);
     const [client, setClient] = useState(null);
+
+    const [patientData, setPatientData] = useState(null);
+    const [ImmunizationData, setImmunizationData] = useState(null);
+    const [MedicationData, setMedicationData] = useState(null);
+    const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
+    const [ObservationData, setObservationData] = useState(null);
     
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
@@ -119,31 +125,26 @@ export default function Dashboard(){
 
                 const patient_dataCleanUp = createPatientData(fullname, MRN, contactFullname, contactNumber);
                 setPatientData(patient_dataCleanUp);
-
             }).catch(onErr);
 
-            console.log("Request Observation");
-            await client.request(`Observation?patient=${client.patient.id}`).then((mr) => {
-                console.log("Observation: ", mr);
+            client.request(`Immunization/?patient=${client.patient.id}`).then((Bundle) => {
+                setImmunizationData(Bundle);
             }).catch(onErr);
 
-            console.log("Request Immunizations");
-            await client.request(`Immunization?patient=${client.patient.id}`).then((mr) => {
-                console.log("Immunizations: ", mr);
+            client.request(`MedicationRequest/?patient=${client.patient.id}`).then((Bundle) => {
+                setMedicationData(Bundle);
             }).catch(onErr);
 
-            console.log("Request DiagnosticReport");
-            await client.request(`DiagnosticReport?patient=${client.patient.id}`).then((mr) => {
-                console.log("DiagnosticReport: ", mr);
+            client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((Bundle) => {
+                setDiagnosticReportData(Bundle);
             }).catch(onErr);
 
-            console.log("Request MedicationRequest");
-            await client.request(`MedicationRequest?patient=${client.patient.id}`).then((mr) => {
-                console.log("MedicationRequest: ", mr);
+            client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
+                setObservationData(Bundle);
             }).catch(onErr);
 
+            console.log(patientData, ImmunizationData, MedicationData, DiagnosticReportData, ObservationData);
             setDataReady(true);
-            
         }
 
         // Wait for authrization status
