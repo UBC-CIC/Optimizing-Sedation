@@ -60,7 +60,7 @@ export default function Dashboard(){
     
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
-    const [patientData, setPatientData] = useState(null);
+    // const [patientData, setPatientData] = useState(null);
 
 
     // Search Filter State Variables
