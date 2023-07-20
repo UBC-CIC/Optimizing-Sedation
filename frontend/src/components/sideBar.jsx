@@ -5,9 +5,10 @@ import React, { useState } from 'react';
 import {Grid, Typography} from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import { Link } from 'react-router-dom';
 
 
-export default function SideBar({patientData}){
+export default function SideBar({patientData, MedicationData, DiagnosticReportData}){
     const [clientReady, setClientReady] = useState(false);
     const [openMedication, setOpenMedication] = React.useState(false);
     const [openDiagnose, setOpenDiagnose] = React.useState(false);
@@ -96,9 +97,31 @@ export default function SideBar({patientData}){
 
                         {openMedication && 
                         <div style={style.roundBoxDropdownLists}>
-                            <Typography variant={"subtitle1"}>Medication A</Typography>
-                            <Typography variant={"subtitle1"}>Medication B</Typography>
-                            <Typography variant={"subtitle1"}>Medication C</Typography>
+                            {MedicationData && MedicationData.length != 0 &&
+                            <ul>
+                            {
+                                MedicationData
+                                .sort((a, b) => a.MedicationStatus.localeCompare(b.MedicationStatus))
+                                .map((medication) => {
+                                    // const modified = medication.MedicationType.replace(/\s*\(.*?\)/g, '');
+                                    const modified = medication.MedicationType.charAt(0).toUpperCase() + medication.MedicationType.slice(1);
+                                    return { MedicationType: modified, MedicationStatus: medication.MedicationStatus, MedicationTime: medication.MedicationTime};
+                                })
+                                .slice(0, 5)
+                                .map((med)=>(
+                                    <li>{med.MedicationType} &nbsp; <span style={{fontWeight: "bold"}}>[{med.MedicationStatus}]</span></li>
+                                ))
+                            }
+                            </ul>
+                            }
+
+                            {
+                                (MedicationData && MedicationData.length != 0 && MedicationData.length > 5) ? (<Link href="#Hello"> Load More...</Link>) : (<React.Fragment></React.Fragment>)
+                            }
+
+                            {(!MedicationData || MedicationData.length == 0) && (
+                                <Typography variant='subtitle1' >No Medication Data</Typography>
+                            )}
                         </div>}
                     </div>
                 </Grid>
@@ -113,9 +136,30 @@ export default function SideBar({patientData}){
 
                     {openDiagnose && 
                     <div style={style.roundBoxDropdownLists}>
-                        <Typography variant={"subtitle1"}>Diagnose A</Typography>
-                        <Typography variant={"subtitle1"}>Diagnose B</Typography>
-                        <Typography variant={"subtitle1"}>Diagnose C</Typography>
+                        {DiagnosticReportData && DiagnosticReportData.length != 0 && (<ul>
+                        {
+                            DiagnosticReportData
+                            .sort((a, b) => a.ConditionType.localeCompare(b.ConditionType))
+                            .map((dia) => {
+                                // const modified = medication.MedicationType.replace(/\s*\(.*?\)/g, '');
+                                const modified = dia.ConditionType.charAt(0).toUpperCase() + dia.ConditionType.slice(1);
+                                return { ConditionType: modified, ConditionStatus: dia.ConditionStatus, ConditionTime: dia.ConditionTime};
+                            })
+                            .slice(0, 5)
+                            .map((med)=>(
+                                <li>{med.ConditionType}</li>
+                            ))
+                        }
+
+                        </ul>)}
+
+                        {
+                            (DiagnosticReportData && DiagnosticReportData.length != 0 && DiagnosticReportData.length > 5) ? (<Link href="#Hello"> Load More...</Link>) : (<React.Fragment></React.Fragment>)
+                        }
+
+                        {(!DiagnosticReportData || DiagnosticReportData.length == 0) && (
+                            <Typography variant='subtitle1' >No Diagnostic Data</Typography>
+                        )}
                     </div>}
                 </Grid>
                 <Grid sm={1} xs={0}/>

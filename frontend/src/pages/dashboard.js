@@ -10,6 +10,11 @@ import PatientTable from '../components/table';
 import Button from '@mui/material/Button';
 import {Grid, Typography} from '@mui/material';
 
+// Data processing modules
+import processPatientData from '../DataProcessing/patientProcessing';
+import processImmunizationData from '../DataProcessing/immunizationProcessing';
+import processMedicationData from '../DataProcessing/medicationProcessing';
+import processConditionData from '../DataProcessing/conditionProcessing';
 
 // Data structuring
 function createPatientData(fullname, MRN, contactFullname, contactNumber){
@@ -76,67 +81,36 @@ export default function Dashboard(){
             setClient(client);
 
             // Operations
-            console.log(client);
-            console.log("Request Patient");
+            // console.log(client);
+            // console.log("Request Patient");
             await client.request(`Patient/${client.patient.id}`).then((patient) => {
-                console.log("Patient: ", patient);
-                let fullname = "";
-                let MRN = "";
-                let contactFullname = ""; 
-                let contactNumber = "";
+                console.log("Patient: ", processPatientData(patient));
+
+                const parsedData = processPatientData(patient)[0];
                 
-                for(let i in patient.name){
-                    const name = patient.name[i];
+                parsedData.PatientContactInfo = `(${parsedData.PatientContactInfo.slice(0, 3)}) ${parsedData.PatientContactInfo.slice(3, 6)}-${parsedData.PatientContactInfo.slice(6)}`;
 
-                    if(name.use == 'official'){
-                        fullname = name.text;
-                    }
-                }
-
-                if(fullname == ""){
-                    fullname = patient.name[0].text;
-                }
-
-                for(let i in patient.identifier){
-                    const identifier = patient.identifier[i];
-
-                    if(identifier.type.text == 'MRN'){
-                        MRN = identifier.value;
-                    }
-                }
-                if(MRN == ""){
-                    MRN = patient.identifier[0].value;
-                }
-
-                for(let i in patient.contact){
-                    const identifier = patient.identifier[i];
-
-                    if(identifier.type.text == 'MRN'){
-                        MRN = identifier.value;
-                    }
-                }
-                
-                if(patient.contact){
-                    contactFullname = patient.contact[0].name.text;
-                    contactNumber = patient.contact[0].telecom[0].value;
-                    contactNumber = `(${contactNumber.slice(0, 3)}) ${contactNumber.slice(3, 6)}-${contactNumber.slice(6)}`;
-
-                }
-
-                const patient_dataCleanUp = createPatientData(fullname, MRN, contactFullname, contactNumber);
+                const patient_dataCleanUp = createPatientData(parsedData.PatientName, parsedData.PatientMRN, parsedData.PatientContactName, parsedData.PatientContactInfo);
                 setPatientData(patient_dataCleanUp);
             }).catch(onErr);
 
-            client.request(`Immunization/?patient=${client.patient.id}`).then((Bundle) => {
-                setImmunizationData(Bundle);
+            client.request(`Immunization/?patient=${client.patient.id}`).then((immunization) => {
+                const paredData = processImmunizationData(immunization);
+                console.log("immunization: ", paredData);
+                setImmunizationData(paredData);
+
             }).catch(onErr);
 
-            client.request(`MedicationRequest/?patient=${client.patient.id}`).then((Bundle) => {
-                setMedicationData(Bundle);
+            client.request(`MedicationRequest/?patient=${client.patient.id}`).then((med) => {
+                const paredData = processMedicationData(med);
+                console.log("med: ", paredData);
+                setMedicationData(paredData);
             }).catch(onErr);
 
-            client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((Bundle) => {
-                setDiagnosticReportData(Bundle);
+            client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
+                const parsedData = processConditionData(diagnostic);
+                console.log("diagnostic: ", parsedData);
+                setDiagnosticReportData(parsedData);
             }).catch(onErr);
 
             client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
@@ -199,7 +173,10 @@ export default function Dashboard(){
                             marginTop: '4vh',
                         }}>
                             <SideBar 
-                            patientData = {patientData}/>
+                            patientData = {patientData}
+                            MedicationData = {MedicationData}
+                            DiagnosticReportData = {DiagnosticReportData}
+                            />
                         </div>
                     </Grid>
                     <Grid sm={8} xs={12}>
@@ -230,6 +207,7 @@ export default function Dashboard(){
                                         selectStatusType = {selectStatusType}
                                         selectAssessmentType = {selectAssessmentType}
                                         searchInput = {searchInput}
+                                        ImmunizationData = {ImmunizationData}
                                         />
                                     </div>
                                 </Grid>
