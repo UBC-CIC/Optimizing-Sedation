@@ -21,6 +21,36 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
         setOpenDiagnose(!openDiagnose);
     };
 
+    const loadMoreMedicationHandler = () => {
+        const dataCleaned = MedicationData.map((row)=>{
+            const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
+            return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime });
+        });
+        const data = {
+            title: patientData.fullname + "'s Medication Data",
+            moduleData: dataCleaned
+        }
+        window.open(
+            '/loadMore?data=' + JSON.stringify(data),
+            '_blank'
+        );
+    }
+
+    const loadMoreDiagnoseHandler = () => {
+        const dataCleaned = DiagnosticReportData.map((row)=>{
+            const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);
+            return ({title: modified, col1: row.ConditionStatus, col2:row.ConditionTime });
+        });
+        const data = {
+            title: patientData.fullname + "'s Diagnostic Data",
+            moduleData: dataCleaned
+        }
+        window.open(
+            '/loadMore?data=' + JSON.stringify(data),
+            '_blank'
+        );
+    }
+
     const style = {
         dropDown: {
             display: 'flex',
@@ -116,7 +146,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                             }
 
                             {
-                                (MedicationData && MedicationData.length != 0 && MedicationData.length > 5) ? (<Link href="#Hello"> Load More...</Link>) : (<React.Fragment></React.Fragment>)
+                                (MedicationData && MedicationData.length != 0 && MedicationData.length > 5) ? (<Link onClick={loadMoreMedicationHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
                             }
 
                             {(!MedicationData || MedicationData.length == 0) && (
@@ -154,7 +184,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                         </ul>)}
 
                         {
-                            (DiagnosticReportData && DiagnosticReportData.length != 0 && DiagnosticReportData.length > 5) ? (<Link href="#Hello"> Load More...</Link>) : (<React.Fragment></React.Fragment>)
+                            (DiagnosticReportData && DiagnosticReportData.length != 0 && DiagnosticReportData.length > 5) ? (<Link onClick={loadMoreDiagnoseHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
                         }
 
                         {(!DiagnosticReportData || DiagnosticReportData.length == 0) && (

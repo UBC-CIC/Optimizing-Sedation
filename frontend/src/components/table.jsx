@@ -69,10 +69,12 @@ function convertData(ImmunizationData){
         const vaccination = ImmunizationData.map(row =>{
             const modified = row.ImmunizationType.charAt(0).toUpperCase() + row.ImmunizationType.slice(1);
             return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime });
-    });
+        });
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
         data.push(createData("Vaccinations", "Up to date", vaccination, vaccinationHeader));
+    } else if (ImmunizationData == null || ImmunizationData == []) {
+        data.push(createData("Vaccinations", "No Data", null, null));
     }
 
 
