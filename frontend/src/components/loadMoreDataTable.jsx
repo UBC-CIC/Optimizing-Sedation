@@ -6,8 +6,6 @@ import {
     Grid, 
     Paper, 
     TableCell, 
-    Collapse, 
-    IconButton,
     TableRow,
     TableContainer,
     TableHead,
@@ -15,9 +13,7 @@ import {
     Table,
     tableCellClasses,
     styled,
-    Typography,
-    Link,
-    Container,
+    LinearProgress,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -184,7 +180,7 @@ export default function LoadMoreDataTable({selectStatusType, searchInput, data})
                         </StyledTableRow>
                     </TableHead>
                     <TableBody>
-                        {
+                        {data && 
                             // Filter data before displaying in the .map() function
                             data
                             // .filter(row => {
@@ -212,9 +208,13 @@ export default function LoadMoreDataTable({selectStatusType, searchInput, data})
                                 <Row info={row}/>
                             ))
                         }
+                        
                     </TableBody>
                 </Table>
             </TableContainer>
+            {data == null && 
+                <LinearProgress color="success" />
+            }
         </div>
     );
 }

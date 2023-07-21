@@ -7,6 +7,9 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Link } from 'react-router-dom';
 
+// Constants
+const MEDICATION = 0;
+const DIAGNOSTIC = 1;
 
 export default function SideBar({patientData, MedicationData, DiagnosticReportData}){
     const [clientReady, setClientReady] = useState(false);
@@ -22,14 +25,11 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
     };
 
     const loadMoreMedicationHandler = () => {
-        const dataCleaned = MedicationData.map((row)=>{
-            const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
-            return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime });
-        });
         const data = {
             title: patientData.fullname + "'s Medication Data",
-            moduleData: dataCleaned
+            dataCode: MEDICATION
         }
+
         window.open(
             '/loadMore?data=' + JSON.stringify(data),
             '_blank'
@@ -37,13 +37,9 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
     }
 
     const loadMoreDiagnoseHandler = () => {
-        const dataCleaned = DiagnosticReportData.map((row)=>{
-            const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);
-            return ({title: modified, col1: row.ConditionStatus, col2:row.ConditionTime });
-        });
         const data = {
             title: patientData.fullname + "'s Diagnostic Data",
-            moduleData: dataCleaned
+            dataCode: DIAGNOSTIC
         }
         window.open(
             '/loadMore?data=' + JSON.stringify(data),

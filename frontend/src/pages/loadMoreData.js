@@ -9,9 +9,17 @@ import LoadMoreDataSearchBar from '../components/loadMoreDataSearchBar';
 import Button from '@mui/material/Button';
 import {Grid, Typography} from '@mui/material';
 
+// Data processing modules
+import processMedicationData from '../DataProcessing/medicationProcessing';
+import processConditionData from '../DataProcessing/conditionProcessing';
+
+// Constants
+const MEDICATION = 0;
+const DIAGNOSTIC = 1;
 
 export default function LoadMoreData(){
     const [loadData, setLoadData] = useState(null);
+    const [parsedTableData, setParsedTableData] = useState(null);
 
 
     // Search Filter State Variables
@@ -20,22 +28,69 @@ export default function LoadMoreData(){
     const [searchInput, setSearchInput] = useState("");
     
     useEffect(() => {
-        try{
-            const paramURL = new URLSearchParams(window.location.search);
-            setLoadData(JSON.parse(paramURL.get('data')));
+        // Wait for authrization status
+        FHIR.oauth2.ready().then(onResolve).catch(onErr);
+    }, []);
 
-            console.log("data: ", JSON.parse(paramURL.get('data')));
+    
+
+    //// Helper Functions ////
+    async function readURLParameter(){
+        try{
+            const paramURL = await new URLSearchParams(window.location.search);
+            
+            console.log("data: ", paramURL.get('data'));
+            const parsedJSONData = JSON.parse(paramURL.get('data'))
+            setLoadData(parsedJSONData);
+
+            return parsedJSONData;
 
         } catch (e){
             // When catch error, print error page
             console.log("errror!!", e);
             // return <Error404 />
         }
-    }, []);
+    }
+
+    // Resolver funcitons
+    async function onResolve(client) {
+        // Read URL parameters
+        const urlData = await readURLParameter();
+
+        // while(loadData == null) {};
+
+        // Operations
+        if(urlData.dataCode == MEDICATION)
+            client.request(`MedicationRequest/?patient=${client.patient.id}`).then((med) => {
+                const parsedData = processMedicationData(med);
+
+                const dataCleaned = parsedData.map((row)=>{
+                    const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
+                    return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime });
+                });
+
+                setParsedTableData(dataCleaned);
+            }).catch(onErr);
+        
+        if(urlData.dataCode == DIAGNOSTIC)
+            client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
+                const parsedData = processConditionData(diagnostic);
+
+                const dataCleaned = parsedData.map((row)=>{
+                    const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);
+                    return ({title: modified, col1: row.ConditionStatus, col2:row.ConditionTime });
+                });
+
+                setParsedTableData(dataCleaned);
+            }).catch(onErr);
+
+    }
 
     function onErr(err) {
         console.log("Error, ", err);
     }
+
+    //// End of Helper Funtions ////
 
     //// Handler Functions////
     const statusTypeHandle = (event) => {
@@ -75,7 +130,7 @@ export default function LoadMoreData(){
                                     /> */}
                                 </Grid>
                                 <Grid sm={1} />
-
+                                {
                                 <Grid sm={11} >
                                     <div style={{paddingTop:'2vh'}}>
                                         <center>
@@ -84,10 +139,11 @@ export default function LoadMoreData(){
                                         <LoadMoreDataTable 
                                         selectStatusType = {selectStatusType}
                                         searchInput = {searchInput}
-                                        data = {loadData.moduleData}
+                                        data = {parsedTableData}
                                         />
                                     </div>
                                 </Grid>
+                                }
                                 <Grid sm={1} />
                             </Grid>
                         </div>
