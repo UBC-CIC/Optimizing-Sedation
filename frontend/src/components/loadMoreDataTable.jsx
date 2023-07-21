@@ -183,27 +183,23 @@ export default function LoadMoreDataTable({selectStatusType, searchInput, data})
                         {data && 
                             // Filter data before displaying in the .map() function
                             data
-                            // .filter(row => {
-                            //     if(selectStatusType.length == 0){
-                            //         return true;
-                            //     } else {
-                            //         for(let status_i in selectStatusType)
-                            //             if(row.col1 == selectStatusType[status_i])
-                            //                 return true;
-                            //     }
+                            .sort((a, b) => b.col2.localeCompare(a.col2))
+                            .filter(row => {
+                                if(selectStatusType.length == 0){
+                                    return true;
+                                } else {
+                                    for(let status_i in selectStatusType)
+                                        if(row.col1 == selectStatusType[status_i])
+                                            return true;
+                                }
 
-                            //     return false;
-                            // })
-                            // .filter(row => {
-                            //     if(row.others != null)
-                            //         for(let i in row.others){
-                            //             if(row.others[i].title.toLowerCase().includes(searchInput.toLowerCase())){
-                            //                 return true;
-                            //             }
-                            //         }
+                                return false;
+                            })
+                            .filter(row => {
+                                return row.title.toLowerCase().includes(searchInput.toLowerCase()) || row.col1.toLowerCase().includes(searchInput.toLowerCase()) || row.col2.toLowerCase().includes(searchInput.toLowerCase());
+                            })
 
-                            //     return row.assessment.toLowerCase().includes(searchInput.toLowerCase()) || row.status.toLowerCase().includes(searchInput.toLowerCase());
-                            // })
+                            // {title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime }
                             .map((row)=>(
                                 <Row info={row}/>
                             ))

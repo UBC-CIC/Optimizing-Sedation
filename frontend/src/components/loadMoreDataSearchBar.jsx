@@ -34,11 +34,10 @@ function getStyles(name, list, theme) {
     };
 }
 
-export default function LoadMoreDataSearchBar({selectStatusType, statusTypeHandle, selectAssessmentType, assessmentTypeHandle, searchInput, searchInputHandle}){
+export default function LoadMoreDataSearchBar({selectStatusType, statusTypeHandle, searchInput, searchInputHandle, statusList}){
 
     const ref1 = useRef(null);
     const ref2 = useRef(null);
-    const ref3 = useRef(null);
 
     // Selector Options
     const statusTypes = [
@@ -49,18 +48,6 @@ export default function LoadMoreDataSearchBar({selectStatusType, statusTypeHandl
         'Yes',
         'No',
         'Done/Not done',
-    ];
-
-    const assessmentTypes = [
-        'Labs',
-        'Vaccinations',
-        'ECG',
-        'EEG',
-        'ENT',
-        'Ophthalmologist',
-        'ASD',
-        'Previous Sedation',
-        'Additional Assessment'
     ];
 
     const theme = useTheme();
@@ -100,7 +87,7 @@ export default function LoadMoreDataSearchBar({selectStatusType, statusTypeHandl
         if (event.key === 'Enter') {
           event.preventDefault(); // Prevent the default Enter key behavior
         }
-      };
+    };
 
 
     useEffect(() => {
@@ -108,13 +95,14 @@ export default function LoadMoreDataSearchBar({selectStatusType, statusTypeHandl
         const siblingHeight = ref1.current.clientHeight;
 
         ref2.current.style.height = `${siblingHeight}px`;
-        ref3.current.style.height = `${siblingHeight}px`;
+
+        console.log("statusList: ", statusList);
     }, []);
 
     return(
         <div>
             <Grid container justify="center" alignItems="center" spacing={0} >
-                <Grid sm={4} xs={12}>
+                <Grid sm={6} xs={12}>
                     <Paper
                         ref={ref1}
                         component="form"
@@ -132,45 +120,7 @@ export default function LoadMoreDataSearchBar({selectStatusType, statusTypeHandl
                     </Paper>
                 </Grid>
 
-                <Grid sm={4} xs={12}>
-                    <Paper style={{marginLeft:'10px', marginRight:'10px', backgroundColor:'#e7e8eb'}}>
-                        <FormControl fullWidth>
-                            <InputLabel id="demo-multiple-chip-label">Type of Assessment</InputLabel>
-                            <Select
-                            labelId="demo-multiple-chip-label"
-                            id="demo-multiple-chip"
-                            displayEmpty
-                            multiple
-                            ref={ref2}
-                            value={selectAssessmentType}
-                            onChange={assessmentTypeHandle}
-                            input={<OutlinedInput id="select-multiple-chip" label="Type of Assessment" />}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
-                                    <div style={{ overflowX: 'auto', scrollbarDidth: 'thin', scrollbarColor: 'gray'}}>
-                                        {selected.map((value) => (
-                                            <Chip key={value} label={value} />
-                                        ))}
-                                    </div>
-                                </Box>
-                            )}
-                            MenuProps={MenuProps}
-                            >
-                            {assessmentTypes.map((name) => (
-                                <MenuItem
-                                key={name}
-                                value={name}
-                                style={getStyles(name, selectStatusType, theme)}
-                                >
-                                {name}
-                                </MenuItem>
-                            ))}
-                            </Select>
-                        </FormControl>
-                    </Paper>
-                </Grid>
-
-                <Grid sm={4} xs={12}>
+                <Grid sm={6} xs={12}>
                     <Paper style={{marginLeft:'10px', marginRight:'10px', backgroundColor:'#e7e8eb'}}>
                         <FormControl fullWidth >
                             <InputLabel id="demo-multiple-chip-label">Flag Type</InputLabel>
@@ -179,7 +129,7 @@ export default function LoadMoreDataSearchBar({selectStatusType, statusTypeHandl
                             id="demo-multiple-chip"
                             displayEmpty
                             multiple
-                            ref={ref3}
+                            ref={ref2}
                             value={selectStatusType}
                             onChange={statusTypeHandle}
                             input={<OutlinedInput id="select-multiple-chip" label="Flag Type" />}
@@ -195,7 +145,7 @@ export default function LoadMoreDataSearchBar({selectStatusType, statusTypeHandl
 
                             MenuProps={MenuProps}
                             >
-                            {statusTypes.map((name) => (
+                            {statusList && statusList.map((name) => (
                                 <MenuItem
                                 key={name}
                                 value={name}

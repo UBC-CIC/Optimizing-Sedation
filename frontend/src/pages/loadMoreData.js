@@ -20,11 +20,10 @@ const DIAGNOSTIC = 1;
 export default function LoadMoreData(){
     const [loadData, setLoadData] = useState(null);
     const [parsedTableData, setParsedTableData] = useState(null);
-
+    const [statusList, setStatusList] = useState(null);
 
     // Search Filter State Variables
     const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
-    const [selectAssessmentType, setSelectAssessmentType] = useState([]);             // Current selection for assessment type
     const [searchInput, setSearchInput] = useState("");
     
     useEffect(() => {
@@ -69,6 +68,9 @@ export default function LoadMoreData(){
                     return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime });
                 });
 
+                const statusList_ = getStatusList(dataCleaned);
+                                
+                setStatusList(Array.from(statusList_))
                 setParsedTableData(dataCleaned);
             }).catch(onErr);
         
@@ -88,6 +90,11 @@ export default function LoadMoreData(){
 
     function onErr(err) {
         console.log("Error, ", err);
+    }
+
+    function getStatusList(tableData){
+        const list = new Set(tableData.map(obj => obj.col1));
+        return list;
     }
 
     //// End of Helper Funtions ////
@@ -120,14 +127,13 @@ export default function LoadMoreData(){
                         }}>
                             <Grid container spacing={0}>
                                 <Grid sm={11} >
-                                    {/* <SearchBar 
+                                    <LoadMoreDataSearchBar 
                                     selectStatusType = {selectStatusType}
                                     statusTypeHandle = {statusTypeHandle}
-                                    selectAssessmentType = {selectAssessmentType}
-                                    assessmentTypeHandle = {assessmentTypeHandle}
                                     searchInput = {searchInput}
                                     searchInputHandle = {searchInputHandle}
-                                    /> */}
+                                    statusList = {statusList}
+                                    />
                                 </Grid>
                                 <Grid sm={1} />
                                 {
