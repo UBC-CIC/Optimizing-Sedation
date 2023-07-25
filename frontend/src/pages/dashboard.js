@@ -60,7 +60,7 @@ export default function Dashboard(){
     const [patientData, setPatientData] = useState(null);
     const [ImmunizationData, setImmunizationData] = useState(null);
     const [MedicationData, setMedicationData] = useState(null);
-    const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
+    const [ConditionData, setConditionData] = useState(null);
     const [ObservationData, setObservationData] = useState(null);
     
     // Data stream line State Variables
@@ -107,17 +107,17 @@ export default function Dashboard(){
                 setMedicationData(paredData);
             }).catch(onErr);
 
-            client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
+            client.request(`Condition/?patient=${client.patient.id}`).then((diagnostic) => {
                 const parsedData = processConditionData(diagnostic);
-                console.log("diagnostic: ", parsedData);
-                setDiagnosticReportData(parsedData);
+                console.log("Condition resource: ", parsedData);
+                setConditionData(parsedData);
             }).catch(onErr);
 
             client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
                 setObservationData(Bundle);
             }).catch(onErr);
 
-            console.log(patientData, ImmunizationData, MedicationData, DiagnosticReportData, ObservationData);
+            console.log(patientData, ImmunizationData, MedicationData, ConditionData, ObservationData);
             setDataReady(true);
         }
 
@@ -175,7 +175,7 @@ export default function Dashboard(){
                             <SideBar 
                             patientData = {patientData}
                             MedicationData = {MedicationData}
-                            DiagnosticReportData = {DiagnosticReportData}
+                            ConditionData = {ConditionData}
                             />
                         </div>
                     </Grid>

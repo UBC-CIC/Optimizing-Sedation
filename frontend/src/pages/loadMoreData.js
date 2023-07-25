@@ -75,8 +75,8 @@ export default function LoadMoreData(){
             }).catch(onErr);
         
         if(urlData.dataCode == DIAGNOSTIC)
-            client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
-                const parsedData = processConditionData(diagnostic);
+            client.request(`Condition/?patient=${client.patient.id}`).then((condition) => {
+                const parsedData = processConditionData(condition);
 
                 const dataCleaned = parsedData.map((row)=>{
                     const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);

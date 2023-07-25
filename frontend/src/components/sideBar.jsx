@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 const MEDICATION = 0;
 const DIAGNOSTIC = 1;
 
-export default function SideBar({patientData, MedicationData, DiagnosticReportData}){
+export default function SideBar({patientData, MedicationData, ConditionData}){
     const [clientReady, setClientReady] = useState(false);
     const [openMedication, setOpenMedication] = React.useState(false);
     const [openDiagnose, setOpenDiagnose] = React.useState(false);
@@ -162,9 +162,9 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
 
                     {openDiagnose && 
                     <div style={style.roundBoxDropdownLists}>
-                        {DiagnosticReportData && DiagnosticReportData.length != 0 && (<ul>
+                        {ConditionData && ConditionData.length != 0 && (<ul>
                         {
-                            DiagnosticReportData
+                            ConditionData
                             .sort((a, b) => a.ConditionType.localeCompare(b.ConditionType))
                             .map((dia) => {
                                 // const modified = medication.MedicationType.replace(/\s*\(.*?\)/g, '');
@@ -180,10 +180,10 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                         </ul>)}
 
                         {
-                            (DiagnosticReportData && DiagnosticReportData.length != 0 && DiagnosticReportData.length > 5) ? (<Link onClick={loadMoreDiagnoseHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
+                            (ConditionData && ConditionData.length != 0 && ConditionData.length > 5) ? (<Link onClick={loadMoreDiagnoseHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
                         }
 
-                        {(!DiagnosticReportData || DiagnosticReportData.length == 0) && (
+                        {(!ConditionData || ConditionData.length == 0) && (
                             <Typography variant='subtitle1' >No Diagnostic Data</Typography>
                         )}
                     </div>}
