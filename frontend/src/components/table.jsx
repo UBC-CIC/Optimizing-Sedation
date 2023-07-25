@@ -21,19 +21,28 @@ import {
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+// Constant Variables
+const LINK = "///LINK";
 
 // Data Structuring
-function createData(assessment, status, others){
-    // others should be in the form of [{title, url}, {title, url}]
+function createData(assessment, status, others, tableHeader){
+    // others should be in the form of [{title, col1, col2}, {title, col1, col2}]
+    // For col1 and col2 are optional
     if (others != null && !Array.isArray(others))
+        return null;
+
+    if (tableHeader != null && !Array.isArray(tableHeader))
         return null;
     
     if(others != null){
         const isValidFormat = others.every(item => {
             let output = typeof item.title === 'string';
             
-            if(item.url != null)
-                output = typeof item.url === 'string';
+            if(item.col1 != null)
+                output = typeof item.col1 === 'string';
+
+            if(item.col2 != null)
+                output = typeof item.col2 === 'string';
             
             return output;
         });
@@ -44,14 +53,32 @@ function createData(assessment, status, others){
     return {
         assessment, 
         status,
-        others
+        others,
+        tableHeader
     };
 }
 
-function convertData(input){
+function convertData(ImmunizationData){
     let data = [];
-    data.push(createData("Labs", "Not done", [{title: "Lab_1_file_name", url: "/Lab_1_file_name"}, {title: "Lab_2_file_name", url: "/Lab_2_file_name"}]));
-    data.push(createData("Vaccinations", "Up to date", [{title: "Covid", url: null}, {title: "Flu", url: null}, {title: "HPV", url: null}]));
+
+    const lab = [{title: "Lab_1_file_name", col1: "/Lab_1_file_name", col2: LINK}, {title: "Lab_2_file_name", col1: "/Lab_2_file_name", col2: LINK}];
+    data.push(createData("Labs", "Not done", lab));
+
+    // Convert ImmunizationData
+    if(ImmunizationData != null){
+        const vaccination = ImmunizationData.map(row =>{
+            const modified = row.ImmunizationType.charAt(0).toUpperCase() + row.ImmunizationType.slice(1);
+            return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime });
+        });
+    
+        const vaccinationHeader = ["Vaccine", "Status", "Date"];
+        data.push(createData("Vaccinations", "Up to date", vaccination, vaccinationHeader));
+    } else if (ImmunizationData == null || ImmunizationData == []) {
+        data.push(createData("Vaccinations", "No Data", null, null));
+    }
+
+
+    
     data.push(createData("ECG", "Done", null));
     data.push(createData("EEG", "Done", null));
     data.push(createData("ENT", "Seen", null));
@@ -59,10 +86,7 @@ function convertData(input){
     data.push(createData("ASD", "Yes", null));
     data.push(createData("Previous Sedation", "No", null));
     data.push(createData("Additional Assessment", "Done/Not done", null));
-    
-    // for(let i = 0; i < 20; i++){
-    //     createData(assessment, status, others)
-    // }
+
 
     return data;
 }
@@ -126,21 +150,59 @@ function Row(props){
                     {data.others != null &&
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Container>
+
+                        <TableContainer style={{marginTop: '2vh', marginBottom: '2vh'}}>
+                        <Table size="small">
                             {
-                                data.others.map((i)=>{
-                                    if(i.url != null){
-                                        return (<Typography variant={"subtitle1"} component="h6">
-                                                    <Link href={i.url} target="_blank" rel="noopener">
+                                data.tableHeader != null &&
+                                <TableHead>
+                                    <TableRow>
+                                        { data.tableHeader.map((i)=>(
+                                            <TableCell align='left' style={{fontWeight: "bold"}}>{i}</TableCell>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                            }
+                            
+                            <TableBody>
+                                {
+                                    data.others.map((i)=>{
+                                        if(i.col1 != null && i.col2 != null && i.col2 == LINK){     // Display as link
+                                            return (
+                                                <Typography variant={"subtitle1"} component="h6">
+                                                    <Link href={i.col1} target="_blank" rel="noopener">
                                                         {i.title}
                                                     </Link> 
                                                 </Typography>);
-                                    } else {
-                                        return (<Typography variant={"subtitle1"} component="h6">
-                                                    {i.title}
-                                                </Typography>);
-                                    }
-                                })
-                            }
+                                        } else if (i.col1 != null && i.col2 != null){               // Display as table
+                                            return (
+                                                <TableRow>
+                                                    <TableCell align='left'>{i.title}</TableCell>
+                                                    <TableCell align='left'>{i.col1}</TableCell>
+                                                    <TableCell align='left'>{i.col2}</TableCell>
+                                                </TableRow>
+                                            );
+                                        } else if (i.col1 != null){
+                                            return (
+                                                <TableRow>
+                                                    <TableCell align='left'>{i.title}</TableCell>
+                                                    <TableCell align='left'>{i.col1}</TableCell>
+                                                </TableRow>
+                                            );
+                                        } 
+                                        else{        
+                                            return (
+                                                <TableRow>
+                                                    <TableCell align='left'>{i.title}</TableCell>
+                                                </TableRow>
+                                            );
+                                        }
+                                    })
+                                }
+                            </TableBody>
+                        </Table>
+                        </TableContainer>
+                            
                         </Container>
                     </Collapse>
                     }
@@ -150,16 +212,16 @@ function Row(props){
     )
 }
 
-export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput}){
+export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData}){
     // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
 
     // Convert input data into current format of this table
-    if(!Array.isArray(fhirData))
-        return (
-            <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
-        );
+    // if(!Array.isArray(fhirData))
+    //     return (
+    //         <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
+    //     );
     
-    const data = convertData(fhirData);
+    const data = convertData(ImmunizationData);
     console.log("data: ", data);
 
     const style = {
@@ -194,9 +256,11 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
     }
 
 
-    // useEffect(() => {
-    //     console.log("data: ", data);
-    // }, []);
+    useEffect(() => {
+        console.log("data: ", data);
+
+        
+    }, []);
 
     return(
         <div>
