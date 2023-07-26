@@ -15,6 +15,7 @@ import processPatientData from '../DataProcessing/patientProcessing';
 import processImmunizationData from '../DataProcessing/immunizationProcessing';
 import processMedicationData from '../DataProcessing/medicationProcessing';
 import processConditionData from '../DataProcessing/conditionProcessing';
+import processObservationData from '../DataProcessing/observationProcessing';
 
 // Data structuring
 function createPatientData(fullname, MRN, contactFullname, contactNumber){
@@ -84,7 +85,7 @@ export default function Dashboard(){
             // console.log(client);
             // console.log("Request Patient");
             await client.request(`Patient/${client.patient.id}`).then((patient) => {
-                console.log("Patient: ", processPatientData(patient));
+                //console.log("Patient: ", processPatientData(patient));
 
                 const parsedData = processPatientData(patient)[0];
                 
@@ -96,28 +97,31 @@ export default function Dashboard(){
 
             client.request(`Immunization/?patient=${client.patient.id}`).then((immunization) => {
                 const paredData = processImmunizationData(immunization);
-                console.log("immunization: ", paredData);
+                //console.log("immunization: ", immunization);
                 setImmunizationData(paredData);
 
             }).catch(onErr);
 
             client.request(`MedicationRequest/?patient=${client.patient.id}`).then((med) => {
                 const paredData = processMedicationData(med);
-                console.log("med: ", paredData);
+                //console.log("med: ", med);
                 setMedicationData(paredData);
             }).catch(onErr);
 
-            client.request(`Condition/?patient=${client.patient.id}`).then((diagnostic) => {
-                const parsedData = processConditionData(diagnostic);
-                console.log("Condition resource: ", parsedData);
+            client.request(`Condition/?patient=${client.patient.id}`).then((condition) => {
+                const parsedData = processConditionData(condition);
+                //console.log("Condition resource: ", parsedData);
                 setConditionData(parsedData);
             }).catch(onErr);
 
             client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
-                setObservationData(Bundle);
+                const parsedData = processObservationData(Bundle);
+                console.log("Raw Observation data: ", Bundle);
+                console.log("Processed Observation data: ", parsedData);
+                setObservationData(parsedData)
             }).catch(onErr);
 
-            console.log(patientData, ImmunizationData, MedicationData, ConditionData, ObservationData);
+            //console.log(patientData, ImmunizationData, MedicationData, ConditionData, ObservationData);
             setDataReady(true);
         }
 
@@ -208,6 +212,7 @@ export default function Dashboard(){
                                         selectAssessmentType = {selectAssessmentType}
                                         searchInput = {searchInput}
                                         ImmunizationData = {ImmunizationData}
+                                        ObservationData = {ObservationData}
                                         />
                                     </div>
                                 </Grid>
