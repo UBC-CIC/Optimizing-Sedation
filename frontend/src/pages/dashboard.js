@@ -96,7 +96,7 @@ export default function Dashboard(){
 
             client.request(`Immunization/?patient=${client.patient.id}`).then((immunization) => {
                 const paredData = processImmunizationData(immunization);
-                console.log("immunization: ", paredData);
+                console.log("immunization: ", immunization);
                 setImmunizationData(paredData);
 
             }).catch(onErr);
@@ -109,11 +109,12 @@ export default function Dashboard(){
 
             client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
                 const parsedData = processConditionData(diagnostic);
-                console.log("diagnostic: ", parsedData);
+                console.log("diagnostic: ", diagnostic);
                 setDiagnosticReportData(parsedData);
             }).catch(onErr);
 
             client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
+                console.log("observation: ", Bundle);
                 setObservationData(Bundle);
             }).catch(onErr);
 

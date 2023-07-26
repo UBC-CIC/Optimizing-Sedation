@@ -85,7 +85,35 @@ export default function LoadMoreData(){
 
                 setParsedTableData(dataCleaned);
             }).catch(onErr);
+        
+        // Random Requests 
+        client.request(`Observation/?patient=${client.patient.id}&code=32880-7`).then((data) => {
+            console.log("Dental: ", data);
+        }).catch(onErr);
 
+        // client.request(`Observation/?patient=${client.patient.id}`).then((data) => {
+        //     console.log("Dental: ", data);
+        // }).catch(onErr);
+
+        // client
+        // // .search({
+        // //     type: 'Observation',
+        // //     query: {
+        // //       subject: `Patient/${client.patient.id}`,
+        // //       code: '100566-9',
+        // //     },
+        // //   })
+        //   .request({
+        //     url: 'Observation', // Resource type (Observation in this case)
+        //     method: 'GET',
+        //     params: {
+        //         patient: client.patient.id,
+        //         code: '100566-9',
+        //     },
+        //   })
+        //   .then((dental) => {
+        //     console.log("Dental: ", dental);
+        // }).catch(onErr);
     }
 
     function onErr(err) {

@@ -166,7 +166,14 @@ function Row(props){
                             
                             <TableBody>
                                 {
-                                    data.others.map((i)=>{
+                                    data.others
+                                    .sort((a, b) => {
+                                        if(a.col2 != null)
+                                            return b.col2.localeCompare(a.col2)
+                                        else
+                                            return 0;
+                                    })
+                                    .map((i)=>{
                                         if(i.col1 != null && i.col2 != null && i.col2 == LINK){     // Display as link
                                             return (
                                                 <Typography variant={"subtitle1"} component="h6">
