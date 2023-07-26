@@ -58,11 +58,24 @@ function createData(assessment, status, others, tableHeader){
     };
 }
 
-function convertData(ImmunizationData){
+function convertData(ImmunizationData, ObservationData){
     let data = [];
 
-    const lab = [{title: "Lab_1_file_name", col1: "/Lab_1_file_name", col2: LINK}, {title: "Lab_2_file_name", col1: "/Lab_2_file_name", col2: LINK}];
-    data.push(createData("Labs", "Not done", lab));
+    /* const lab = [{title: "Lab_1_file_name", col1: "/Lab_1_file_name", col2: LINK}, {title: "Lab_2_file_name", col1: "/Lab_2_file_name", col2: LINK}];
+    data.push(createData("Labs", "Not done", lab)); */
+
+    // Convert lab data
+    if(ObservationData != null){
+        const observation = ObservationData.map(row =>{
+            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+            return ({title: modified, col1: row.ObservationValue, col2:row.ObservationTime });
+        });
+    
+        const observationHeader = ["Lab Type", "Value", "Date"];
+        data.push(createData("Labs", "Done", observation, observationHeader));
+    } else if (ObservationData == null || ObservationData == []) {
+        data.push(createData("Labs", "No Data", null, null));
+    }
 
     // Convert ImmunizationData
     if(ImmunizationData != null){
@@ -76,7 +89,6 @@ function convertData(ImmunizationData){
     } else if (ImmunizationData == null || ImmunizationData == []) {
         data.push(createData("Vaccinations", "No Data", null, null));
     }
-
 
     
     data.push(createData("ECG", "Done", null));
@@ -212,7 +224,7 @@ function Row(props){
     )
 }
 
-export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData}){
+export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData}){
     // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
 
     // Convert input data into current format of this table
@@ -221,8 +233,8 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
     //         <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
     //     );
     
-    const data = convertData(ImmunizationData);
-    console.log("data: ", data);
+    const data = convertData(ImmunizationData, ObservationData);
+    //console.log("data: ", data);
 
     const style = {
         dropDown: {
@@ -257,7 +269,7 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
 
 
     useEffect(() => {
-        console.log("data: ", data);
+        //console.log("data: ", data);
 
         
     }, []);

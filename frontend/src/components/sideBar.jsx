@@ -146,7 +146,7 @@ export default function SideBar({patientData, MedicationData, ConditionData}){
                             }
 
                             {(!MedicationData || MedicationData.length == 0) && (
-                                <Typography variant='subtitle1' >No Medication Data</Typography>
+                                <Typography variant='subtitle1' >No Medication Data From The Last Six Months</Typography>
                             )}
                         </div>}
                     </div>
