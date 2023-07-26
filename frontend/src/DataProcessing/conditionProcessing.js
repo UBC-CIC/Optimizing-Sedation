@@ -5,8 +5,8 @@ function processConditionData(ConditionData) {
     if (ConditionData && ConditionData.entry[0].resource) {
       ConditionData.entry.forEach((entry) => {
         const ConditionType =
-          entry.resource.code
-            ? entry.resource.code.text
+          entry.resource.code.coding && entry.resource.code.coding.length > 0
+            ? entry.resource.code.coding[0].display 
             : 'N/A';
         
         const ConditionStatus =
