@@ -1,0 +1,1079 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    [
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-599",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-599",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2007-01-07"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-592",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-592",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2006-02-08"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-591",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-591",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2006-01-07"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-594",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-594",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2006-07-13"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-593",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-593",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2006-05-01"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-596",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-596",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2006-09-10"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-595",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-595",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2006-08-14"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-598",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-598",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2006-11-08"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-597",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-597",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2006-10-17"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-608",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-608",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of atomoxetine 25 MG Oral Capsule [Strattera]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "352319",
+                "display": "atomoxetine 25 MG Oral Capsule [Strattera]"
+              }
+            ],
+            "text": "atomoxetine 25 MG Oral Capsule [Strattera]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-137"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2008-04-25"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-607",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-607",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of atomoxetine 25 MG Oral Capsule [Strattera]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "352319",
+                "display": "atomoxetine 25 MG Oral Capsule [Strattera]"
+              }
+            ],
+            "text": "atomoxetine 25 MG Oral Capsule [Strattera]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-137"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2008-02-17"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-609",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-609",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of atomoxetine 25 MG Oral Capsule [Strattera]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "352319",
+                "display": "atomoxetine 25 MG Oral Capsule [Strattera]"
+              }
+            ],
+            "text": "atomoxetine 25 MG Oral Capsule [Strattera]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-137"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2008-05-21"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-600",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-600",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2007-02-19"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-602",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-602",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of atomoxetine 18 MG Oral Capsule [Strattera]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "352318",
+                "display": "atomoxetine 18 MG Oral Capsule [Strattera]"
+              }
+            ],
+            "text": "atomoxetine 18 MG Oral Capsule [Strattera]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-136"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2007-07-17"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-601",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-601",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of 24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "284429",
+                "display": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+              }
+            ],
+            "text": "24 HR Methylphenidate 18 MG Extended Release Tablet [Concerta]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-134"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2007-06-02"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-604",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-604",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of atomoxetine 18 MG Oral Capsule [Strattera]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "352318",
+                "display": "atomoxetine 18 MG Oral Capsule [Strattera]"
+              }
+            ],
+            "text": "atomoxetine 18 MG Oral Capsule [Strattera]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-136"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2007-10-19"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-603",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-603",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of atomoxetine 18 MG Oral Capsule [Strattera]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "352318",
+                "display": "atomoxetine 18 MG Oral Capsule [Strattera]"
+              }
+            ],
+            "text": "atomoxetine 18 MG Oral Capsule [Strattera]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-136"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2007-09-16"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-606",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-606",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of atomoxetine 25 MG Oral Capsule [Strattera]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "352319",
+                "display": "atomoxetine 25 MG Oral Capsule [Strattera]"
+              }
+            ],
+            "text": "atomoxetine 25 MG Oral Capsule [Strattera]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-137"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2008-01-13"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-605",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-605",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of atomoxetine 18 MG Oral Capsule [Strattera]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "352318",
+                "display": "atomoxetine 18 MG Oral Capsule [Strattera]"
+              }
+            ],
+            "text": "atomoxetine 18 MG Oral Capsule [Strattera]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-136"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2007-11-21"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-611",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-611",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of atomoxetine 25 MG Oral Capsule [Strattera]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "352319",
+                "display": "atomoxetine 25 MG Oral Capsule [Strattera]"
+              }
+            ],
+            "text": "atomoxetine 25 MG Oral Capsule [Strattera]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-137"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2008-07-20"
+        },
+        "search": {
+          "mode": "match"
+        }
+      },
+      {
+        "fullUrl": "https://api.logicahealth.org/TestingVersion1/data/MedicationDispense/smart-MedicationDispense-610",
+        "resource": {
+          "resourceType": "MedicationDispense",
+          "id": "smart-MedicationDispense-610",
+          "meta": {
+            "versionId": "1",
+            "lastUpdated": "2020-07-15T02:51:47.000+00:00",
+            "source": "#lyVj5wZaDBrtHtA1"
+          },
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Dispensed 30 tablets = 30 day supply of atomoxetine 25 MG Oral Capsule [Strattera]</div>"
+          },
+          "status": "completed",
+          "medicationCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                "code": "352319",
+                "display": "atomoxetine 25 MG Oral Capsule [Strattera]"
+              }
+            ],
+            "text": "atomoxetine 25 MG Oral Capsule [Strattera]"
+          },
+          "subject": {
+            "reference": "Patient/smart-1186747"
+          },
+          "authorizingPrescription": [
+            {
+              "reference": "MedicationRequest/smart-MedicationRequest-137"
+            }
+          ],
+          "quantity": {
+            "value": 30,
+            "unit": "tablets",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tablets}"
+          },
+          "daysSupply": {
+            "value": 30,
+            "unit": "days",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          },
+          "whenHandedOver": "2008-06-23"
+        },
+        "search": {
+          "mode": "match"
+        }
+      }
+    ]
+  ]
+}
