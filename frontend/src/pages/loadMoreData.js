@@ -86,10 +86,25 @@ export default function LoadMoreData(){
                 setParsedTableData(dataCleaned);
             }).catch(onErr);
         
+        // Request Observation
+        client.request(`Observation/?patient=${client.patient.id}`).then((data) => {
+            console.log("Observation: ", data);
+        }).catch(onErr);
+
         // Random Requests 
-        client.request(`Observation/?patient=${client.patient.id}&code=32880-7`).then((data) => {
+        // const code  = ["93246-7", "32623-1"];
+        // client.request(`Observation/?patient=${client.patient.id}&code=${code}`).then((data) => {
+        //     console.log("Dental: ", data);
+        // }).catch(onErr);
+
+        const code  = ["93246-7", "32623-1"];
+        client.request(`Observation/?value-string=apple&patient=${client.patient.id}`).then((data) => {
             console.log("Dental: ", data);
         }).catch(onErr);
+
+        // client.request(`Observation/?patient=${client.patient.id}&code=http://loinc.org|32880-7`).then((data) => {
+        //     console.log("Dental: ", data);
+        // }).catch(onErr);
 
         // client.request(`Observation/?patient=${client.patient.id}`).then((data) => {
         //     console.log("Dental: ", data);

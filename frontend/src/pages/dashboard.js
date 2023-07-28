@@ -103,7 +103,7 @@ export default function Dashboard(){
 
             client.request(`MedicationRequest/?patient=${client.patient.id}`).then((med) => {
                 const paredData = processMedicationData(med);
-                console.log("med: ", paredData);
+                console.log("med: ", med);
                 setMedicationData(paredData);
             }).catch(onErr);
 
