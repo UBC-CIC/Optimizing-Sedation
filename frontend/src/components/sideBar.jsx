@@ -164,5 +164,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                 <Grid sm={1} xs={0}/>
             </Grid>
         </div>
+
+        
     );
 }

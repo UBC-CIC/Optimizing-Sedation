@@ -5,6 +5,7 @@ import FHIR from 'fhirclient';
 import SideBar from '../components/sideBar';
 import SearchBar from '../components/searchBar';
 import PatientTable from '../components/table';
+import LoadMoreDataPopUp from '../components/med_diag_popup';
 
 // Material UI
 import Button from '@mui/material/Button';
@@ -66,7 +67,14 @@ export default function Dashboard(){
     const [MedicationData, setMedicationData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
     const [ObservationData, setObservationData] = useState(null);
+
+    // Popup states variables
+    const [loadPopup, setLoadPopup] = useState(false);
+    const [medDiagData, setMedDiagData] = useState([]);
+    const [statusList, setStatusList] = useState(null);
+    const [popupTitle, setPopupTitle] = useState(null);
     
+
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
     // const [patientData, setPatientData] = useState(null);
@@ -76,46 +84,6 @@ export default function Dashboard(){
     const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
     const [selectAssessmentType, setSelectAssessmentType] = useState([]);             // Current selection for assessment type
     const [searchInput, setSearchInput] = useState("");
-
-    // None-state Variables
-    var windowList = [];
-
-    // Global handlers
-    const loadMoreMedicationHandler = () => {
-        const data = {
-            title: patientData.fullname + "'s Medication Data",
-            dataCode: MEDICATION
-        }
-
-        const window_i = window.open(
-            '/loadMore?data=' + JSON.stringify(data),
-            '_blank'
-        );
-
-        windowList.push(window_i);
-    }
-
-    const loadMoreDiagnoseHandler = () => {
-        const data = {
-            title: patientData.fullname + "'s Diagnostic Data",
-            dataCode: DIAGNOSTIC
-        }
-        const window_i = window.open(
-            '/loadMore?data=' + JSON.stringify(data),
-            '_blank'
-        );
-
-        windowList.push(window_i);
-    }
-
-    // Listen for the 'beforeunload' event on pageA to close pageB when pageA is closed
-    window.addEventListener('beforeunload', function () {
-        if (windowList.length != 0) {
-            windowList.map((window_) => {
-                window_.close();
-            }); 
-        }
-    });
     
     useEffect(() => {
         // Resolver funcitons
@@ -147,7 +115,7 @@ export default function Dashboard(){
 
             client.request(`MedicationRequest/?patient=${client.patient.id}`).then((med) => {
                 const paredData = processMedicationData(med);
-                console.log("med: ", med);
+                console.log("med: ", paredData);
                 setMedicationData(paredData);
             }).catch(onErr);
 
@@ -207,12 +175,49 @@ export default function Dashboard(){
 
     //// End of Handler Functions ////
 
+    //// Helper Functions ////
+    function getStatusList(tableData){
+        return tableData.map(obj => obj.col1);
+    }
+
+    //// End of Helper Funtions ////
+
+    //// Global Handlers ////
+    const loadMoreMedicationHandler = () => {
+        setPopupTitle("Medication Data");
+        const dataCleaned = MedicationData.map((row)=>{
+            const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
+            return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime });
+        });
+
+        const statusList_ = getStatusList(dataCleaned);
+        console.log("statusList_: ", statusList_);
+        setMedDiagData(dataCleaned);
+        setStatusList(statusList_);
+        setLoadPopup(true);
+    }
+
+    const loadMoreDiagnoseHandler = () => {
+        setPopupTitle("Diagnostic Data");
+        const dataCleaned = DiagnosticReportData.map((row)=>{
+            const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
+            return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime });
+        });
+
+        const statusList_ = getStatusList(dataCleaned);
+        setMedDiagData(dataCleaned);
+        setStatusList(statusList_);
+        setLoadPopup(true);
+    }
+
+    //// End of Global Handlers ////
 
     return(
         <div>
             {clientReady && dataReady &&
             <React.Fragment>
                 <Grid container spacing={0}>
+                    {/* Left-hand side elements */}
                     <Grid sm={4} xs={12}>
                         <div style={{
                             marginTop: '4vh',
@@ -226,40 +231,54 @@ export default function Dashboard(){
                             />
                         </div>
                     </Grid>
+
+                    {/* Right-hand side elements */}
                     <Grid sm={8} xs={12}>
                         <div style={{
                             marginTop: '4vh',
                         }}>
-                            <Grid container spacing={0}>
-                                <Grid sm={11} >
-                                    <SearchBar 
-                                    selectStatusType = {selectStatusType}
-                                    statusTypeHandle = {statusTypeHandle}
-                                    selectAssessmentType = {selectAssessmentType}
-                                    assessmentTypeHandle = {assessmentTypeHandle}
-                                    searchInput = {searchInput}
-                                    searchInputHandle = {searchInputHandle}
-                                    />
-                                </Grid>
-                                <Grid sm={1} />
-
-                                <Grid sm={11} >
-                                    <div style={{paddingTop:'2vh'}}>
-                                        {/* <h1>Hello World, Dashboard!</h1>
-                                        <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
-                                        <p>{text}</p> */}
-                                        <h1>Patient Assessment Information</h1>
-                                        <PatientTable 
-                                        fhirData = {[]} 
+                            {!loadPopup && 
+                            <React.Fragment>
+                                <Grid container spacing={0}>
+                                    <Grid sm={11} >
+                                        <SearchBar 
                                         selectStatusType = {selectStatusType}
+                                        statusTypeHandle = {statusTypeHandle}
                                         selectAssessmentType = {selectAssessmentType}
+                                        assessmentTypeHandle = {assessmentTypeHandle}
                                         searchInput = {searchInput}
-                                        ImmunizationData = {ImmunizationData}
+                                        searchInputHandle = {searchInputHandle}
                                         />
-                                    </div>
+                                    </Grid>
+                                    <Grid sm={1} />
+
+                                    <Grid sm={11} >
+                                        <div style={{paddingTop:'2vh'}}>
+                                            {/* <h1>Hello World, Dashboard!</h1>
+                                            <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
+                                            <p>{text}</p> */}
+                                            <h1>Patient Assessment Information</h1>
+                                            <PatientTable 
+                                            fhirData = {[]} 
+                                            selectStatusType = {selectStatusType}
+                                            selectAssessmentType = {selectAssessmentType}
+                                            searchInput = {searchInput}
+                                            ImmunizationData = {ImmunizationData}
+                                            />
+                                        </div>
+                                    </Grid>
+                                    <Grid sm={1} />
                                 </Grid>
-                                <Grid sm={1} />
-                            </Grid>
+                            </React.Fragment>
+                            }
+                            {loadPopup && 
+                            <LoadMoreDataPopUp
+                            parsedTableData = {medDiagData} 
+                            loadData = {true}
+                            statusList = {statusList}
+                            popupTitle = {popupTitle}
+                            setLoadPopup = {setLoadPopup}/>
+                            }
                         </div>
                     </Grid>
                 </Grid>

@@ -145,7 +145,7 @@ export default function LoadMoreDataSearchBar({selectStatusType, statusTypeHandl
 
                             MenuProps={MenuProps}
                             >
-                            {statusList && statusList.map((name) => (
+                            {statusList != null && statusList.map((name) => (
                                 <MenuItem
                                 key={name}
                                 value={name}
