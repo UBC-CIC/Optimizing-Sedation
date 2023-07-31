@@ -16,6 +16,10 @@ import processImmunizationData from '../DataProcessing/immunizationProcessing';
 import processMedicationData from '../DataProcessing/medicationProcessing';
 import processConditionData from '../DataProcessing/conditionProcessing';
 
+// Constants
+const MEDICATION = 0;
+const DIAGNOSTIC = 1;
+
 // Data structuring
 function createPatientData(fullname, MRN, contactFullname, contactNumber){
     return {
@@ -72,6 +76,46 @@ export default function Dashboard(){
     const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
     const [selectAssessmentType, setSelectAssessmentType] = useState([]);             // Current selection for assessment type
     const [searchInput, setSearchInput] = useState("");
+
+    // None-state Variables
+    var windowList = [];
+
+    // Global handlers
+    const loadMoreMedicationHandler = () => {
+        const data = {
+            title: patientData.fullname + "'s Medication Data",
+            dataCode: MEDICATION
+        }
+
+        const window_i = window.open(
+            '/loadMore?data=' + JSON.stringify(data),
+            '_blank'
+        );
+
+        windowList.push(window_i);
+    }
+
+    const loadMoreDiagnoseHandler = () => {
+        const data = {
+            title: patientData.fullname + "'s Diagnostic Data",
+            dataCode: DIAGNOSTIC
+        }
+        const window_i = window.open(
+            '/loadMore?data=' + JSON.stringify(data),
+            '_blank'
+        );
+
+        windowList.push(window_i);
+    }
+
+    // Listen for the 'beforeunload' event on pageA to close pageB when pageA is closed
+    window.addEventListener('beforeunload', function () {
+        if (windowList.length != 0) {
+            windowList.map((window_) => {
+                window_.close();
+            }); 
+        }
+    });
     
     useEffect(() => {
         // Resolver funcitons
@@ -177,6 +221,8 @@ export default function Dashboard(){
                             patientData = {patientData}
                             MedicationData = {MedicationData}
                             DiagnosticReportData = {DiagnosticReportData}
+                            loadMoreMedicationHandler={loadMoreMedicationHandler}
+                            loadMoreDiagnoseHandler={loadMoreDiagnoseHandler}
                             />
                         </div>
                     </Grid>

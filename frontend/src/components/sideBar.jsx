@@ -7,11 +7,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Link } from 'react-router-dom';
 
-// Constants
-const MEDICATION = 0;
-const DIAGNOSTIC = 1;
-
-export default function SideBar({patientData, MedicationData, DiagnosticReportData}){
+export default function SideBar({patientData, MedicationData, DiagnosticReportData, loadMoreMedicationHandler,loadMoreDiagnoseHandler}){
     const [clientReady, setClientReady] = useState(false);
     const [openMedication, setOpenMedication] = React.useState(false);
     const [openDiagnose, setOpenDiagnose] = React.useState(false);
@@ -23,29 +19,6 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
     const openDiagnoseHandle = () => {
         setOpenDiagnose(!openDiagnose);
     };
-
-    const loadMoreMedicationHandler = () => {
-        const data = {
-            title: patientData.fullname + "'s Medication Data",
-            dataCode: MEDICATION
-        }
-
-        window.open(
-            '/loadMore?data=' + JSON.stringify(data),
-            '_blank'
-        );
-    }
-
-    const loadMoreDiagnoseHandler = () => {
-        const data = {
-            title: patientData.fullname + "'s Diagnostic Data",
-            dataCode: DIAGNOSTIC
-        }
-        window.open(
-            '/loadMore?data=' + JSON.stringify(data),
-            '_blank'
-        );
-    }
 
     const style = {
         dropDown: {
