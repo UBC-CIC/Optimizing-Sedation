@@ -10,10 +10,10 @@ import {Grid, Link, Typography} from '@mui/material';
 
 
 
-export default function LoadRawDataDisplay({MedicationData, setLoadRawData}){
+export default function LoadRawDataDisplay({observationData, diagnosticData, conditionData, MedicationData, setLoadRawData}){
     // Search Filter State Variables
     const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
-    const [selectAssessmentType, setSelectAssessmentType] = useState([]);             // Current selection for assessment type
+    const [selectDataType, setSelectDataType] = useState([]);             // Current selection for assessment type
     const [searchInput, setSearchInput] = useState("");
 
     //// Handler Functions ////
@@ -25,9 +25,17 @@ export default function LoadRawDataDisplay({MedicationData, setLoadRawData}){
         );
     };
 
-    const assessmentTypeHandle = (event) => {
+    // Selector Options
+    const [statusTypesList, setStatusTypesList] = useState([]);
+    const assessmentTypes = [
+        'Condition Data',
+        'Diagnostic Data',
+        'Observation Data',
+    ];
+
+    const dataTypeHandle = (event) => {
         const { target: { value }, } = event;
-        setSelectAssessmentType(
+        setSelectDataType(
         // On autofill we get a stringified value.
         typeof value === 'string' ? value.split(',') : value,
         );
@@ -41,20 +49,37 @@ export default function LoadRawDataDisplay({MedicationData, setLoadRawData}){
 
     //// Helper Functions ////
     function getStatusList(tableData){
-        return tableData.map(obj => obj.col1);
+        if (tableData)
+            return tableData.map(obj => obj.col1);
+        else
+            return [];
     }
 
     //// End of Helper Funtions ////
+
+    useEffect(()=>{
+        // Get a list of status
+        // let uniqueStatus = new Set([...getStatusList(observationData), ...getStatusList(diagnosticData), ...getStatusList(conditionData)]);
+        let uniqueStatus = new Set([...getStatusList(MedicationData), ...getStatusList(diagnosticData), ...getStatusList(conditionData)]);
+        setStatusTypesList(Array.from(uniqueStatus));
+
+    }, []);
 
     return(
         <React.Fragment>
             <Grid container spacing={0}>
                 <Grid sm={11} >
-                    <SearchBar 
+                    <SearchBar
+                    statusTypeDisplayText = "Status Type"
+                    statusTypeList={statusTypesList}
                     selectStatusType = {selectStatusType}
                     statusTypeHandle = {statusTypeHandle}
-                    selectAssessmentType = {selectAssessmentType}
-                    assessmentTypeHandle = {assessmentTypeHandle}
+
+                    assessmentTypeDisplayText = "Data Type"
+                    assessmentTypeList={assessmentTypes}
+                    selectAssessmentType = {selectDataType}
+                    assessmentTypeHandle = {dataTypeHandle}
+
                     searchInput = {searchInput}
                     searchInputHandle = {searchInputHandle}
                     />
@@ -74,25 +99,25 @@ export default function LoadRawDataDisplay({MedicationData, setLoadRawData}){
                             <h1>Patient Raw Data</h1>
                             <Link onClick={() => {setLoadRawData(false)}}>View Data Summary</Link>
                         </div>
-                        
-                        <h2>Observation Data</h2>
+
+                        <h2>Condition Data</h2>
                         <LoadMoreDataTable 
-                        selectStatusType = {[]}
-                        searchInput = {""}
+                        selectStatusType = {selectDataType.includes("Condition Data") ? selectStatusType : []}
+                        searchInput = {selectDataType.includes("Condition Data") || selectDataType.length == 0 ? searchInput : ""}
                         data = {MedicationData}
                         />
 
                         <h2>Diagnostic Data</h2>
                         <LoadMoreDataTable 
-                        selectStatusType = {[]}
-                        searchInput = {""}
+                        selectStatusType = {selectDataType.includes("Diagnostic Data") ? selectStatusType : []}
+                        searchInput = {selectDataType.includes("Diagnostic Data") || selectDataType.length == 0 ? searchInput : ""}
                         data = {MedicationData}
                         />
-                                                
-                        <h2>Condition Data</h2>
+
+                        <h2>Observation Data</h2>
                         <LoadMoreDataTable 
-                        selectStatusType = {[]}
-                        searchInput = {""}
+                        selectStatusType = {selectDataType.includes("Observation Data") ? selectStatusType : []}
+                        searchInput = {selectDataType.includes("Observation Data") || selectDataType.length == 0 ? searchInput : ""}
                         data = {MedicationData}
                         />
                         

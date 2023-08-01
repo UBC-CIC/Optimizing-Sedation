@@ -6,7 +6,7 @@ import SideBar from '../components/sideBar';
 import SearchBar from '../components/searchBar';
 import PatientTable from '../components/table';
 import LoadMoreDataPopUp from '../components/med_diag_popup';
-import LoadRawDataDisplay from '../components/loadRawData';
+import LoadRawDataDisplay from '../components/loadRawDataDisplay';
 
 // Material UI
 import Button from '@mui/material/Button';
@@ -28,18 +28,28 @@ function createPatientData(fullname, MRN, contactFullname, contactNumber){
     };
 }
 
-function createPatientMedicalSummaryData(listOfMedications, listOfDiagnoses){
-    if (listOfMedications != null && !Array.isArray(listOfMedications))
-        return null;
-    
-    if (listOfDiagnoses != null && !Array.isArray(listOfDiagnoses))
-        return null;
+// Selector Options
+const statusTypes = [
+    'Not done',
+    'Up to date',
+    'Done',
+    'Seen',
+    'Yes',
+    'No',
+    'Done/Not done',
+];
 
-    return {
-        listOfMedications, 
-        listOfDiagnoses
-    };
-}
+const assessmentTypes = [
+    'Labs',
+    'Vaccinations',
+    'ECG',
+    'EEG',
+    'ENT',
+    'Ophthalmologist',
+    'ASD',
+    'Previous Sedation',
+    'Additional Assessment'
+];
 
 // function createPatientMedicalSummaryData(listOfMedications, listOfDiagnoses){
 //     if (listOfMedications != null && !Array.isArray(listOfMedications))
@@ -243,10 +253,14 @@ export default function Dashboard(){
                                 <Grid container spacing={0}>
                                     <Grid sm={11} >
                                         <SearchBar 
+                                        statusTypeList={statusTypes}
                                         selectStatusType = {selectStatusType}
                                         statusTypeHandle = {statusTypeHandle}
+
+                                        assessmentTypeList={assessmentTypes}
                                         selectAssessmentType = {selectAssessmentType}
                                         assessmentTypeHandle = {assessmentTypeHandle}
+
                                         searchInput = {searchInput}
                                         searchInputHandle = {searchInputHandle}
                                         />
