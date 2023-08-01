@@ -16,6 +16,7 @@ import processImmunizationData from '../DataProcessing/immunizationProcessing';
 import processMedicationData from '../DataProcessing/medicationProcessing';
 import processConditionData from '../DataProcessing/conditionProcessing';
 import processObservationData from '../DataProcessing/observationProcessing';
+import processDiagnosticReportData from '../DataProcessing/diagnosticReportProcessing';
 
 // Data structuring
 function createPatientData(fullname, MRN, contactFullname, contactNumber){
@@ -63,6 +64,7 @@ export default function Dashboard(){
     const [MedicationData, setMedicationData] = useState(null);
     const [ConditionData, setConditionData] = useState(null);
     const [ObservationData, setObservationData] = useState(null);
+    const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
     
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
@@ -85,7 +87,7 @@ export default function Dashboard(){
             // console.log(client);
             // console.log("Request Patient");
             await client.request(`Patient/${client.patient.id}`).then((patient) => {
-                //console.log("Patient: ", processPatientData(patient));
+                //console.log("Raw Patient Data: ", patient);
 
                 const parsedData = processPatientData(patient)[0];
                 
@@ -96,16 +98,17 @@ export default function Dashboard(){
             }).catch(onErr);
 
             client.request(`Immunization/?patient=${client.patient.id}`).then((immunization) => {
-                const paredData = processImmunizationData(immunization);
+                const parsedData = processImmunizationData(immunization);
                 //console.log("immunization: ", immunization);
-                setImmunizationData(paredData);
+                setImmunizationData(parsedData);
 
             }).catch(onErr);
 
             client.request(`MedicationRequest/?patient=${client.patient.id}`).then((med) => {
-                const paredData = processMedicationData(med);
-                //console.log("med: ", med);
-                setMedicationData(paredData);
+                const parsedData = processMedicationData(med);
+                //console.log("Raw medical data: ", med);
+                setMedicationData(parsedData);
+                //console.log("Processed medical data: ", parsedData)
             }).catch(onErr);
 
             client.request(`Condition/?patient=${client.patient.id}`).then((condition) => {
@@ -114,9 +117,17 @@ export default function Dashboard(){
                 setConditionData(parsedData);
             }).catch(onErr);
 
+            client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
+                const parsedData = processDiagnosticReportData(diagnostic);
+                console.log("DiagnosticReport resource: ", diagnostic);
+                console.log("Processed DiagnosticData: ", parsedData)
+                setDiagnosticReportData(parsedData);
+            }).catch(onErr);
+
             client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
-                const parsedData = processObservationData(Bundle);
                 console.log("Raw Observation data: ", Bundle);
+                const parsedData = processObservationData(Bundle);
+                
                 console.log("Processed Observation data: ", parsedData);
                 setObservationData(parsedData)
             }).catch(onErr);
