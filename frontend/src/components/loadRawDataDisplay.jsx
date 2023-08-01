@@ -8,14 +8,16 @@ import SearchBar from './searchBar';
 // Material UI
 import {Grid, Link, Typography} from '@mui/material';
 
-
-
 export default function LoadRawDataDisplay({observationData, diagnosticData, conditionData, MedicationData, setLoadRawData}){
     // Search Filter State Variables
     const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
     const [selectDataType, setSelectDataType] = useState([]);             // Current selection for assessment type
     const [searchInput, setSearchInput] = useState("");
 
+    // Cleaned Fhir Data for table
+    const [ConditionData_, setConditionnData] = useState(null);
+    const [DiagnosticReportData_, setDiagnosticReportData] = useState(null);
+    const [ObservationData_, setObservationData] = useState(null);
     //// Handler Functions ////
     const statusTypeHandle = (event) => {
         const { target: { value }, } = event;
@@ -63,6 +65,28 @@ export default function LoadRawDataDisplay({observationData, diagnosticData, con
         let uniqueStatus = new Set([...getStatusList(MedicationData), ...getStatusList(diagnosticData), ...getStatusList(conditionData)]);
         setStatusTypesList(Array.from(uniqueStatus));
 
+
+        // Clean up condition data
+        let dataCleaned = observationData.map((row)=>{
+            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+            return ({title: modified, col1: row.ObservationStatus, col2:row.ObservationTime });
+        });
+        setConditionnData(dataCleaned);
+
+        // Clean up diagnostic data
+        dataCleaned = diagnosticData.map((row)=>{
+            const modified = row.DiagnosticReportType.charAt(0).toUpperCase() + row.DiagnosticReportType.slice(1);
+            return ({title: modified, col1: row.DiagnosticReportStatus, col2:row.DiagnosticReportTime });
+        });
+        setDiagnosticReportData(dataCleaned);
+
+        // Clean up observation data
+        dataCleaned = conditionData.map((row)=>{
+            const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);
+            return ({title: modified, col1: row.ConditionStatus, col2:row.ConditionTime });
+        });
+        setObservationData(dataCleaned);
+
     }, []);
 
     return(
@@ -104,21 +128,21 @@ export default function LoadRawDataDisplay({observationData, diagnosticData, con
                         <LoadMoreDataTable 
                         selectStatusType = {selectDataType.includes("Condition Data") ? selectStatusType : []}
                         searchInput = {selectDataType.includes("Condition Data") || selectDataType.length == 0 ? searchInput : ""}
-                        data = {MedicationData}
+                        data = {ConditionData_}
                         />
 
                         <h2>Diagnostic Data</h2>
                         <LoadMoreDataTable 
                         selectStatusType = {selectDataType.includes("Diagnostic Data") ? selectStatusType : []}
                         searchInput = {selectDataType.includes("Diagnostic Data") || selectDataType.length == 0 ? searchInput : ""}
-                        data = {MedicationData}
+                        data = {DiagnosticReportData_}
                         />
 
                         <h2>Observation Data</h2>
                         <LoadMoreDataTable 
                         selectStatusType = {selectDataType.includes("Observation Data") ? selectStatusType : []}
                         searchInput = {selectDataType.includes("Observation Data") || selectDataType.length == 0 ? searchInput : ""}
-                        data = {MedicationData}
+                        data = {ObservationData_}
                         />
                         
                     </div>

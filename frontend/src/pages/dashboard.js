@@ -75,6 +75,7 @@ export default function Dashboard(){
     const [MedicationData, setMedicationData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
     const [ObservationData, setObservationData] = useState(null);
+    const [ConditionData, setConditionnData] = useState(null);
 
     // Popup states variables
     const [loadPopup, setLoadPopup] = useState(false);
@@ -104,8 +105,6 @@ export default function Dashboard(){
             setClient(client);
 
             // Operations
-            // console.log(client);
-            // console.log("Request Patient");
             await client.request(`Patient/${client.patient.id}`).then((patient) => {
                 console.log("Patient: ", processPatientData(patient));
 
@@ -298,7 +297,10 @@ export default function Dashboard(){
                             </React.Fragment>
                             }
                             {!loadPopup && loadRawData && 
-                                <LoadRawDataDisplay 
+                                <LoadRawDataDisplay
+                                observationData = {ObservationData}
+                                diagnosticData = {DiagnosticReportData}
+                                conditionData = {ConditionData}
                                 MedicationData = {medDiagData}
                                 setLoadRawData = {setLoadRawData}
                                 />
