@@ -18,11 +18,15 @@ function processObservationData(ObservationData) {
                 const ObservationTime = entry.resource.effectiveDateTime
                 ? entry.resource.effectiveDateTime
                 : 'N/A';
+
+                const ObservationID = entry.resource.id
+                ? entry.resource.id
+                : 'N/A';
         
                 const entryString = `${ObservationType}-${ObservationValue}-${ObservationTime}`;
                 if (!uniqueEntries.has(entryString)) {
                 uniqueEntries.add(entryString);
-                results.push({ ObservationType, ObservationValue, ObservationTime });
+                results.push({ ObservationType, ObservationValue, ObservationTime, ObservationID });
                 }
             }
           }
