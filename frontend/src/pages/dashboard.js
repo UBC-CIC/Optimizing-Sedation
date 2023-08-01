@@ -6,20 +6,17 @@ import SideBar from '../components/sideBar';
 import SearchBar from '../components/searchBar';
 import PatientTable from '../components/table';
 import LoadMoreDataPopUp from '../components/med_diag_popup';
+import LoadRawDataDisplay from '../components/loadRawData';
 
 // Material UI
 import Button from '@mui/material/Button';
-import {Grid, Typography} from '@mui/material';
+import {Grid, Link, Typography} from '@mui/material';
 
 // Data processing modules
 import processPatientData from '../DataProcessing/patientProcessing';
 import processImmunizationData from '../DataProcessing/immunizationProcessing';
 import processMedicationData from '../DataProcessing/medicationProcessing';
 import processConditionData from '../DataProcessing/conditionProcessing';
-
-// Constants
-const MEDICATION = 0;
-const DIAGNOSTIC = 1;
 
 // Data structuring
 function createPatientData(fullname, MRN, contactFullname, contactNumber){
@@ -62,6 +59,7 @@ export default function Dashboard(){
     const [text, setText] = useState(undefined);
     const [client, setClient] = useState(null);
 
+    // Fhir Resources state variables
     const [patientData, setPatientData] = useState(null);
     const [ImmunizationData, setImmunizationData] = useState(null);
     const [MedicationData, setMedicationData] = useState(null);
@@ -73,6 +71,9 @@ export default function Dashboard(){
     const [medDiagData, setMedDiagData] = useState([]);
     const [statusList, setStatusList] = useState(null);
     const [popupTitle, setPopupTitle] = useState(null);
+
+    // View Raw Data states variables
+    const [loadRawData, setLoadRawData] = useState(false);
     
 
     // Data stream line State Variables
@@ -237,7 +238,7 @@ export default function Dashboard(){
                         <div style={{
                             marginTop: '4vh',
                         }}>
-                            {!loadPopup && 
+                            {!loadPopup && !loadRawData &&
                             <React.Fragment>
                                 <Grid container spacing={0}>
                                     <Grid sm={11} >
@@ -257,7 +258,18 @@ export default function Dashboard(){
                                             {/* <h1>Hello World, Dashboard!</h1>
                                             <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
                                             <p>{text}</p> */}
-                                            <h1>Patient Assessment Information</h1>
+                                            <div style={{
+                                                display: 'flex',
+                                                flexFlow: 'row',
+                                                alignItems: 'center',
+                                                flexWrap: 'nowrap',
+                                                justifyContent: 'space-between',
+                                                }}>
+
+                                                <h1>Patient Assessment Information</h1>
+                                                <Link onClick={() => {setLoadRawData(true)}}>View Raw Data</Link>
+                                            </div>
+                                            
                                             <PatientTable 
                                             fhirData = {[]} 
                                             selectStatusType = {selectStatusType}
@@ -270,6 +282,12 @@ export default function Dashboard(){
                                     <Grid sm={1} />
                                 </Grid>
                             </React.Fragment>
+                            }
+                            {!loadPopup && loadRawData && 
+                                <LoadRawDataDisplay 
+                                MedicationData = {medDiagData}
+                                setLoadRawData = {setLoadRawData}
+                                />
                             }
                             {loadPopup && 
                             <LoadMoreDataPopUp
