@@ -119,7 +119,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                             }
 
                             {(!MedicationData || MedicationData.length == 0) && (
-                                <Typography variant='subtitle1' >No Medication Data</Typography>
+                                <Typography variant='subtitle1' >No Medication Data From The Last Six Months</Typography>
                             )}
                         </div>}
                     </div>
@@ -135,9 +135,9 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
 
                     {openDiagnose && 
                     <div style={style.roundBoxDropdownLists}>
-                        {DiagnosticReportData && DiagnosticReportData.length != 0 && (<ul>
+                        {ConditionData && ConditionData.length != 0 && (<ul>
                         {
-                            DiagnosticReportData
+                            ConditionData
                             .sort((a, b) => a.ConditionType.localeCompare(b.ConditionType))
                             .map((dia) => {
                                 // const modified = medication.MedicationType.replace(/\s*\(.*?\)/g, '');
@@ -153,10 +153,10 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                         </ul>)}
 
                         {
-                            (DiagnosticReportData && DiagnosticReportData.length != 0 && DiagnosticReportData.length > 5) ? (<Link onClick={loadMoreDiagnoseHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
+                            (ConditionData && ConditionData.length != 0 && ConditionData.length > 5) ? (<Link onClick={loadMoreDiagnoseHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
                         }
 
-                        {(!DiagnosticReportData || DiagnosticReportData.length == 0) && (
+                        {(!ConditionData || ConditionData.length == 0) && (
                             <Typography variant='subtitle1' >No Diagnostic Data</Typography>
                         )}
                     </div>}
