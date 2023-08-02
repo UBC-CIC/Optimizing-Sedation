@@ -301,7 +301,7 @@ export default function Dashboard(){
                                 observationData = {ObservationData}
                                 diagnosticData = {DiagnosticReportData}
                                 conditionData = {ConditionData}
-                                MedicationData = {medDiagData}
+                                MedicationData = {MedicationData}
                                 setLoadRawData = {setLoadRawData}
                                 />
                             }

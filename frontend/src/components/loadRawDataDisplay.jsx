@@ -15,9 +15,11 @@ export default function LoadRawDataDisplay({observationData, diagnosticData, con
     const [searchInput, setSearchInput] = useState("");
 
     // Cleaned Fhir Data for table
-    const [ConditionData_, setConditionnData] = useState(null);
-    const [DiagnosticReportData_, setDiagnosticReportData] = useState(null);
-    const [ObservationData_, setObservationData] = useState(null);
+    const [ConditionData_, setConditionnData] = useState([]);
+    const [DiagnosticReportData_, setDiagnosticReportData] = useState([]);
+    const [ObservationData_, setObservationData] = useState([]);
+    const [MedicationData_, setMedicationnData] = useState([]);
+
     //// Handler Functions ////
     const statusTypeHandle = (event) => {
         const { target: { value }, } = event;
@@ -60,33 +62,38 @@ export default function LoadRawDataDisplay({observationData, diagnosticData, con
     //// End of Helper Funtions ////
 
     useEffect(()=>{
+        // Clean up condition data
+        const dataCleaned = MedicationData.map((row)=>{
+            const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
+            return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime });
+        });
+
+        setMedicationnData(dataCleaned);
+
+        // let dataCleaned = observationData.map((row)=>{
+        //     const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+        //     return ({title: modified, col1: row.ObservationStatus, col2:row.ObservationTime });
+        // });
+        // setConditionnData(dataCleaned);
+
+        // // Clean up diagnostic data
+        // dataCleaned = diagnosticData.map((row)=>{
+        //     const modified = row.DiagnosticReportType.charAt(0).toUpperCase() + row.DiagnosticReportType.slice(1);
+        //     return ({title: modified, col1: row.DiagnosticReportStatus, col2:row.DiagnosticReportTime });
+        // });
+        // setDiagnosticReportData(dataCleaned);
+
+        // // Clean up observation data
+        // dataCleaned = conditionData != null && conditionData.map((row)=>{
+        //     const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);
+        //     return ({title: modified, col1: row.ConditionStatus, col2:row.ConditionTime });
+        // });
+        // setObservationData(dataCleaned);
+
         // Get a list of status
         // let uniqueStatus = new Set([...getStatusList(observationData), ...getStatusList(diagnosticData), ...getStatusList(conditionData)]);
-        let uniqueStatus = new Set([...getStatusList(MedicationData), ...getStatusList(diagnosticData), ...getStatusList(conditionData)]);
+        let uniqueStatus = new Set([...getStatusList(MedicationData_), ...getStatusList(diagnosticData), ...getStatusList(conditionData)]);
         setStatusTypesList(Array.from(uniqueStatus));
-
-
-        // Clean up condition data
-        let dataCleaned = observationData.map((row)=>{
-            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
-            return ({title: modified, col1: row.ObservationStatus, col2:row.ObservationTime });
-        });
-        setConditionnData(dataCleaned);
-
-        // Clean up diagnostic data
-        dataCleaned = diagnosticData.map((row)=>{
-            const modified = row.DiagnosticReportType.charAt(0).toUpperCase() + row.DiagnosticReportType.slice(1);
-            return ({title: modified, col1: row.DiagnosticReportStatus, col2:row.DiagnosticReportTime });
-        });
-        setDiagnosticReportData(dataCleaned);
-
-        // Clean up observation data
-        dataCleaned = conditionData.map((row)=>{
-            const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);
-            return ({title: modified, col1: row.ConditionStatus, col2:row.ConditionTime });
-        });
-        setObservationData(dataCleaned);
-
     }, []);
 
     return(
@@ -128,21 +135,21 @@ export default function LoadRawDataDisplay({observationData, diagnosticData, con
                         <LoadMoreDataTable 
                         selectStatusType = {selectDataType.includes("Condition Data") ? selectStatusType : []}
                         searchInput = {selectDataType.includes("Condition Data") || selectDataType.length == 0 ? searchInput : ""}
-                        data = {ConditionData_}
+                        data = {MedicationData_}
                         />
 
                         <h2>Diagnostic Data</h2>
                         <LoadMoreDataTable 
                         selectStatusType = {selectDataType.includes("Diagnostic Data") ? selectStatusType : []}
                         searchInput = {selectDataType.includes("Diagnostic Data") || selectDataType.length == 0 ? searchInput : ""}
-                        data = {DiagnosticReportData_}
+                        data = {MedicationData_}
                         />
 
                         <h2>Observation Data</h2>
                         <LoadMoreDataTable 
                         selectStatusType = {selectDataType.includes("Observation Data") ? selectStatusType : []}
                         searchInput = {selectDataType.includes("Observation Data") || selectDataType.length == 0 ? searchInput : ""}
-                        data = {ObservationData_}
+                        data = {MedicationData_}
                         />
                         
                     </div>
