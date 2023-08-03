@@ -58,22 +58,25 @@ function createData(assessment, status, others, tableHeader){
     };
 }
 
-function convertData(ImmunizationData, ObservationData){
+function convertData(ImmunizationData, LabData, ObservationData){
     let data = [];
 
     /* const lab = [{title: "Lab_1_file_name", col1: "/Lab_1_file_name", col2: LINK}, {title: "Lab_2_file_name", col1: "/Lab_2_file_name", col2: LINK}];
     data.push(createData("Labs", "Not done", lab)); */
 
     // Convert lab data
-    if(ObservationData != null){
-        const observation = ObservationData.map(row =>{
+    if(LabData != null){
+        const observation = LabData.map(row =>{
+            // // Generate col3 for drop down
+            // const matchedObservationCode = ObservationData.filter((obs) => (row.ObservationID.includes(obs.ObservationID)));
+
             const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
-            return ({title: modified, col1: row.ObservationValue, col2:row.ObservationTime });
+            return ({title: modified, col1: row.ObservationValue, col2: row.ObservationTime && (row.ObservationTime.split('T'))[0]});
         });
     
         const observationHeader = ["Lab Type", "Value", "Date"];
         data.push(createData("Labs", "Done", observation, observationHeader));
-    } else if (ObservationData == null || ObservationData == []) {
+    } else if (LabData == null || LabData == []) {
         data.push(createData("Labs", "No Data", null, null));
     }
 
@@ -81,7 +84,7 @@ function convertData(ImmunizationData, ObservationData){
     if(ImmunizationData != null){
         const vaccination = ImmunizationData.map(row =>{
             const modified = row.ImmunizationType.charAt(0).toUpperCase() + row.ImmunizationType.slice(1);
-            return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime });
+            return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime && (row.ImmunizationTime.split('T'))[0] });
         });
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
@@ -91,15 +94,15 @@ function convertData(ImmunizationData, ObservationData){
     }
 
     
-    data.push(createData("ECG", "Done", null));
-    data.push(createData("EEG", "Done", null));
-    data.push(createData("ENT", "Seen", null));
-    data.push(createData("Ophthalmologist", "Seen", null));
-    data.push(createData("ASD", "Yes", null));
-    data.push(createData("Previous Sedation", "No", null));
-    data.push(createData("Additional Assessment", "Done/Not done", null));
+    data.push(createData("ECG", "No Data", null));
+    data.push(createData("EEG", "No Data", null));
+    data.push(createData("ENT", "No Data", null));
+    data.push(createData("Ophthalmologist", "No Data", null));
+    data.push(createData("ASD", "No Data", null));
+    data.push(createData("Previous Sedation", "No Data", null));
+    data.push(createData("Dentistry", "No Data", null));
 
-
+    console.log("data: ", data);
     return data;
 }
 // Custome Row Design
@@ -231,7 +234,7 @@ function Row(props){
     )
 }
 
-export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData}){
+export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData}){
     // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
 
     // Convert input data into current format of this table
@@ -240,7 +243,7 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
     //         <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
     //     );
     
-    const data = convertData(ImmunizationData, ObservationData);
+    const data = convertData(ImmunizationData, LabData, ObservationData);
     //console.log("data: ", data);
 
     const style = {

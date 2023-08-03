@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 
 
 // Material UI
-import {Grid, Typography} from '@mui/material';
+import {Grid, Typography, Table, TableHead, TableBody, TableRow, TableCell} from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Link } from 'react-router-dom';
 
-export default function SideBar({patientData, MedicationData, DiagnosticReportData, loadMoreMedicationHandler,loadMoreDiagnoseHandler}){
+export default function SideBar({patientData, MedicationData, DiagnosticReportData, ObservationData, loadMoreMedicationHandler,loadMoreDiagnoseHandler}){
     const [clientReady, setClientReady] = useState(false);
     const [openMedication, setOpenMedication] = React.useState(false);
     const [openDiagnose, setOpenDiagnose] = React.useState(false);
@@ -108,7 +108,12 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                                 })
                                 .slice(0, 5)
                                 .map((med)=>(
-                                    <li>{med.MedicationType} &nbsp; <span style={{fontWeight: "bold"}}>[{med.MedicationStatus}]</span></li>
+                                    <li>{med.MedicationType}
+                                        <ul>
+                                            <li>Status: {med.MedicationStatus}</li>
+                                            <li>Time: {med.MedicationTime && (med.MedicationTime.split('T'))[0]}</li>
+                                        </ul>
+                                    </li>
                                 ))
                             }
                             </ul>
@@ -119,7 +124,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                             }
 
                             {(!MedicationData || MedicationData.length == 0) && (
-                                <Typography variant='subtitle1' >No Medication Data From The Last Six Months</Typography>
+                                <Typography variant='subtitle1'>No Medication Data From The Last Six Months</Typography>
                             )}
                         </div>}
                     </div>
@@ -135,28 +140,72 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
 
                     {openDiagnose && 
                     <div style={style.roundBoxDropdownLists}>
-                        {ConditionData && ConditionData.length != 0 && (<ul>
+                        {DiagnosticReportData && DiagnosticReportData.length != 0 && (<ul>
                         {
-                            ConditionData
-                            .sort((a, b) => a.ConditionType.localeCompare(b.ConditionType))
+                            DiagnosticReportData
+                            .sort((a, b) => a.DiagnosticReportTime.localeCompare(b.DiagnosticReportTime))
                             .map((dia) => {
+                                console.log("dia.DiagnosticReportTime: ", dia.DiagnosticReportType);
                                 // const modified = medication.MedicationType.replace(/\s*\(.*?\)/g, '');
-                                const modified = dia.ConditionType.charAt(0).toUpperCase() + dia.ConditionType.slice(1);
-                                return { ConditionType: modified, ConditionStatus: dia.ConditionStatus, ConditionTime: dia.ConditionTime};
+                                const modified = (dia.DiagnosticReportType) ? dia.DiagnosticReportType.charAt(0).toUpperCase() + dia.DiagnosticReportType.slice(1): dia.DiagnosticReportType;
+                                return { type: modified, time: dia.DiagnosticReportTime, ref: dia.DiagnosticReportReferences};
                             })
-                            .slice(0, 5)
-                            .map((med)=>(
-                                <li>{med.ConditionType}</li>
+                            .slice(0, 3)
+                            .map((dia)=>(
+                                <li>{dia.type} 
+                                    <ul>
+                                        <li>Time: {dia.time && (dia.time.split('T'))[0]}</li>
+                                        <li>Observation: 
+                                            <Table size="small">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell>Type</TableCell>
+                                                        <TableCell>Value</TableCell>
+                                                        <TableCell>Date</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                {
+                                                    ObservationData && ObservationData.map((obs) => {
+                                                        // Diagnostic data format, "Observation/L-206031874" 
+                                                        if(dia.ref.includes("Observation/" + obs.ObservationID)){
+                                                            return (
+                                                                <React.Fragment>
+                                                                    <TableRow>
+                                                                        <TableCell>{obs.ObservationType}</TableCell>
+                                                                        <TableCell>{obs.ObservationValue}</TableCell>
+                                                                        <TableCell>{obs.ObservationTime && (obs.ObservationTime.split('T'))[0]}</TableCell>
+                                                                    </TableRow>
+                                                                </React.Fragment>
+                                                            )
+                                                        }
+                                                    })
+                                                }
+                                                </TableBody>
+                                            </Table>
+                                            {/* <ul>
+                                                {
+                                                    ObservationData && ObservationData.map((obs) => {
+                                                        // Diagnostic data format, "Observation/L-206031874" 
+                                                        if(dia.ref.includes("Observation/" + obs.ObservationID)){
+                                                            return (<li>{obs.ObservationType} &nbsp; {obs.ObservationValue} &nbsp; {obs.ObservationTime && (obs.ObservationTime.split('T'))[0]}</li>);
+                                                        }
+                                                    })
+                                                }
+                                            </ul> */}
+                                        </li>
+                                    </ul>
+                                </li>
                             ))
                         }
 
                         </ul>)}
 
                         {
-                            (ConditionData && ConditionData.length != 0 && ConditionData.length > 5) ? (<Link onClick={loadMoreDiagnoseHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
+                            (DiagnosticReportData && DiagnosticReportData.length != 0 && DiagnosticReportData.length > 3) ? (<Link onClick={loadMoreDiagnoseHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
                         }
 
-                        {(!ConditionData || ConditionData.length == 0) && (
+                        {(!DiagnosticReportData || DiagnosticReportData.length == 0) && (
                             <Typography variant='subtitle1' >No Diagnostic Data</Typography>
                         )}
                     </div>}

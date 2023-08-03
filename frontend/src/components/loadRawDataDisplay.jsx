@@ -63,28 +63,28 @@ export default function LoadRawDataDisplay({observationData, diagnosticData, con
 
     useEffect(()=>{
         // Clean up condition data
-        const dataCleaned = MedicationData.map((row)=>{
+        let dataCleaned = MedicationData && MedicationData.map((row)=>{
             const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
             return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime });
         });
 
         setMedicationnData(dataCleaned);
 
-        // let dataCleaned = observationData.map((row)=>{
-        //     const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
-        //     return ({title: modified, col1: row.ObservationStatus, col2:row.ObservationTime });
-        // });
-        // setConditionnData(dataCleaned);
+        dataCleaned = observationData && observationData.map((row)=>{
+            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+            return ({title: modified, col1: row.ObservationValue, col2: row.ObservationTime && (row.ObservationTime.split('T'))[0]});
+        });
+        setConditionnData(dataCleaned);
 
         // // Clean up diagnostic data
-        // dataCleaned = diagnosticData.map((row)=>{
+        // dataCleaned = diagnosticData && diagnosticData.map((row)=>{
         //     const modified = row.DiagnosticReportType.charAt(0).toUpperCase() + row.DiagnosticReportType.slice(1);
         //     return ({title: modified, col1: row.DiagnosticReportStatus, col2:row.DiagnosticReportTime });
         // });
         // setDiagnosticReportData(dataCleaned);
 
         // // Clean up observation data
-        // dataCleaned = conditionData != null && conditionData.map((row)=>{
+        // dataCleaned = conditionData && conditionData.map((row)=>{
         //     const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);
         //     return ({title: modified, col1: row.ConditionStatus, col2:row.ConditionTime });
         // });
@@ -94,7 +94,7 @@ export default function LoadRawDataDisplay({observationData, diagnosticData, con
         // let uniqueStatus = new Set([...getStatusList(observationData), ...getStatusList(diagnosticData), ...getStatusList(conditionData)]);
         let uniqueStatus = new Set([...getStatusList(MedicationData_), ...getStatusList(diagnosticData), ...getStatusList(conditionData)]);
         setStatusTypesList(Array.from(uniqueStatus));
-    }, []);
+    }, [MedicationData, observationData, diagnosticData, conditionData]);
 
     return(
         <React.Fragment>
@@ -145,12 +145,17 @@ export default function LoadRawDataDisplay({observationData, diagnosticData, con
                         data = {MedicationData_}
                         />
 
-                        <h2>Observation Data</h2>
-                        <LoadMoreDataTable 
-                        selectStatusType = {selectDataType.includes("Observation Data") ? selectStatusType : []}
-                        searchInput = {selectDataType.includes("Observation Data") || selectDataType.length == 0 ? searchInput : ""}
-                        data = {MedicationData_}
-                        />
+                        {
+                            ConditionData_ && 
+                            <React.Fragment>
+                                <h2>Observation Data</h2>
+                                <LoadMoreDataTable 
+                                selectStatusType = {selectDataType.includes("Observation Data") ? selectStatusType : []}
+                                searchInput = {selectDataType.includes("Observation Data") || selectDataType.length == 0 ? searchInput : ""}
+                                data = {ConditionData_}
+                                />
+                            </React.Fragment>
+                        }
                         
                     </div>
                 </Grid>

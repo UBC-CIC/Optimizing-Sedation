@@ -1,3 +1,5 @@
+import getReadableObservation from "./lib";
+
 function processObservationData(ObservationData) {
     const results = [];
     const uniqueEntries = new Set();
@@ -36,5 +38,28 @@ function processObservationData(ObservationData) {
   
     return results;
   }
-  
-  export default processObservationData;
+
+function processAllObservationData(ObservationData) {
+  const results = [];
+  const uniqueEntries = new Set();
+
+  if (ObservationData && ObservationData.entry[0].resource) {
+    ObservationData.entry.forEach((entry) => {
+
+      const en = getReadableObservation(entry);
+
+      const entryString = `${en.type}-${en.value}-${en.time}`;
+      if (!uniqueEntries.has(entryString)) {
+      uniqueEntries.add(entryString);
+      results.push({ ObservationType: en.type, ObservationValue: en.value, ObservationTime: en.time, ObservationID: en.id, ObservationOther: en.other });
+      }
+    });
+  }
+
+  return results;
+}
+
+export {
+  processObservationData, 
+  processAllObservationData
+};

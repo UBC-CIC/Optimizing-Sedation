@@ -17,7 +17,8 @@ import processPatientData from '../DataProcessing/patientProcessing';
 import processImmunizationData from '../DataProcessing/immunizationProcessing';
 import processMedicationData from '../DataProcessing/medicationProcessing';
 import processConditionData from '../DataProcessing/conditionProcessing';
-import processObservationData from '../DataProcessing/observationProcessing';
+import {processObservationData, processAllObservationData} from '../DataProcessing/observationProcessing';
+
 import processDiagnosticReportData from '../DataProcessing/diagnosticReportProcessing';
 
 // Data structuring
@@ -77,8 +78,8 @@ export default function Dashboard(){
     const [MedicationData, setMedicationData] = useState(null);
     const [ConditionData, setConditionData] = useState(null);
     const [ObservationData, setObservationData] = useState(null);
+    const [LabData, setLabData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
-    const [ConditionData, setConditionnData] = useState(null);
 
     // Popup states variables
     const [loadPopup, setLoadPopup] = useState(false);
@@ -127,10 +128,10 @@ export default function Dashboard(){
             }).catch(onErr);
 
             client.request(`MedicationRequest/?patient=${client.patient.id}`).then((med) => {
+                console.log("Raw medical data: ", med);
                 const parsedData = processMedicationData(med);
-                //console.log("Raw medical data: ", med);
                 setMedicationData(parsedData);
-                //console.log("Processed medical data: ", parsedData)
+                console.log("Processed medical data: ", parsedData)
             }).catch(onErr);
 
             client.request(`Condition/?patient=${client.patient.id}`).then((condition) => {
@@ -140,18 +141,22 @@ export default function Dashboard(){
             }).catch(onErr);
 
             client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
-                const parsedData = processDiagnosticReportData(diagnostic);
                 console.log("DiagnosticReport resource: ", diagnostic);
+                const parsedData = processDiagnosticReportData(diagnostic);
                 console.log("Processed DiagnosticData: ", parsedData)
                 setDiagnosticReportData(parsedData);
             }).catch(onErr);
 
             client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
                 console.log("Raw Observation data: ", Bundle);
-                const parsedData = processObservationData(Bundle);
+                const parsedLabData = processObservationData(Bundle);
+                const parsedData = processAllObservationData(Bundle);
                 
                 console.log("Processed Observation data: ", parsedData);
-                setObservationData(parsedData)
+                console.log("Processed Lab data: ", parsedLabData);
+
+                setLabData(parsedLabData);
+                setObservationData(parsedData);
             }).catch(onErr);
 
             //console.log(patientData, ImmunizationData, MedicationData, ConditionData, ObservationData);
@@ -250,6 +255,8 @@ export default function Dashboard(){
                             patientData = {patientData}
                             MedicationData = {MedicationData}
                             DiagnosticReportData = {DiagnosticReportData}
+                            ObservationData = {ObservationData}
+
                             loadMoreMedicationHandler={loadMoreMedicationHandler}
                             loadMoreDiagnoseHandler={loadMoreDiagnoseHandler}
                             />
@@ -282,9 +289,6 @@ export default function Dashboard(){
 
                                     <Grid sm={11} >
                                         <div style={{paddingTop:'2vh'}}>
-                                            {/* <h1>Hello World, Dashboard!</h1>
-                                            <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
-                                            <p>{text}</p> */}
                                             <div style={{
                                                 display: 'flex',
                                                 flexFlow: 'row',
@@ -303,6 +307,8 @@ export default function Dashboard(){
                                             selectAssessmentType = {selectAssessmentType}
                                             searchInput = {searchInput}
                                             ImmunizationData = {ImmunizationData}
+                                            ObservationData = {ObservationData}
+                                            LabData = {LabData}
                                             />
                                         </div>
                                     </Grid>
