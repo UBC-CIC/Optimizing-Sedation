@@ -4,6 +4,7 @@ import FHIR from 'fhirclient';
 // Components
 import LoadMoreDataTable from '../components/loadMoreDataTable';
 import LoadMoreDataSearchBar from '../components/loadMoreDataSearchBar';
+import CustomedDataGrid from './CustomeDataGrid';
 
 // Material UI
 import Button from '@mui/material/Button';
@@ -69,24 +70,25 @@ export default function LoadMoreDataPopUp({parsedTableData, loadData, statusList
                             </div>
 
                             {/* Search bar */}
-                            <LoadMoreDataSearchBar 
+                            {/* <LoadMoreDataSearchBar 
                             selectStatusType = {selectStatusType}
                             statusTypeHandle = {statusTypeHandle}
                             searchInput = {searchInput}
                             searchInputHandle = {searchInputHandle}
                             statusList = {statusList}
-                            />
+                            /> */}
 
                             {/* Table */}
                             <div style={{paddingTop:'2vh'}}>
                                 <center>
                                     <h1>{loadData.title}</h1>
                                 </center>
-                                <LoadMoreDataTable 
+                                <CustomedDataGrid medDiagData={parsedTableData}/>
+                                {/* <LoadMoreDataTable 
                                 selectStatusType = {selectStatusType}
                                 searchInput = {searchInput}
                                 data = {parsedTableData}
-                                />
+                                /> */}
                             </div>
                         </Paper>
                         </Grid>

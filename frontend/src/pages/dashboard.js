@@ -220,9 +220,11 @@ export default function Dashboard(){
     //// Global Handlers ////
     const loadMoreMedicationHandler = () => {
         setPopupTitle("Medication Data");
+        let counter = 0;
         const dataCleaned = MedicationData.map((row)=>{
+            counter++;
             const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
-            return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime && (row.MedicationTime.split('T'))[0]});
+            return ({id: counter, title: modified, col1: row.MedicationStatus, col2:row.MedicationTime && (row.MedicationTime.split('T'))[0]});
         });
 
         const statusList_ = getStatusList(dataCleaned);
@@ -234,9 +236,11 @@ export default function Dashboard(){
 
     const loadMoreDiagnoseHandler = () => {
         setPopupTitle("Diagnostic Data");
+        let counter = 0;
         const dataCleaned = ConditionData.map((row)=>{
+            counter++;
             const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);
-            return ({title: modified, col1: row.ConditionStatus, col2:row.ConditionTime && (row.ConditionTime.split('T'))[0] });
+            return ({id: counter, title: modified, col1: row.ConditionStatus, col2:row.ConditionTime && (row.ConditionTime.split('T'))[0] });
         });
 
         const statusList_ = getStatusList(dataCleaned);
@@ -319,6 +323,8 @@ export default function Dashboard(){
                                         </div>
                                     </Grid>
                                     <Grid sm={1} />
+
+                                    
                                 </Grid>
                             </React.Fragment>
                             }
