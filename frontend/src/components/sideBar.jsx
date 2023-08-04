@@ -143,19 +143,19 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                         {DiagnosticReportData && DiagnosticReportData.length != 0 && (<ul>
                         {
                             DiagnosticReportData
-                            .sort((a, b) => a.DiagnosticReportTime.localeCompare(b.DiagnosticReportTime))
+                            .sort((a, b) => a.ConditionTime.localeCompare(b.ConditionTime))
                             .map((dia) => {
-                                console.log("dia.DiagnosticReportTime: ", dia.DiagnosticReportType);
                                 // const modified = medication.MedicationType.replace(/\s*\(.*?\)/g, '');
-                                const modified = (dia.DiagnosticReportType) ? dia.DiagnosticReportType.charAt(0).toUpperCase() + dia.DiagnosticReportType.slice(1): dia.DiagnosticReportType;
-                                return { type: modified, time: dia.DiagnosticReportTime, ref: dia.DiagnosticReportReferences};
+                                const modified = (dia.ConditionType) ? dia.ConditionType.charAt(0).toUpperCase() + dia.ConditionType.slice(1): dia.ConditionType;
+                                return { type: modified, time: dia.ConditionTime, status: dia.ConditionStatus};
                             })
-                            .slice(0, 3)
+                            .slice(0, 5)    // Shows the top 5 values
                             .map((dia)=>(
                                 <li>{dia.type} 
                                     <ul>
+                                        <li>Status: {dia.status}</li>
                                         <li>Time: {dia.time && (dia.time.split('T'))[0]}</li>
-                                        <li>Observation: 
+                                        {/* <li>Observation: 
                                             <Table size="small">
                                                 <TableHead>
                                                     <TableRow>
@@ -183,7 +183,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                                                 }
                                                 </TableBody>
                                             </Table>
-                                            {/* <ul>
+                                            <ul>
                                                 {
                                                     ObservationData && ObservationData.map((obs) => {
                                                         // Diagnostic data format, "Observation/L-206031874" 
@@ -192,8 +192,8 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                                                         }
                                                     })
                                                 }
-                                            </ul> */}
-                                        </li>
+                                            </ul>
+                                        </li> */}
                                     </ul>
                                 </li>
                             ))
@@ -202,11 +202,11 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                         </ul>)}
 
                         {
-                            (DiagnosticReportData && DiagnosticReportData.length != 0 && DiagnosticReportData.length > 3) ? (<Link onClick={loadMoreDiagnoseHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
+                            (DiagnosticReportData && DiagnosticReportData.length != 0 && DiagnosticReportData.length > 5) ? (<Link onClick={loadMoreDiagnoseHandler}>Load More...</Link>) : (<React.Fragment></React.Fragment>)
                         }
 
                         {(!DiagnosticReportData || DiagnosticReportData.length == 0) && (
-                            <Typography variant='subtitle1' >No Diagnostic Data</Typography>
+                            <Typography variant='subtitle1'>No Diagnostic Data</Typography>
                         )}
                     </div>}
                 </Grid>

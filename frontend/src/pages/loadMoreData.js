@@ -166,8 +166,12 @@ export default function LoadMoreData(){
     }
 
     function getStatusList(tableData){
-        const list = new Set(tableData.map(obj => obj.col1));
-        return list;
+        if (tableData){
+            const uniqueList = new Set(tableData.map(obj => obj.col1));
+            return Array.from(uniqueList);
+        } else {
+            return [];
+        }
     }
 
     //// End of Helper Funtions ////
