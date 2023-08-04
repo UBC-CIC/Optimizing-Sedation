@@ -21,6 +21,10 @@ import {
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
+// Custome Components
+import {DropDownTableRow} from './dropDownTable';
+
 // Constant Variables
 const LINK = "///LINK";
 
@@ -35,6 +39,7 @@ function createData(assessment, status, others, tableHeader){
         return null;
     
     if(others != null){
+        console.log("createData.other: ", others);
         const isValidFormat = others.every(item => {
             let output = typeof item.title === 'string';
             
@@ -60,22 +65,51 @@ function createData(assessment, status, others, tableHeader){
 
 function convertData(ImmunizationData, LabData, ObservationData){
     let data = [];
+    /**
+     * 'LabData' Structure
+     * [
+     *      {
+     *          title: String!
+     *          time: String!
+     *          references: ['String: ObservationID']
+     *          value: String
+     *      }
+     * ]
+     */
 
     /* const lab = [{title: "Lab_1_file_name", col1: "/Lab_1_file_name", col2: LINK}, {title: "Lab_2_file_name", col1: "/Lab_2_file_name", col2: LINK}];
     data.push(createData("Labs", "Not done", lab)); */
 
     // Convert lab data
     if(LabData != null){
-        const observation = LabData.map(row =>{
-            // // Generate col3 for drop down
-            // const matchedObservationCode = ObservationData.filter((obs) => (row.ObservationID.includes(obs.ObservationID)));
-
-            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
-            return ({title: modified, col1: row.ObservationValue, col2: row.ObservationTime && (row.ObservationTime.split('T'))[0]});
-        });
+        const labProcessedData = LabData.map(row =>{
+            const modifiedTitle = (row.title) && (row.title.charAt(0).toUpperCase() + row.title.slice(1));
+            if(row.references){
+                // Generate col3 for drop down
+                // dia.ref.includes("Observation/" + obs.ObservationID)
+                const matchedObservationCode = ObservationData.filter((obs) => (row.references.includes("Observation/" + obs.ObservationID)));
+                const col3Data = matchedObservationCode.map((obs)=>{
+                    const modified = obs.ObservationType.charAt(0).toUpperCase() + obs.ObservationType.slice(1);
     
-        const observationHeader = ["Lab Type", "Value", "Date"];
-        data.push(createData("Labs", "Done", observation, observationHeader));
+                    return {title: modified, col1: obs.ObservationValue, col2: obs.ObservationTime && (obs.ObservationTime.split('T'))[0]}
+                });
+                
+                const subHeaders = ["Observation Type", "Value", "Date"];
+                return ({title: modifiedTitle, col1: 'N/A', col2: row.time && (row.time.split('T'))[0], col3: col3Data, headers: subHeaders});
+            } else if (row.value){
+                return ({title: modifiedTitle, col1: row.value, col2: row.time && (row.time.split('T'))[0]});
+            }
+            
+            return null;
+        });
+        
+        if(labProcessedData != null){
+            console.log("labProcessedData: ", labProcessedData);
+            const observationHeader = ["Lab Type", "Value", "Date"];
+            data.push(createData("Labs", "Done", labProcessedData, observationHeader));
+        } else {
+            data.push(createData("Labs", "No Data", null, null));
+        }
     } else if (LabData == null || LabData == []) {
         data.push(createData("Labs", "No Data", null, null));
     }
@@ -138,6 +172,7 @@ function Row(props){
 
     return(
         <React.Fragment>
+            {/* Main Row */}
             <StyledTableRow sx={{ '& > *': { borderBottom: 'unset' }}} key={data.assessment}>
                 <StyledTableCell component="th" scope="row">{data.assessment}</StyledTableCell>
                 <StyledTableCell align="center">
@@ -159,7 +194,8 @@ function Row(props){
                     </Grid>
                 </StyledTableCell>
             </StyledTableRow>
-
+            
+            {/* Sub Row */}
             <StyledTableRow>
                 <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     {data.others != null &&
@@ -182,7 +218,7 @@ function Row(props){
                             <TableBody>
                                 {
                                     data.others
-                                    .sort((a, b) => {
+                                    .sort((a, b) => {       // Sort based on time
                                         if(a.col2 != null)
                                             return b.col2.localeCompare(a.col2)
                                         else
@@ -198,11 +234,7 @@ function Row(props){
                                                 </Typography>);
                                         } else if (i.col1 != null && i.col2 != null){               // Display as table
                                             return (
-                                                <TableRow>
-                                                    <TableCell align='left'>{i.title}</TableCell>
-                                                    <TableCell align='left'>{i.col1}</TableCell>
-                                                    <TableCell align='left'>{i.col2}</TableCell>
-                                                </TableRow>
+                                                    <DropDownTableRow rowData = {i}/>
                                             );
                                         } else if (i.col1 != null){
                                             return (

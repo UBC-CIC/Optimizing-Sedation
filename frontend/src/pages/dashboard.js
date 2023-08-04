@@ -135,19 +135,20 @@ export default function Dashboard(){
             }).catch(onErr);
 
             client.request(`Condition/?patient=${client.patient.id}`).then((condition) => {
+                console.log("Condition resource raw: ", condition);
                 const parsedData = processConditionData(condition);
-                //console.log("Condition resource: ", parsedData);
+                console.log("Condition resource processed: ", parsedData);
                 setConditionData(parsedData);
             }).catch(onErr);
 
-            client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
+            await client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
                 console.log("DiagnosticReport resource: ", diagnostic);
                 const parsedData = processDiagnosticReportData(diagnostic);
                 console.log("Processed DiagnosticData: ", parsedData)
                 setDiagnosticReportData(parsedData);
             }).catch(onErr);
 
-            client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
+            await client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
                 console.log("Raw Observation data: ", Bundle);
                 const parsedLabData = processObservationData(Bundle);
                 const parsedData = processAllObservationData(Bundle);
@@ -206,7 +207,12 @@ export default function Dashboard(){
 
     //// Helper Functions ////
     function getStatusList(tableData){
-        return tableData.map(obj => obj.col1);
+        if (tableData){
+            const uniqueList = new Set(tableData.map(obj => obj.col1));
+            return Array.from(uniqueList);
+        } else {
+            return [];
+        }
     }
 
     //// End of Helper Funtions ////
@@ -216,7 +222,7 @@ export default function Dashboard(){
         setPopupTitle("Medication Data");
         const dataCleaned = MedicationData.map((row)=>{
             const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
-            return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime });
+            return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime && (row.MedicationTime.split('T'))[0]});
         });
 
         const statusList_ = getStatusList(dataCleaned);
@@ -228,9 +234,9 @@ export default function Dashboard(){
 
     const loadMoreDiagnoseHandler = () => {
         setPopupTitle("Diagnostic Data");
-        const dataCleaned = DiagnosticReportData.map((row)=>{
-            const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
-            return ({title: modified, col1: row.MedicationStatus, col2:row.MedicationTime });
+        const dataCleaned = ConditionData.map((row)=>{
+            const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);
+            return ({title: modified, col1: row.ConditionStatus, col2:row.ConditionTime && (row.ConditionTime.split('T'))[0] });
         });
 
         const statusList_ = getStatusList(dataCleaned);
@@ -254,7 +260,7 @@ export default function Dashboard(){
                             <SideBar 
                             patientData = {patientData}
                             MedicationData = {MedicationData}
-                            DiagnosticReportData = {DiagnosticReportData}
+                            DiagnosticReportData = {ConditionData}
                             ObservationData = {ObservationData}
 
                             loadMoreMedicationHandler={loadMoreMedicationHandler}
@@ -308,7 +314,7 @@ export default function Dashboard(){
                                             searchInput = {searchInput}
                                             ImmunizationData = {ImmunizationData}
                                             ObservationData = {ObservationData}
-                                            LabData = {LabData}
+                                            LabData = {DiagnosticReportData}
                                             />
                                         </div>
                                     </Grid>
