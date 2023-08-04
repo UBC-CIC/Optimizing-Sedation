@@ -50,7 +50,7 @@ function DropDownTableRow({rowData}){
     return(
         <React.Fragment>
             {/* Main Row */}
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' }}} key={data.title}>
+            <TableRow sx={{ '& > *': { borderBottom: '0px solid black' }}} key={data.title}>
                 <TableCell component="th" scope="row">{data.title}</TableCell>
                 <TableCell component="th" scope="row">{data.col1}</TableCell>
                 <TableCell align="center">
@@ -74,14 +74,14 @@ function DropDownTableRow({rowData}){
             </TableRow>
             
             {/* Sub Row */}
-            <TableRow style={{backgroundColor: "#f5f5f5"}}>
+            <TableRow style={{ '& > *': { borderBottom: '0px solid black' }, backgroundColor: "#f5f5f5"}} key={data.title}>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     {data.col3 != null &&
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Container>
                             {/* Sub Row Body */}
                             {/* Design 1: display as table form */}
-                            <Table size="small">
+                            <Table size="small" style={{borderBottom: '0px solid black', marginBottom: 10, marginTop: 10}}>
                                 <TableHead>
                                     <TableRow>
                                         {data.headers && data.headers.map((i)=>{
