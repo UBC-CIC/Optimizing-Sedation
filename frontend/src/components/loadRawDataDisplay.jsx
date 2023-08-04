@@ -58,6 +58,14 @@ export default function LoadRawDataDisplay({observationData, diagnosticData, con
         else
             return [];
     }
+    function getStatusList(tableData){
+        if (tableData){
+            const uniqueList = new Set(tableData.map(obj => obj.col1));
+            return Array.from(uniqueList);
+        } else {
+            return [];
+        }
+    }
 
     //// End of Helper Funtions ////
 
