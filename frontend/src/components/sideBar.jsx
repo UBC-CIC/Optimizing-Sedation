@@ -56,8 +56,8 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                 <Grid sm={2} xs={0}/>
                 <Grid sm={9} xs={12}>
                     <div style={style.roundBoxNoHorizontalSpace}>
-                        <Typography variant={"subtitle1"} component="h6">Patient Name</Typography>
-                        <Typography variant={"h5"} component="h6">{patientData.fullname}</Typography>
+                        <Typography variant={"subtitle1"} component="h6" style={{color: 'white'}}>Patient Name</Typography>
+                        <Typography variant={"h5"} component="h6" style={{color: 'white', fontWeight: 'bold'}}>{patientData.fullname}</Typography>
                     </div>
                 </Grid>
                 <Grid sm={1} xs={0}/>
@@ -65,8 +65,8 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                 <Grid sm={2} xs={0}/>
                 <Grid sm={9} xs={12}>
                     <div style={style.roundBoxNoHorizontalSpace}>
-                        <Typography variant={"subtitle1"}>Patient MRN</Typography>
-                        <Typography variant={"h5"}>#{patientData.MRN}</Typography>
+                        <Typography variant={"subtitle1"} style={{color: 'white'}}>Patient MRN</Typography>
+                        <Typography variant={"h5"} style={{color: 'white', fontWeight: 'bold'}}>#{patientData.MRN}</Typography>
                     </div>
                 </Grid>
                 <Grid sm={1} xs={0}/>
