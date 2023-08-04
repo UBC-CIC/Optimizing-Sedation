@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
+import * as imported_LOINC_Codes from '../DataProcessing/codes/LOINC_codes';
 
 // Components
 import SideBar from '../components/sideBar';
@@ -65,6 +66,9 @@ export default function Dashboard(){
     const [ConditionData, setConditionData] = useState(null);
     const [ObservationData, setObservationData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
+
+    const LOINC_codes = Object.entries(imported_LOINC_Codes);
+    
     
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
@@ -131,6 +135,12 @@ export default function Dashboard(){
                 console.log("Processed Observation data: ", parsedData);
                 setObservationData(parsedData)
             }).catch(onErr);
+            
+            LOINC_codes.map(([name, array]) => {
+                client.request(`Observation/?patient=${client.patient.id}&code=${array}`, { pageLimit: 0 }).then((Bundle) => {               
+                    console.log(`${name}`, Bundle);
+                }).catch(onErr);
+            });
 
             //console.log(patientData, ImmunizationData, MedicationData, ConditionData, ObservationData);
             setDataReady(true);
