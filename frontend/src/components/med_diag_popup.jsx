@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
 
 // Components
-import LoadMoreDataTable from '../components/loadMoreDataTable';
-import LoadMoreDataSearchBar from '../components/loadMoreDataSearchBar';
 import CustomedDataGrid from './CustomeDataGrid';
 
 // Material UI
@@ -11,29 +9,12 @@ import Button from '@mui/material/Button';
 import {Grid, IconButton, Paper, Typography} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-// Data processing modules
-import processMedicationData from '../DataProcessing/medicationProcessing';
-import processConditionData from '../DataProcessing/conditionProcessing';
-
-export default function LoadMoreDataPopUp({parsedTableData, loadData, statusList, popupTitle, setLoadPopup}){
-    // Search Filter State Variables
-    const [searchInput, setSearchInput] = useState("");
-    const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
+export default function LoadMoreDataPopUp({parsedTableData, loadData, popupTitle, setLoadPopup}){
+    
     useEffect(() => {
     }, []);
 
     //// Handler Functions////
-    const statusTypeHandle = (event) => {
-        const { target: { value }, } = event;
-        setSelectStatusType(
-        // On autofill we get a stringified value.
-        typeof value === 'string' ? value.split(',') : value,
-        );
-    };
-
-    const searchInputHandle = (event) => {
-        setSearchInput(event.target.value);
-    };
 
     const closeHandler = () =>{
         setLoadPopup(false);
@@ -49,7 +30,7 @@ export default function LoadMoreDataPopUp({parsedTableData, loadData, statusList
                         <Grid sm={11} >
                         <Paper elevation={3} style={{
                             padding: '2vh 3vw 3vh 3vw',
-                            backgroundColor: '#049DBF',
+                            backgroundColor: '#f3f6f9',
                             margin: 0
                             }}>
                             {/* Popup Header */}
@@ -59,8 +40,8 @@ export default function LoadMoreDataPopUp({parsedTableData, loadData, statusList
                                 alignItems: 'center',
                                 flexWrap: 'nowrap',
                                 justifyContent: 'space-between',
-                                borderBottom: '2px solid black',
-                                marginBottom: '3vh'
+                                borderBottom: '1px solid black',
+                                marginBottom: '0vh'
                                 }}>
 
                                 <h2>{popupTitle}</h2>
@@ -68,15 +49,6 @@ export default function LoadMoreDataPopUp({parsedTableData, loadData, statusList
                                     <CloseIcon />
                                 </IconButton>
                             </div>
-
-                            {/* Search bar */}
-                            {/* <LoadMoreDataSearchBar 
-                            selectStatusType = {selectStatusType}
-                            statusTypeHandle = {statusTypeHandle}
-                            searchInput = {searchInput}
-                            searchInputHandle = {searchInputHandle}
-                            statusList = {statusList}
-                            /> */}
 
                             {/* Table */}
                             <div style={{paddingTop:'2vh'}}>

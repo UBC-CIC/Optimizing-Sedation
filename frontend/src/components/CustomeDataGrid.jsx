@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarFilterButton } from '@mui/x-data-grid';
 
 const columns = [
   {
@@ -27,31 +27,29 @@ const columns = [
 ];
 
 export default function CustomedDataGrid({medDiagData}) {
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
-        setData(medDiagData.filter((item)=>(item.title.toLowerCase().includes(""))));
-    },[medDiagData]);
 
     return (
     <Box sx={{ 
-        width: '100%', 
-        '& .classA': {
-            backgroundColor: '#4A4B4C',
-            color: 'white'
-        },
-        }}>
+      backgroundColor: 'white',
+      width: '100%',
+      '& .classA': {
+        // backgroundColor: '#f3f6f9',
+      }
+      }}>
         <DataGrid
-        rows={data}
+        rows={medDiagData}
         columns={columns}
+        slots={{
+          toolbar: GridToolbarFilterButton,
+        }}
         initialState={{
             pagination: {
             paginationModel: {
-                pageSize: 20,
+                pageSize: 15,
             },
             },
         }}
-        pageSizeOptions={[20]}
+        pageSizeOptions={[15]}
         disableRowSelectionOnClick
         />
     </Box>
