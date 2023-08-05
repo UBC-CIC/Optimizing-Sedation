@@ -123,21 +123,33 @@ export default function Dashboard(){
 
             client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
                 const parsedData = processDiagnosticReportData(diagnostic);
-                console.log("DiagnosticReport resource: ", diagnostic);
-                console.log("Processed DiagnosticData: ", parsedData)
+                //console.log("DiagnosticReport resource: ", diagnostic);
+                //console.log("Processed DiagnosticData: ", parsedData)
                 setDiagnosticReportData(parsedData);
             }).catch(onErr);
 
-            client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
-                console.log("Raw Observation data: ", Bundle);
-                const parsedData = processObservationData(Bundle);
-                
-                console.log("Processed Observation data: ", parsedData);
-                setObservationData(parsedData)
-            }).catch(onErr);
+            fetchObservations(`Observation/?patient=${client.patient.id}`)
+
+            function fetchObservations(url, accumulatedResults = []) {
+                client.request(url).then((Bundle) => {
+                        const results = processObservationData(Bundle);
+                        accumulatedResults.push(...results); // Append current results to accumulatedResults
             
+                        const nextLink = Bundle.link.find(link => link.relation === 'next');
+                        if (nextLink) {
+                            //console.log("Next link: ", nextLink.url);
+                            fetchObservations(nextLink.url, accumulatedResults); // Recursive call with accumulatedResults
+                        } else {
+                            //console.log("No next link found");
+                            console.log("Total observations: ", accumulatedResults);
+                            setObservationData(accumulatedResults);
+                        }
+                    })
+                    .catch(onErr);
+            }
+
             LOINC_codes.map(([name, array]) => {
-                client.request(`Observation/?patient=${client.patient.id}&code=${array}`, { pageLimit: 0 }).then((Bundle) => {               
+                client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => {               
                     console.log(`${name}`, Bundle);
                 }).catch(onErr);
             });
