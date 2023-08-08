@@ -101,48 +101,25 @@ export default function Dashboard(){
                 setPatientData(patient_dataCleanUp);
             }).catch(onErr);
 
-            client.request(`Immunization/?patient=${client.patient.id}`).then((immunization) => {
-                const parsedData = processImmunizationData(immunization);
-                //console.log("immunization: ", immunization);
-                setImmunizationData(parsedData);
+            fetchData(`Immunization/?patient=${client.patient.id}`, processImmunizationData, setImmunizationData);
+            fetchData(`MedicationRequest/?patient=${client.patient.id}`, processMedicationData, setMedicationData);
+            fetchData(`Condition/?patient=${client.patient.id}`, processConditionData, setConditionData);
+            fetchData(`DiagnosticReport/?patient=${client.patient.id}`, processDiagnosticReportData, setDiagnosticReportData);
+            fetchData(`Observation/?patient=${client.patient.id}`, processObservationData, setObservationData);
 
-            }).catch(onErr);
-
-            client.request(`MedicationRequest/?patient=${client.patient.id}`).then((med) => {
-                const parsedData = processMedicationData(med);
-                //console.log("Raw medical data: ", med);
-                setMedicationData(parsedData);
-                //console.log("Processed medical data: ", parsedData)
-            }).catch(onErr);
-
-            client.request(`Condition/?patient=${client.patient.id}`).then((condition) => {
-                const parsedData = processConditionData(condition);
-                //console.log("Condition resource: ", parsedData);
-                setConditionData(parsedData);
-            }).catch(onErr);
-
-            client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
-                const parsedData = processDiagnosticReportData(diagnostic);
-                //console.log("DiagnosticReport resource: ", diagnostic);
-                //console.log("Processed DiagnosticData: ", parsedData)
-                setDiagnosticReportData(parsedData);
-            }).catch(onErr);
-
-            fetchObservations(`Observation/?patient=${client.patient.id}`)
-
-            function fetchObservations(url, accumulatedResults = []) {
+            function fetchData(url, processData, setData, accumulatedResults = []) {
                 client.request(url).then((Bundle) => {
-                        const results = processObservationData(Bundle);
+                        const results = processData(Bundle);
                         accumulatedResults.push(...results); // Append current results to accumulatedResults
             
                         const nextLink = Bundle.link.find(link => link.relation === 'next');
                         if (nextLink) {
-                            //console.log("Next link: ", nextLink.url);
-                            fetchObservations(nextLink.url, accumulatedResults); // Recursive call with accumulatedResults
+                            console.log("Next link: ", nextLink.url);
+                            fetchData(nextLink.url, processData, setData, accumulatedResults); // Recursive call with accumulatedResults
                         } else {
                             //console.log("No next link found");
                             console.log("Total observations: ", accumulatedResults);
-                            setObservationData(accumulatedResults);
+                            setData(accumulatedResults);
                         }
                     })
                     .catch(onErr);
@@ -150,7 +127,7 @@ export default function Dashboard(){
 
             LOINC_codes.map(([name, array]) => {
                 client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => {               
-                    console.log(`${name}`, Bundle);
+                    //console.log(`${name}`, Bundle);
                 }).catch(onErr);
             });
 
