@@ -67,6 +67,7 @@ export default function Dashboard(){
     const [ObservationData, setObservationData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
 
+    const [totalLOINC_codesData, settotalLOINC_codesData] = useState(null);
     const LOINC_codesData = {}; // Object to hold state variables
 
     const LOINC_codes = Object.entries(imported_LOINC_Codes);
@@ -108,6 +109,7 @@ export default function Dashboard(){
             fetchData(`Condition/?patient=${client.patient.id}`, processConditionData, setConditionData);
             fetchData(`DiagnosticReport/?patient=${client.patient.id}`, processDiagnosticReportData, setDiagnosticReportData);
             fetchData(`Observation/?patient=${client.patient.id}`, processObservationData, setObservationData);
+            settotalLOINC_codesData(fetchCodeData(LOINC_codes));
 
             function fetchData(url, processData, setData, accumulatedResults = []) {
                 client.request(url).then((Bundle) => {
@@ -127,17 +129,15 @@ export default function Dashboard(){
                     .catch(onErr);
             }
 
-            LOINC_codes.map(([name, array]) => {
-                client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => {    
-                    LOINC_codesData[`${name}`] = processObservationData(Bundle); // Dynamically assign variable
+            function fetchCodeData(LOINC_codes){
+                LOINC_codes.map(([name, array]) => {
+                    client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => {    
+                        LOINC_codesData[`${name}`] = processObservationData(Bundle); // Dynamically assign variable
+                    }).catch(onErr);
+                });
+                return LOINC_codesData;
+            }
 
-                    //console.log(`${name}`, Bundle);
-                    //console.log(`State variable for ${name}:`, LOINC_codesData[`${name}`]);
-                    console.log("CODES DATA: ", LOINC_codesData);
-                }).catch(onErr);
-            });
-
-            //console.log(patientData, ImmunizationData, MedicationData, ConditionData, ObservationData);
             setDataReady(true);
         }
 
@@ -229,6 +229,7 @@ export default function Dashboard(){
                                         searchInput = {searchInput}
                                         ImmunizationData = {ImmunizationData}
                                         ObservationData = {ObservationData}
+                                        totalLOINC_codesData = {totalLOINC_codesData}
                                         />
                                     </div>
                                 </Grid>
