@@ -16,10 +16,10 @@ account_number="$3"
 # Login into registry
 aws ecr get-login-password --profile "$profile_name" --region "$region" | docker login --username AWS --password-stdin "$account_number".dkr.ecr."$region".amazonaws.com
 
-# Creat a Docker image
+# Create a Docker image
 docker build -t docker-repo .
 
-# Creat tag for Docker image
+# Create tag for Docker image
 docker tag docker-repo:latest "$account_number".dkr.ecr."$region".amazonaws.com/docker-repo:latest
 
 # Push Docker image to "docker-repo" repository
