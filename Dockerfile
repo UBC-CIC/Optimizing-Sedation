@@ -1,6 +1,10 @@
 # ==== CONFIGURE =====
 # Use a Node 16 base image
-FROM node:16-alpine
+## For others
+# FROM node:16-alpine
+
+## For MAC M1
+FROM --platform=linux/amd64 node:16-alpine  
 
 # Copy front-end to /app
 COPY frontend /app
