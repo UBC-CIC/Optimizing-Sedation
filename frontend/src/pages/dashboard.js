@@ -67,6 +67,8 @@ export default function Dashboard(){
     const [ObservationData, setObservationData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
 
+    const LOINC_codesData = {}; // Object to hold state variables
+
     const LOINC_codes = Object.entries(imported_LOINC_Codes);
     
     
@@ -114,11 +116,11 @@ export default function Dashboard(){
             
                         const nextLink = Bundle.link.find(link => link.relation === 'next');
                         if (nextLink) {
-                            console.log("Next link: ", nextLink.url);
+                            //console.log("Next link: ", nextLink.url);
                             fetchData(nextLink.url, processData, setData, accumulatedResults); // Recursive call with accumulatedResults
                         } else {
                             //console.log("No next link found");
-                            console.log("Total observations: ", accumulatedResults);
+                            //console.log("Total observations: ", accumulatedResults);
                             setData(accumulatedResults);
                         }
                     })
@@ -126,8 +128,12 @@ export default function Dashboard(){
             }
 
             LOINC_codes.map(([name, array]) => {
-                client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => {               
+                client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => {    
+                    LOINC_codesData[`${name}`] = processObservationData(Bundle); // Dynamically assign variable
+
                     //console.log(`${name}`, Bundle);
+                    //console.log(`State variable for ${name}:`, LOINC_codesData[`${name}`]);
+                    console.log("CODES DATA: ", LOINC_codesData);
                 }).catch(onErr);
             });
 
