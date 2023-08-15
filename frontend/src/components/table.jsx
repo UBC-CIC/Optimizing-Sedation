@@ -63,7 +63,7 @@ function createData(assessment, status, others, tableHeader){
     };
 }
 
-function convertData(ImmunizationData, LabData, ObservationData){
+function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData){
     let data = [];
     /**
      * 'LabData' Structure
@@ -127,14 +127,93 @@ function convertData(ImmunizationData, LabData, ObservationData){
         data.push(createData("Vaccinations", "No Data", null, null));
     }
 
+    // Convert ECG data
+    if(totalLOINC_codesData.ECG_LOINC != null){
+        const ecgObservation = totalLOINC_codesData.ECG_LOINC.map(row =>{
+            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+            return ({title: modified, col1: row.ObservationValue, col2:row.ObservationTime });
+        });
     
-    data.push(createData("ECG", "No Data", null));
-    data.push(createData("EEG", "No Data", null));
-    data.push(createData("ENT", "No Data", null));
-    data.push(createData("Ophthalmologist", "No Data", null));
-    data.push(createData("ASD", "No Data", null));
-    data.push(createData("Previous Sedation", "No Data", null));
-    data.push(createData("Dentistry", "No Data", null));
+        const ecgHeader = ["Result Type", "Value", "Date"];
+        data.push(createData("ECG", "Done", ecgObservation, ecgHeader));
+    } else if (totalLOINC_codesData.ECG_LOINC == null || totalLOINC_codesData.ECG_LOINC == []) {
+        data.push(createData("ECG", "No Data", null, null));
+    }
+
+    // Convert EEG data
+    if(totalLOINC_codesData.EEG_LOINC != null){
+        const eegObservation = totalLOINC_codesData.EEG_LOINC.map(row =>{
+            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+            return ({title: modified, col1: row.ObservationValue, col2:row.ObservationTime });
+        });
+    
+        const eegHeader = ["Result Type", "Value", "Date"];
+        data.push(createData("EEG", "Done", eegObservation, eegHeader));
+    } else if (totalLOINC_codesData.EEG_LOINC == null || totalLOINC_codesData.EEG_LOINC == []) {
+        data.push(createData("EEG", "No Data", null, null));
+    }
+
+    // Convert ENT data
+    if(totalLOINC_codesData.ENT_LOINC != null){
+        const entObservation = totalLOINC_codesData.ENT_LOINC.map(row =>{
+            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+            return ({title: modified, col1: row.ObservationValue, col2:row.ObservationTime });
+        });
+    
+        const entHeader = ["Result Type", "Value", "Date"];
+        data.push(createData("ENT", "Done", entObservation, entHeader));
+    } else if (totalLOINC_codesData.ENT_LOINC == null || totalLOINC_codesData.ENT_LOINC == []) {
+        data.push(createData("ENT", "No Data", null, null));
+    }
+
+    // Convert ASD data
+    if(totalLOINC_codesData.ASD_LOINC != null){
+        const asdObservation = totalLOINC_codesData.ASD_LOINC.map(row =>{
+            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+            return ({title: modified, col1: row.ObservationValue, col2:row.ObservationTime });
+        });
+    
+        const asdHeader = ["Result Type", "Value", "Date"];
+        data.push(createData("ASD", "Done", asdObservation, asdHeader));
+    } else if (totalLOINC_codesData.ASD_LOINC == null || totalLOINC_codesData.ASD_LOINC == []) {
+        data.push(createData("ASD", "No Data", null, null));
+    }
+
+    // Convert OPTHALMOLOGY data
+    if(totalLOINC_codesData.OPTHALMOLOGY_LOINC != null){
+        const opthalmologyObservation = totalLOINC_codesData.OPTHALMOLOGY_LOINC.map(row =>{
+            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+            return ({title: modified, col1: row.ObservationValue, col2:row.ObservationTime });
+        });
+    
+        const opthalmologyHeader = ["Result Type", "Value", "Date"];
+        data.push(createData("Opthalmologist", "Done", opthalmologyObservation, opthalmologyHeader));
+    } else if (totalLOINC_codesData.OPTHALMOLOGY_LOINC == null || totalLOINC_codesData.OPTHALMOLOGY_LOINC == []) {
+        data.push(createData("Opthalmologist", "No Data", null, null));
+    }
+
+    // Convert SEDATION data
+    if(totalLOINC_codesData.SEDATION_LOINC != null){
+        const sedationObservation = totalLOINC_codesData.SEDATION_LOINC.map(row =>{
+            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+            return ({title: modified, col1: row.ObservationValue, col2:row.ObservationTime });
+        });
+    
+        const sedationHeader = ["Result Type", "Value", "Date"];
+        data.push(createData("Previous Sedation", "Done", sedationObservation, sedationHeader));
+    } else if (totalLOINC_codesData.SEDATION_LOINC == null || totalLOINC_codesData.SEDATION_LOINC == []) {
+        data.push(createData("Previous Sedation", "No Data", null, null));
+    }
+
+    
+    //data.push(createData("ECG", "Done", null));
+    //data.push(createData("EEG", "Done", null));
+    //data.push(createData("ENT", "Seen", null));
+    //data.push(createData("Ophthalmologist", "Seen", null));
+    //data.push(createData("ASD", "Yes", null));
+    //data.push(createData("Previous Sedation", "No", null));
+    data.push(createData("Additional Assessment", "Done/Not done", null));
+
 
     console.log("data: ", data);
     return data;
@@ -266,7 +345,7 @@ function Row(props){
     )
 }
 
-export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData}){
+export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData, totalLOINC_codesData}){
     // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
 
     // Convert input data into current format of this table
@@ -275,7 +354,8 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
     //         <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
     //     );
     
-    const data = convertData(ImmunizationData, LabData, ObservationData);
+
+    const data = convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
     //console.log("data: ", data);
 
     const style = {

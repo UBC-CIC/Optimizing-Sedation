@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
+import * as imported_LOINC_Codes from '../DataProcessing/codes/LOINC_codes';
 
 // Components
 import SideBar from '../components/sideBar';
@@ -81,6 +82,7 @@ export default function Dashboard(){
     const [LabData, setLabData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
 
+
     // Popup states variables
     const [loadPopup, setLoadPopup] = useState(false);
     const [medDiagData, setMedDiagData] = useState([]);
@@ -89,6 +91,13 @@ export default function Dashboard(){
 
     // View Raw Data states variables
     const [loadRawData, setLoadRawData] = useState(false);
+
+    const [totalLOINC_codesData, settotalLOINC_codesData] = useState(null);
+    const LOINC_codesData = {}; // Object to hold state variables
+
+    const LOINC_codes = Object.entries(imported_LOINC_Codes);
+    
+
     
 
     // Data stream line State Variables
@@ -120,47 +129,41 @@ export default function Dashboard(){
                 setPatientData(patient_dataCleanUp);
             }).catch(onErr);
 
-            client.request(`Immunization/?patient=${client.patient.id}`).then((immunization) => {
-                const parsedData = processImmunizationData(immunization);
-                //console.log("immunization: ", immunization);
-                setImmunizationData(parsedData);
+            fetchData(`Immunization/?patient=${client.patient.id}`, processImmunizationData, setImmunizationData);
+            fetchData(`MedicationRequest/?patient=${client.patient.id}`, processMedicationData, setMedicationData);
+            fetchData(`Condition/?patient=${client.patient.id}`, processConditionData, setConditionData);
+            fetchData(`DiagnosticReport/?patient=${client.patient.id}`, processDiagnosticReportData, setDiagnosticReportData);
+            fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
+            fetchData(`Observation/?patient=${client.patient.id}`, processObservationData, setLabData);
+            settotalLOINC_codesData(fetchCodeData(LOINC_codes));
 
-            }).catch(onErr);
+            function fetchData(url, processData, setData, accumulatedResults = []) {
+                client.request(url).then((Bundle) => {
+                        const results = processData(Bundle);
+                        accumulatedResults.push(...results); // Append current results to accumulatedResults
+            
+                        const nextLink = Bundle.link.find(link => link.relation === 'next');
+                        if (nextLink) {
+                            //console.log("Next link: ", nextLink.url);
+                            fetchData(nextLink.url, processData, setData, accumulatedResults); // Recursive call with accumulatedResults
+                        } else {
+                            //console.log("No next link found");
+                            //console.log("Total observations: ", accumulatedResults);
+                            setData(accumulatedResults);
+                        }
+                    })
+                    .catch(onErr);
+            }
 
-            client.request(`MedicationRequest/?patient=${client.patient.id}`).then((med) => {
-                console.log("Raw medical data: ", med);
-                const parsedData = processMedicationData(med);
-                setMedicationData(parsedData);
-                console.log("Processed medical data: ", parsedData)
-            }).catch(onErr);
+            function fetchCodeData(LOINC_codes){
+                LOINC_codes.map(([name, array]) => {
+                    client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => {    
+                        LOINC_codesData[`${name}`] = processObservationData(Bundle); // Dynamically assign variable
+                    }).catch(onErr);
+                });
+                return LOINC_codesData;
+            }
 
-            client.request(`Condition/?patient=${client.patient.id}`).then((condition) => {
-                console.log("Condition resource raw: ", condition);
-                const parsedData = processConditionData(condition);
-                console.log("Condition resource processed: ", parsedData);
-                setConditionData(parsedData);
-            }).catch(onErr);
-
-            await client.request(`DiagnosticReport/?patient=${client.patient.id}`).then((diagnostic) => {
-                console.log("DiagnosticReport resource: ", diagnostic);
-                const parsedData = processDiagnosticReportData(diagnostic);
-                console.log("Processed DiagnosticData: ", parsedData)
-                setDiagnosticReportData(parsedData);
-            }).catch(onErr);
-
-            await client.request(`Observation/?patient=${client.patient.id}`).then((Bundle) => {
-                console.log("Raw Observation data: ", Bundle);
-                const parsedLabData = processObservationData(Bundle);
-                const parsedData = processAllObservationData(Bundle);
-                
-                console.log("Processed Observation data: ", parsedData);
-                console.log("Processed Lab data: ", parsedLabData);
-
-                setLabData(parsedLabData);
-                setObservationData(parsedData);
-            }).catch(onErr);
-
-            //console.log(patientData, ImmunizationData, MedicationData, ConditionData, ObservationData);
             setDataReady(true);
         }
 
@@ -292,7 +295,8 @@ export default function Dashboard(){
                                         assessmentTypeHandle = {assessmentTypeHandle}
 
                                         searchInput = {searchInput}
-                                        searchInputHandle = {searchInputHandle}
+
+                                        searchInputHandle = {searchInputHandle}                                     
                                         />
                                     </Grid>
                                     <Grid sm={1} />
@@ -319,6 +323,7 @@ export default function Dashboard(){
                                             ImmunizationData = {ImmunizationData}
                                             ObservationData = {ObservationData}
                                             LabData = {DiagnosticReportData}
+                                            totalLOINC_codesData = {totalLOINC_codesData}
                                             />
                                         </div>
                                     </Grid>
