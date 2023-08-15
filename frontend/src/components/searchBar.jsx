@@ -34,34 +34,13 @@ function getStyles(name, list, theme) {
     };
 }
 
-export default function SearchBar({selectStatusType, statusTypeHandle, selectAssessmentType, assessmentTypeHandle, searchInput, searchInputHandle}){
+export default function SearchBar({ statusTypeDisplayText, statusTypeList, selectStatusType, statusTypeHandle, 
+                                    assessmentTypeDisplayText, assessmentTypeList, selectAssessmentType, assessmentTypeHandle, 
+                                    searchInput, searchInputHandle}){
 
     const ref1 = useRef(null);
     const ref2 = useRef(null);
     const ref3 = useRef(null);
-
-    // Selector Options
-    const statusTypes = [
-        'Not done',
-        'Up to date',
-        'Done',
-        'Seen',
-        'Yes',
-        'No',
-        'Done/Not done',
-    ];
-
-    const assessmentTypes = [
-        'Labs',
-        'Vaccinations',
-        'ECG',
-        'EEG',
-        'ENT',
-        'Ophthalmologist',
-        'ASD',
-        'Previous Sedation',
-        'Additional Assessment'
-    ];
 
     const theme = useTheme();
 
@@ -135,7 +114,7 @@ export default function SearchBar({selectStatusType, statusTypeHandle, selectAss
                 <Grid sm={4} xs={12}>
                     <Paper style={{marginLeft:'10px', marginRight:'10px', backgroundColor:'#e7e8eb'}}>
                         <FormControl fullWidth>
-                            <InputLabel id="demo-multiple-chip-label">Type of Assessment</InputLabel>
+                            <InputLabel id="demo-multiple-chip-label">{(assessmentTypeDisplayText != null) ? assessmentTypeDisplayText : "Type of Assessment"}</InputLabel>
                             <Select
                             labelId="demo-multiple-chip-label"
                             id="demo-multiple-chip"
@@ -144,7 +123,7 @@ export default function SearchBar({selectStatusType, statusTypeHandle, selectAss
                             ref={ref2}
                             value={selectAssessmentType}
                             onChange={assessmentTypeHandle}
-                            input={<OutlinedInput id="select-multiple-chip" label="Type of Assessment" />}
+                            input={<OutlinedInput id="select-multiple-chip" label={(assessmentTypeDisplayText != null) ? assessmentTypeDisplayText : "Type of Assessment"} />}
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
                                     <div style={{ overflowX: 'auto', scrollbarDidth: 'thin', scrollbarColor: 'gray'}}>
@@ -156,7 +135,7 @@ export default function SearchBar({selectStatusType, statusTypeHandle, selectAss
                             )}
                             MenuProps={MenuProps}
                             >
-                            {assessmentTypes.map((name) => (
+                            {assessmentTypeList != null &&  assessmentTypeList.map((name) => (
                                 <MenuItem
                                 key={name}
                                 value={name}
@@ -173,7 +152,7 @@ export default function SearchBar({selectStatusType, statusTypeHandle, selectAss
                 <Grid sm={4} xs={12}>
                     <Paper style={{marginLeft:'10px', marginRight:'10px', backgroundColor:'#e7e8eb'}}>
                         <FormControl fullWidth >
-                            <InputLabel id="demo-multiple-chip-label">Flag Type</InputLabel>
+                            <InputLabel id="demo-multiple-chip-label">{(statusTypeDisplayText != null) ? statusTypeDisplayText : "Flag Type"}</InputLabel>
                             <Select
                             labelId="demo-multiple-chip-label"
                             id="demo-multiple-chip"
@@ -182,7 +161,7 @@ export default function SearchBar({selectStatusType, statusTypeHandle, selectAss
                             ref={ref3}
                             value={selectStatusType}
                             onChange={statusTypeHandle}
-                            input={<OutlinedInput id="select-multiple-chip" label="Flag Type" />}
+                            input={<OutlinedInput id="select-multiple-chip" label={(statusTypeDisplayText != null) ? statusTypeDisplayText : "Flag Type"} />}
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
                                     <div style={{ overflowX: 'auto', scrollbarDidth: 'thin', scrollbarColor: 'gray'}}>
@@ -195,7 +174,7 @@ export default function SearchBar({selectStatusType, statusTypeHandle, selectAss
 
                             MenuProps={MenuProps}
                             >
-                            {statusTypes.map((name) => (
+                            {statusTypeList != null && statusTypeList.map((name) => (
                                 <MenuItem
                                 key={name}
                                 value={name}

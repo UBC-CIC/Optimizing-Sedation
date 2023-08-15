@@ -6,17 +6,20 @@ import * as imported_LOINC_Codes from '../DataProcessing/codes/LOINC_codes';
 import SideBar from '../components/sideBar';
 import SearchBar from '../components/searchBar';
 import PatientTable from '../components/table';
+import LoadMoreDataPopUp from '../components/med_diag_popup';
+import LoadRawDataDisplay from '../components/loadRawDataDisplay';
 
 // Material UI
 import Button from '@mui/material/Button';
-import {Grid, Typography} from '@mui/material';
+import {Grid, Link, Typography} from '@mui/material';
 
 // Data processing modules
 import processPatientData from '../DataProcessing/patientProcessing';
 import processImmunizationData from '../DataProcessing/immunizationProcessing';
 import processMedicationData from '../DataProcessing/medicationProcessing';
 import processConditionData from '../DataProcessing/conditionProcessing';
-import processObservationData from '../DataProcessing/observationProcessing';
+import {processObservationData, processAllObservationData} from '../DataProcessing/observationProcessing';
+
 import processDiagnosticReportData from '../DataProcessing/diagnosticReportProcessing';
 
 // Data structuring
@@ -29,18 +32,28 @@ function createPatientData(fullname, MRN, contactFullname, contactNumber){
     };
 }
 
-function createPatientMedicalSummaryData(listOfMedications, listOfDiagnoses){
-    if (listOfMedications != null && !Array.isArray(listOfMedications))
-        return null;
-    
-    if (listOfDiagnoses != null && !Array.isArray(listOfDiagnoses))
-        return null;
+// Selector Options
+const statusTypes = [
+    'Not done',
+    'Up to date',
+    'Done',
+    'Seen',
+    'Yes',
+    'No',
+    'Done/Not done',
+];
 
-    return {
-        listOfMedications, 
-        listOfDiagnoses
-    };
-}
+const assessmentTypes = [
+    'Labs',
+    'Vaccinations',
+    'ECG',
+    'EEG',
+    'ENT',
+    'Ophthalmologist',
+    'ASD',
+    'Previous Sedation',
+    'Additional Assessment'
+];
 
 // function createPatientMedicalSummaryData(listOfMedications, listOfDiagnoses){
 //     if (listOfMedications != null && !Array.isArray(listOfMedications))
@@ -60,19 +73,33 @@ export default function Dashboard(){
     const [text, setText] = useState(undefined);
     const [client, setClient] = useState(null);
 
+    // Fhir Resources state variables
     const [patientData, setPatientData] = useState(null);
     const [ImmunizationData, setImmunizationData] = useState(null);
     const [MedicationData, setMedicationData] = useState(null);
     const [ConditionData, setConditionData] = useState(null);
     const [ObservationData, setObservationData] = useState(null);
+    const [LabData, setLabData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
+
+
+    // Popup states variables
+    const [loadPopup, setLoadPopup] = useState(false);
+    const [medDiagData, setMedDiagData] = useState([]);
+    const [statusList, setStatusList] = useState(null);
+    const [popupTitle, setPopupTitle] = useState(null);
+
+    // View Raw Data states variables
+    const [loadRawData, setLoadRawData] = useState(false);
 
     const [totalLOINC_codesData, settotalLOINC_codesData] = useState(null);
     const LOINC_codesData = {}; // Object to hold state variables
 
     const LOINC_codes = Object.entries(imported_LOINC_Codes);
     
+
     
+
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
     // const [patientData, setPatientData] = useState(null);
@@ -91,8 +118,6 @@ export default function Dashboard(){
             setClient(client);
 
             // Operations
-            // console.log(client);
-            // console.log("Request Patient");
             await client.request(`Patient/${client.patient.id}`).then((patient) => {
                 //console.log("Raw Patient Data: ", patient);
 
@@ -108,7 +133,8 @@ export default function Dashboard(){
             fetchData(`MedicationRequest/?patient=${client.patient.id}`, processMedicationData, setMedicationData);
             fetchData(`Condition/?patient=${client.patient.id}`, processConditionData, setConditionData);
             fetchData(`DiagnosticReport/?patient=${client.patient.id}`, processDiagnosticReportData, setDiagnosticReportData);
-            fetchData(`Observation/?patient=${client.patient.id}`, processObservationData, setObservationData);
+            fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
+            fetchData(`Observation/?patient=${client.patient.id}`, processObservationData, setLabData);
             settotalLOINC_codesData(fetchCodeData(LOINC_codes));
 
             function fetchData(url, processData, setData, accumulatedResults = []) {
@@ -182,12 +208,58 @@ export default function Dashboard(){
 
     //// End of Handler Functions ////
 
+    //// Helper Functions ////
+    function getStatusList(tableData){
+        if (tableData){
+            const uniqueList = new Set(tableData.map(obj => obj.col1));
+            return Array.from(uniqueList);
+        } else {
+            return [];
+        }
+    }
+
+    //// End of Helper Funtions ////
+
+    //// Global Handlers ////
+    const loadMoreMedicationHandler = () => {
+        setPopupTitle("Medication Data");
+        let counter = 0;
+        const dataCleaned = MedicationData.map((row)=>{
+            counter++;
+            const modified = row.MedicationType.charAt(0).toUpperCase() + row.MedicationType.slice(1);
+            return ({id: counter, title: modified, col1: row.MedicationStatus, col2:row.MedicationTime && (row.MedicationTime.split('T'))[0]});
+        });
+
+        const statusList_ = getStatusList(dataCleaned);
+        console.log("statusList_: ", statusList_);
+        setMedDiagData(dataCleaned);
+        setStatusList(statusList_);
+        setLoadPopup(true);
+    }
+
+    const loadMoreDiagnoseHandler = () => {
+        setPopupTitle("Diagnostic Data");
+        let counter = 0;
+        const dataCleaned = ConditionData.map((row)=>{
+            counter++;
+            const modified = row.ConditionType.charAt(0).toUpperCase() + row.ConditionType.slice(1);
+            return ({id: counter, title: modified, col1: row.ConditionStatus, col2:row.ConditionTime && (row.ConditionTime.split('T'))[0] });
+        });
+
+        const statusList_ = getStatusList(dataCleaned);
+        setMedDiagData(dataCleaned);
+        setStatusList(statusList_);
+        setLoadPopup(true);
+    }
+
+    //// End of Global Handlers ////
 
     return(
         <div>
             {clientReady && dataReady &&
             <React.Fragment>
                 <Grid container spacing={0}>
+                    {/* Left-hand side elements */}
                     <Grid sm={4} xs={12}>
                         <div style={{
                             marginTop: '4vh',
@@ -195,46 +267,89 @@ export default function Dashboard(){
                             <SideBar 
                             patientData = {patientData}
                             MedicationData = {MedicationData}
-                            ConditionData = {ConditionData}
+                            DiagnosticReportData = {ConditionData}
+                            ObservationData = {ObservationData}
+
+                            loadMoreMedicationHandler={loadMoreMedicationHandler}
+                            loadMoreDiagnoseHandler={loadMoreDiagnoseHandler}
                             />
                         </div>
                     </Grid>
+
+                    {/* Right-hand side elements */}
                     <Grid sm={8} xs={12}>
                         <div style={{
                             marginTop: '4vh',
                         }}>
-                            <Grid container spacing={0}>
-                                <Grid sm={11} >
-                                    <SearchBar 
-                                    selectStatusType = {selectStatusType}
-                                    statusTypeHandle = {statusTypeHandle}
-                                    selectAssessmentType = {selectAssessmentType}
-                                    assessmentTypeHandle = {assessmentTypeHandle}
-                                    searchInput = {searchInput}
-                                    searchInputHandle = {searchInputHandle}
-                                    />
-                                </Grid>
-                                <Grid sm={1} />
-
-                                <Grid sm={11} >
-                                    <div style={{paddingTop:'2vh'}}>
-                                        {/* <h1>Hello World, Dashboard!</h1>
-                                        <Button variant="outlined" onClick={loadPatientHandler}>Load Patient</Button>
-                                        <p>{text}</p> */}
-                                        <h1>Patient Assessment Information</h1>
-                                        <PatientTable 
-                                        fhirData = {[]} 
+                            {!loadPopup && !loadRawData &&
+                            <React.Fragment>
+                                <Grid container spacing={0}>
+                                    <Grid sm={11} >
+                                        <SearchBar 
+                                        statusTypeList={statusTypes}
                                         selectStatusType = {selectStatusType}
+                                        statusTypeHandle = {statusTypeHandle}
+
+                                        assessmentTypeList={assessmentTypes}
                                         selectAssessmentType = {selectAssessmentType}
+                                        assessmentTypeHandle = {assessmentTypeHandle}
+
                                         searchInput = {searchInput}
-                                        ImmunizationData = {ImmunizationData}
-                                        ObservationData = {ObservationData}
-                                        totalLOINC_codesData = {totalLOINC_codesData}
+
+                                        searchInputHandle = {searchInputHandle}                                     
                                         />
-                                    </div>
+                                    </Grid>
+                                    <Grid sm={1} />
+
+                                    <Grid sm={11} >
+                                        <div style={{paddingTop:'2vh'}}>
+                                            <div style={{
+                                                display: 'flex',
+                                                flexFlow: 'row',
+                                                alignItems: 'center',
+                                                flexWrap: 'nowrap',
+                                                justifyContent: 'space-between',
+                                                }}>
+
+                                                <h1>Patient Assessment Information</h1>
+                                                <Link onClick={() => {setLoadRawData(true)}}>View Raw Data</Link>
+                                            </div>
+                                            
+                                            <PatientTable 
+                                            fhirData = {[]} 
+                                            selectStatusType = {selectStatusType}
+                                            selectAssessmentType = {selectAssessmentType}
+                                            searchInput = {searchInput}
+                                            ImmunizationData = {ImmunizationData}
+                                            ObservationData = {ObservationData}
+                                            LabData = {DiagnosticReportData}
+                                            totalLOINC_codesData = {totalLOINC_codesData}
+                                            />
+                                        </div>
+                                    </Grid>
+                                    <Grid sm={1} />
+
+                                    
                                 </Grid>
-                                <Grid sm={1} />
-                            </Grid>
+                            </React.Fragment>
+                            }
+                            {!loadPopup && loadRawData && 
+                                <LoadRawDataDisplay
+                                observationData = {ObservationData}
+                                diagnosticData = {DiagnosticReportData}
+                                conditionData = {ConditionData}
+                                MedicationData = {MedicationData}
+                                setLoadRawData = {setLoadRawData}
+                                />
+                            }
+                            {loadPopup && 
+                            <LoadMoreDataPopUp
+                            parsedTableData = {medDiagData} 
+                            loadData = {true}
+                            statusList = {statusList}
+                            popupTitle = {popupTitle}
+                            setLoadPopup = {setLoadPopup}/>
+                            }
                         </div>
                     </Grid>
                 </Grid>

@@ -21,6 +21,10 @@ import {
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
+// Custome Components
+import {DropDownTableRow} from './dropDownTable';
+
 // Constant Variables
 const LINK = "///LINK";
 
@@ -35,6 +39,7 @@ function createData(assessment, status, others, tableHeader){
         return null;
     
     if(others != null){
+        console.log("createData.other: ", others);
         const isValidFormat = others.every(item => {
             let output = typeof item.title === 'string';
             
@@ -58,22 +63,54 @@ function createData(assessment, status, others, tableHeader){
     };
 }
 
-function convertData(ImmunizationData, ObservationData, totalLOINC_codesData){
+function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData){
     let data = [];
+    /**
+     * 'LabData' Structure
+     * [
+     *      {
+     *          title: String!
+     *          time: String!
+     *          references: ['String: ObservationID']
+     *          value: String
+     *      }
+     * ]
+     */
 
     /* const lab = [{title: "Lab_1_file_name", col1: "/Lab_1_file_name", col2: LINK}, {title: "Lab_2_file_name", col1: "/Lab_2_file_name", col2: LINK}];
     data.push(createData("Labs", "Not done", lab)); */
 
     // Convert lab data
-    if(ObservationData != null){
-        const observation = ObservationData.map(row =>{
-            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
-            return ({title: modified, col1: row.ObservationValue, col2:row.ObservationTime });
-        });
+    if(LabData != null){
+        const labProcessedData = LabData.map(row =>{
+            const modifiedTitle = (row.title) && (row.title.charAt(0).toUpperCase() + row.title.slice(1));
+            if(row.references){
+                // Generate col3 for drop down
+                // dia.ref.includes("Observation/" + obs.ObservationID)
+                const matchedObservationCode = ObservationData.filter((obs) => (row.references.includes("Observation/" + obs.ObservationID)));
+                const col3Data = matchedObservationCode.map((obs)=>{
+                    const modified = obs.ObservationType.charAt(0).toUpperCase() + obs.ObservationType.slice(1);
     
-        const observationHeader = ["Lab Type", "Value", "Date"];
-        data.push(createData("Labs", "Done", observation, observationHeader));
-    } else if (ObservationData == null || ObservationData == []) {
+                    return {title: modified, col1: obs.ObservationValue, col2: obs.ObservationTime && (obs.ObservationTime.split('T'))[0]}
+                });
+                
+                const subHeaders = ["Observation Type", "Value", "Date"];
+                return ({title: modifiedTitle, col1: 'N/A', col2: row.time && (row.time.split('T'))[0], col3: col3Data, headers: subHeaders});
+            } else if (row.value){
+                return ({title: modifiedTitle, col1: row.value, col2: row.time && (row.time.split('T'))[0]});
+            }
+            
+            return null;
+        });
+        
+        if(labProcessedData != null){
+            console.log("labProcessedData: ", labProcessedData);
+            const observationHeader = ["Lab Type", "Value", "Date"];
+            data.push(createData("Labs", "Done", labProcessedData, observationHeader));
+        } else {
+            data.push(createData("Labs", "No Data", null, null));
+        }
+    } else if (LabData == null || LabData == []) {
         data.push(createData("Labs", "No Data", null, null));
     }
 
@@ -81,7 +118,7 @@ function convertData(ImmunizationData, ObservationData, totalLOINC_codesData){
     if(ImmunizationData != null){
         const vaccination = ImmunizationData.map(row =>{
             const modified = row.ImmunizationType.charAt(0).toUpperCase() + row.ImmunizationType.slice(1);
-            return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime });
+            return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime && (row.ImmunizationTime.split('T'))[0] });
         });
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
@@ -178,6 +215,7 @@ function convertData(ImmunizationData, ObservationData, totalLOINC_codesData){
     data.push(createData("Additional Assessment", "Done/Not done", null));
 
 
+    console.log("data: ", data);
     return data;
 }
 // Custome Row Design
@@ -213,6 +251,7 @@ function Row(props){
 
     return(
         <React.Fragment>
+            {/* Main Row */}
             <StyledTableRow sx={{ '& > *': { borderBottom: 'unset' }}} key={data.assessment}>
                 <StyledTableCell component="th" scope="row">{data.assessment}</StyledTableCell>
                 <StyledTableCell align="center">
@@ -234,7 +273,8 @@ function Row(props){
                     </Grid>
                 </StyledTableCell>
             </StyledTableRow>
-
+            
+            {/* Sub Row */}
             <StyledTableRow>
                 <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     {data.others != null &&
@@ -256,7 +296,14 @@ function Row(props){
                             
                             <TableBody>
                                 {
-                                    data.others.map((i)=>{
+                                    data.others
+                                    .sort((a, b) => {       // Sort based on time
+                                        if(a.col2 != null)
+                                            return b.col2.localeCompare(a.col2)
+                                        else
+                                            return 0;
+                                    })
+                                    .map((i)=>{
                                         if(i.col1 != null && i.col2 != null && i.col2 == LINK){     // Display as link
                                             return (
                                                 <Typography variant={"subtitle1"} component="h6">
@@ -266,11 +313,7 @@ function Row(props){
                                                 </Typography>);
                                         } else if (i.col1 != null && i.col2 != null){               // Display as table
                                             return (
-                                                <TableRow>
-                                                    <TableCell align='left'>{i.title}</TableCell>
-                                                    <TableCell align='left'>{i.col1}</TableCell>
-                                                    <TableCell align='left'>{i.col2}</TableCell>
-                                                </TableRow>
+                                                    <DropDownTableRow rowData = {i}/>
                                             );
                                         } else if (i.col1 != null){
                                             return (
@@ -302,7 +345,7 @@ function Row(props){
     )
 }
 
-export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, totalLOINC_codesData}){
+export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData, totalLOINC_codesData}){
     // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
 
     // Convert input data into current format of this table
@@ -311,7 +354,8 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
     //         <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
     //     );
     
-    const data = convertData(ImmunizationData, ObservationData, totalLOINC_codesData);
+
+    const data = convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
     //console.log("data: ", data);
 
     const style = {

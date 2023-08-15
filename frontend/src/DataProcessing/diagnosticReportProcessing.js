@@ -28,7 +28,8 @@ function processDiagnosticReportData(DiagnosticReportData) {
         const entryString = `${DiagnosticReportType}-${DiagnosticReportReferences.join(",")}-${DiagnosticReportTime}`;
         if (!uniqueEntries.has(entryString)) {
           uniqueEntries.add(entryString);
-          results.push({ DiagnosticReportType, DiagnosticReportReferences, DiagnosticReportTime });
+          // results.push({ DiagnosticReportType, DiagnosticReportReferences, DiagnosticReportTime });
+          results.push({ title: DiagnosticReportType, references: DiagnosticReportReferences, time: DiagnosticReportTime });
         }
       }
     });
