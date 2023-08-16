@@ -133,8 +133,8 @@ export default function Dashboard(){
             fetchData(`MedicationRequest/?patient=${client.patient.id}`, processMedicationData, setMedicationData);
             fetchData(`Condition/?patient=${client.patient.id}`, processConditionData, setConditionData);
             fetchData(`DiagnosticReport/?patient=${client.patient.id}`, processDiagnosticReportData, setDiagnosticReportData);
+            //fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
             fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
-            fetchData(`Observation/?patient=${client.patient.id}`, processObservationData, setLabData);
             settotalLOINC_codesData(fetchCodeData(LOINC_codes));
 
             function fetchData(url, processData, setData, accumulatedResults = []) {
@@ -158,7 +158,7 @@ export default function Dashboard(){
             function fetchCodeData(LOINC_codes){
                 LOINC_codes.map(([name, array]) => {
                     client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => {    
-                        LOINC_codesData[`${name}`] = processObservationData(Bundle); // Dynamically assign variable
+                        LOINC_codesData[`${name}`] = processAllObservationData(Bundle); // Dynamically assign variable
                     }).catch(onErr);
                 });
                 return LOINC_codesData;
