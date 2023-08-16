@@ -205,6 +205,19 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
         data.push(createData("Previous Sedation", "No Data", null, null));
     }
 
+    // Convert DENTISTRY data
+    if(totalLOINC_codesData.DENTISTRY_LOINC != null){
+        const dentistryObservation = totalLOINC_codesData.DENTISTRY_LOINC.map(row =>{
+            const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+            return ({title: modified, col1: row.ObservationValue, col2:row.ObservationTime });
+        });
+    
+        const dentistryHeader = ["Result Type", "Value", "Date"];
+        data.push(createData("Dentistry", "Done", dentistryObservation, dentistryHeader));
+    } else if (totalLOINC_codesData.DENTISTRY_LOINC == null || totalLOINC_codesData.DENTISTRY_LOINC == []) {
+        data.push(createData("Dentistry", "No Data", null, null));
+    }
+
     
     //data.push(createData("ECG", "Done", null));
     //data.push(createData("EEG", "Done", null));
@@ -212,7 +225,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
     //data.push(createData("Ophthalmologist", "Seen", null));
     //data.push(createData("ASD", "Yes", null));
     //data.push(createData("Previous Sedation", "No", null));
-    data.push(createData("Additional Assessment", "Done/Not done", null));
+    //data.push(createData("Dentistry", "No Data", null));
 
 
     console.log("data: ", data);
