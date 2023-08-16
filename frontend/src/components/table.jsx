@@ -81,7 +81,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
     data.push(createData("Labs", "Not done", lab)); */
 
     // Convert lab data
-    if(LabData != null){
+    if(LabData != null && ObservationData != null){
         const labProcessedData = LabData.map(row =>{
             const modifiedTitle = (row.title) && (row.title.charAt(0).toUpperCase() + row.title.slice(1));
             if(row.references){
