@@ -1,4 +1,3 @@
-# ==== CONFIGURE =====
 # Use a Node 16 base image
 ## For others
 # FROM node:16-alpine
