@@ -1,10 +1,11 @@
-import { Stack, StackProps} from 'aws-cdk-lib';
+import { Stack, StackProps, Duration} from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as tasks from "aws-cdk-lib/aws-stepfunctions-tasks";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as ecspatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 
 import { VpcStack } from './vpc-stack';
@@ -22,8 +23,12 @@ export class HostStack extends Stack {
             maxAzs: 2,
             subnetConfiguration:[
                 {
-                    name: "public-subnet-1",
+                    name: "public-subnet",
                     subnetType: ec2.SubnetType.PUBLIC
+                },
+                {
+                    name: "private-subnet",
+                    subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
                 }
             ]
         });
@@ -37,14 +42,13 @@ export class HostStack extends Stack {
         });
 
         // Open a port for public to access the hosting
-        securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(3000), 'Allow access to dashbaord on IPV4');
-        securityGroup.addIngressRule(ec2.Peer.anyIpv6(), ec2.Port.tcp(3000), 'Allow access to dashbaord on IPV6');
+        // securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(3000), 'Allow access to dashbaord on IPV4');
+        // securityGroup.addIngressRule(ec2.Peer.anyIpv6(), ec2.Port.tcp(3000), 'Allow access to dashbaord on IPV6');
 
         // Create ECS Cluster which use to run Task on ECS Farget instance
         const cluster = new ecs.Cluster(this, "fargateCluster", {
             clusterName: "fargateCluster",
             vpc: vpc,
-            
         });
 
         // Define general IAM Role for AmazonECSTaskExecutionRolePolicy
@@ -60,8 +64,8 @@ export class HostStack extends Stack {
         // Running on Fargate.
         const ecsTask = new ecs.TaskDefinition(this, "ecsTask", {
             compatibility: ecs.Compatibility.FARGATE,
-            cpu: '256',
-            memoryMiB: '1024',
+            cpu: "1024",
+            memoryMiB: "2048",
             runtimePlatform: {
                 operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
             },
@@ -108,15 +112,35 @@ export class HostStack extends Stack {
         //     securityGroups: [securityGroup]
         // });
 
-        new ecs.FargateService(this, "HostDashboard", {
+        // new ecs.FargateService(this, "HostDashboard", {
+        //     cluster: cluster,
+        //     taskDefinition: ecsTask,
+        //     assignPublicIp: true,
+        //     vpcSubnets: {
+        //         subnetType: ec2.SubnetType.PUBLIC
+        //     },
+
+        //     securityGroups: [securityGroup]
+        // });
+
+        const ALBFargateService = new ecspatterns.ApplicationLoadBalancedFargateService(this, "Host-With-LoadBalancer-Dashboard", {
             cluster: cluster,
             taskDefinition: ecsTask,
-            assignPublicIp: true,
-            vpcSubnets: {
-                subnetType: ec2.SubnetType.PUBLIC
+            securityGroups: [securityGroup],
+            serviceName: "Dashbaord-Service",
+            memoryLimitMiB: 2048,
+            cpu: 1024,
+            desiredCount: 1,
+            taskSubnets: {
+                subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
             },
-
-            securityGroups: [securityGroup]
+            loadBalancerName: "Dashboard-LoadBalancer",
+            // healthCheckGracePeriod: Duration.seconds(150)
         });
+
+        // // Change Health Check Path
+        // ALBFargateService.targetGroup.configureHealthCheck({
+        //     path: "/",
+        // });
     }
 }
