@@ -1,4 +1,4 @@
-import { Stack, StackProps, Duration} from 'aws-cdk-lib';
+import { Stack, StackProps, CfnOutput, RemovalPolicy} from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as tasks from "aws-cdk-lib/aws-stepfunctions-tasks";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -6,6 +6,8 @@ import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecspatterns from 'aws-cdk-lib/aws-ecs-patterns';
+import * as secretmanager from 'aws-cdk-lib/aws-secretsmanager';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 
 import { VpcStack } from './vpc-stack';
@@ -31,6 +33,22 @@ export class HostStack extends Stack {
                     subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
                 }
             ]
+        });
+
+        // Retrieve a secrete from Secret Manager
+        // Example of passing secret using command,
+        //      aws secretsmanager create-secret --name SedationSecrets --secret-string '{"REACT_APP_CLIENT_SECRET":"string", "REACT_APP_CLIENT_ID":"string"}' --profile <your-profile-name>
+        const secret = secretmanager.Secret.fromSecretNameV2(this, "ImportedSecrets", "SedationSecrets");
+        
+        const accessSecretRole = new iam.Role(this, "SecretAccessRole", {
+            assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+        })
+
+        secret.grantRead(accessSecretRole);
+
+        // Output the value
+        new CfnOutput(this, 'SecretValue', {
+            value: secret.toString()
         });
 
         // Simple security group that allows all outbound traffic
@@ -79,9 +97,15 @@ export class HostStack extends Stack {
         const containerDefinition = ecsTask.addContainer("taskContainer", {
             image: ecs.ContainerImage.fromEcrRepository(repo, "latest"),
             containerName: "executionContainer",
-            environment: {
-                REACT_APP_CLIENT_SECRET: 'eLwgkM_bTUXDgwe4_OdGSS8bUy3oMuIX',
-                REACT_APP_CLIENT_ID: '87897be1-4596-4143-9927-9904df4abcd0',
+            // environment: {
+            //     REACT_APP_CLIENT_SECRET: 'eLwgkM_bTUXDgwe4_OdGSS8bUy3oMuIX',
+            //     REACT_APP_CLIENT_ID: '87897be1-4596-4143-9927-9904df4abcd0',
+            // },
+            // environment: secret.secretValue.toJSON(),
+            // secrets: {SEDATION_SECRET: ecs.Secret.fromSecretsManager(secret)},
+            secrets: {
+                "REACT_APP_CLIENT_SECRET": ecs.Secret.fromSecretsManager(secret, "REACT_APP_CLIENT_SECRET"),
+                "REACT_APP_CLIENT_ID": ecs.Secret.fromSecretsManager(secret, "REACT_APP_CLIENT_ID"),
             },
             portMappings: [
                 {
@@ -127,7 +151,7 @@ export class HostStack extends Stack {
             cluster: cluster,
             taskDefinition: ecsTask,
             securityGroups: [securityGroup],
-            serviceName: "Dashbaord-Service",
+            serviceName: "Dashboard-Service",
             memoryLimitMiB: 2048,
             cpu: 1024,
             desiredCount: 1,
@@ -142,5 +166,18 @@ export class HostStack extends Stack {
         // ALBFargateService.targetGroup.configureHealthCheck({
         //     path: "/",
         // });
+
+
+        // Create an S3 Bucket for Medical Code Configuration
+        // const bucket = new s3.Bucket(scope, 'ConfigBucket', {
+        //     publicReadAccess: false,
+        //     blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+        //     encryption: s3.BucketEncryption.S3_MANAGED,
+        //     versioned: false,
+        //     removalPolicy: RemovalPolicy.DESTROY,
+        //     bucketName: "ConfigurationStorage"
+        // });
+
+        // Load default configuration speadsheet to S3
     }
 }
