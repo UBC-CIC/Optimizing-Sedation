@@ -1,6 +1,5 @@
-import { Stack, StackProps, CfnOutput, RemovalPolicy, aws_s3_deployment} from 'aws-cdk-lib';
+import { Stack, StackProps, RemovalPolicy} from 'aws-cdk-lib';
 import { Construct } from "constructs";
-import * as tasks from "aws-cdk-lib/aws-stepfunctions-tasks";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as ecr from 'aws-cdk-lib/aws-ecr';
@@ -9,12 +8,8 @@ import * as ecspatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as secretmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as S3Deployment from "aws-cdk-lib/aws-s3-deployment";
-import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 
-import { VpcStack } from './vpc-stack';
-import { EcrStack } from './cdk-ecr';
-
-const CONFIG_FILE_PATH = "../../frontend/config/";
+const CONFIG_FILE_PATH = "../config/";
 export class HostStack extends Stack {
     constructor(scope: Construct, id: string, repo: ecr.Repository, props?: StackProps) {
         super(scope, id, props);
@@ -48,11 +43,6 @@ export class HostStack extends Stack {
 
         secret.grantRead(accessSecretRole);
 
-        // Output the value
-        new CfnOutput(this, 'SecretValue', {
-            value: secret.toString()
-        });
-
         // Simple security group that allows all outbound traffic
         const securityGroup = new ec2.SecurityGroup(this, "securityGroup", {
             allowAllOutbound: true,
@@ -60,11 +50,7 @@ export class HostStack extends Stack {
             vpc: vpc,
             securityGroupName: "cdkVpcSecurityGroup",
         });
-
-        // Open a port for public to access the hosting
-        // securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(3000), 'Allow access to dashbaord on IPV4');
-        // securityGroup.addIngressRule(ec2.Peer.anyIpv6(), ec2.Port.tcp(3000), 'Allow access to dashbaord on IPV6');
-
+        
         // Create ECS Cluster which use to run Task on ECS Farget instance
         const cluster = new ecs.Cluster(this, "fargateCluster", {
             clusterName: "fargateCluster",
@@ -99,12 +85,6 @@ export class HostStack extends Stack {
         const containerDefinition = ecsTask.addContainer("taskContainer", {
             image: ecs.ContainerImage.fromEcrRepository(repo, "latest"),
             containerName: "executionContainer",
-            // environment: {
-            //     REACT_APP_CLIENT_SECRET: 'eLwgkM_bTUXDgwe4_OdGSS8bUy3oMuIX',
-            //     REACT_APP_CLIENT_ID: '87897be1-4596-4143-9927-9904df4abcd0',
-            // },
-            // environment: secret.secretValue.toJSON(),
-            // secrets: {SEDATION_SECRET: ecs.Secret.fromSecretsManager(secret)},
             secrets: {
                 "REACT_APP_CLIENT_SECRET": ecs.Secret.fromSecretsManager(secret, "REACT_APP_CLIENT_SECRET"),
                 "REACT_APP_CLIENT_ID": ecs.Secret.fromSecretsManager(secret, "REACT_APP_CLIENT_ID"),
@@ -118,37 +98,8 @@ export class HostStack extends Stack {
             ],
         });
 
-        // Run Task on ECS Cluster
-        // new tasks.EcsRunTask(this, "HostDashboard", {
-        //     cluster: cluster,
-        //     launchTarget: new tasks.EcsFargateLaunchTarget(),
-        //     taskDefinition: ecsTask,
-        //     containerOverrides: [
-        //         {
-        //             containerDefinition: containerDefinition,
-        //         }
-        //     ],
-        //     subnets: {
-        //         subnetType: ec2.SubnetType.PUBLIC
-                
-        //     },
-
-
-        //     integrationPattern: sfn.IntegrationPattern.RUN_JOB,
-        //     securityGroups: [securityGroup]
-        // });
-
-        // new ecs.FargateService(this, "HostDashboard", {
-        //     cluster: cluster,
-        //     taskDefinition: ecsTask,
-        //     assignPublicIp: true,
-        //     vpcSubnets: {
-        //         subnetType: ec2.SubnetType.PUBLIC
-        //     },
-
-        //     securityGroups: [securityGroup]
-        // });
-
+        // Run Application Load Balancer in Fargate as an ECS Service
+        // ALB in public subnet, ECS Service in private subnet
         const ALBFargateService = new ecspatterns.ApplicationLoadBalancedFargateService(this, "Host-With-LoadBalancer-Dashboard", {
             cluster: cluster,
             taskDefinition: ecsTask,
@@ -163,12 +114,6 @@ export class HostStack extends Stack {
             loadBalancerName: "Dashboard-LoadBalancer",
             // healthCheckGracePeriod: Duration.seconds(150)
         });
-
-        // // Change Health Check Path
-        // ALBFargateService.targetGroup.configureHealthCheck({
-        //     path: "/",
-        // });
-
 
         // Create an S3 Bucket for Medical Code Configuration
         const bucket = new s3.Bucket(this, 'ConfigBucket', {
