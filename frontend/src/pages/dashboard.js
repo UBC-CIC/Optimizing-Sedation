@@ -157,8 +157,9 @@ export default function Dashboard(){
 
             function fetchCodeData(LOINC_codes){
                 LOINC_codes.map(([name, array]) => {
-                    client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => {    
-                        LOINC_codesData[`${name}`] = processAllObservationData(Bundle); // Dynamically assign variable
+                    LOINC_codesData[`${name}`] = null;
+                    client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => { 
+                            LOINC_codesData[`${name}`] = processAllObservationData(Bundle); // Dynamically assign variable
                     }).catch(onErr);
                 });
                 return LOINC_codesData;
