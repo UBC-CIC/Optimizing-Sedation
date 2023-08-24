@@ -90,7 +90,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                     }}>
                         <Typography variant={"subtitle1"} >Patient Medical Summary</Typography>
                         <div style={style.dropDown} onClick={openMedicationHandle}>
-                            <Typography variant={"h6"}>View list of medications</Typography>
+                            <Typography variant={"h6"}>View list of medications (from the past six months)</Typography>
                             {openMedication ? <ExpandLess /> : <ExpandMore />}
                         </div>
 
@@ -124,7 +124,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                             }
 
                             {(!MedicationData || MedicationData.length == 0) && (
-                                <Typography variant='subtitle1'>No Medication Data From The Last Six Months</Typography>
+                                <Typography variant='subtitle1'>No Medication Data From The Past Six Months</Typography>
                             )}
                         </div>}
                     </div>

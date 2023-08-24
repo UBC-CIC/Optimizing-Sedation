@@ -122,7 +122,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
         });
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
-        data.push(createData("Vaccinations", "Up to date", vaccination, vaccinationHeader));
+        data.push(createData("Vaccinations", "Done", vaccination, vaccinationHeader));
     } else if (ImmunizationData == null || ImmunizationData == []) {
         data.push(createData("Vaccinations", "No Data", null, null));
     }
