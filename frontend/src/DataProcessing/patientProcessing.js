@@ -43,9 +43,18 @@ function processPatientData(PatientData) {
                         }
                     }
                 }
-
             }
         }
+        else if (PatientData.telecom){
+            for (const telecom of PatientData.telecom){
+                if (telecom.system && telecom.value){
+                    if(telecom.system === "phone")
+                        PatientContactInfo = telecom.value
+                        break;
+                    }
+                }
+            }
+        
         
         results.push({ PatientName, PatientMRN, PatientContactName, PatientContactInfo });
     }

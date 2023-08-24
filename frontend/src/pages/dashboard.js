@@ -119,10 +119,12 @@ export default function Dashboard(){
 
             // Operations
             await client.request(`Patient/${client.patient.id}`).then((patient) => {
-                //console.log("Raw Patient Data: ", patient);
+                console.log("Raw Patient Data: ", patient);
 
                 const parsedData = processPatientData(patient)[0];
                 
+                parsedData.PatientContactInfo = parsedData.PatientContactInfo.replace(/[-()]/g, '');
+                console.log('contact info: ', parsedData.PatientContactInfo);
                 parsedData.PatientContactInfo = `(${parsedData.PatientContactInfo.slice(0, 3)}) ${parsedData.PatientContactInfo.slice(3, 6)}-${parsedData.PatientContactInfo.slice(6)}`;
 
                 const patient_dataCleanUp = createPatientData(parsedData.PatientName, parsedData.PatientMRN, parsedData.PatientContactName, parsedData.PatientContactInfo);
