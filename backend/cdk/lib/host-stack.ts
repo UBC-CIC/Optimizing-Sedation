@@ -6,10 +6,9 @@ import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecspatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as secretmanager from 'aws-cdk-lib/aws-secretsmanager';
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import * as S3Deployment from "aws-cdk-lib/aws-s3-deployment";
 
-const CONFIG_FILE_PATH = "../config/";
 export class HostStack extends Stack {
     constructor(scope: Construct, id: string, repo: ecr.Repository, props?: StackProps) {
         super(scope, id, props);
@@ -96,6 +95,10 @@ export class HostStack extends Stack {
                   protocol: ecs.Protocol.TCP
                 },
             ],
+            logging: ecs.LogDrivers.awsLogs({
+                streamPrefix: "sedation-log",
+                logRetention: RetentionDays.ONE_YEAR,
+            }),
         });
 
         // Run Application Load Balancer in Fargate as an ECS Service
@@ -115,20 +118,8 @@ export class HostStack extends Stack {
             // healthCheckGracePeriod: Duration.seconds(150)
         });
 
-        // Create an S3 Bucket for Medical Code Configuration
-        const bucket = new s3.Bucket(this, 'ConfigBucket', {
-            publicReadAccess: false,
-            blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-            encryption: s3.BucketEncryption.S3_MANAGED,
-            versioned: false,
-            removalPolicy: RemovalPolicy.DESTROY,
-            bucketName: "sedation-configuration-storage"
-        });
-
-        // Load default configuration file to S3
-        const loadConfigFile = new S3Deployment.BucketDeployment(this, "DeployDefaultConfigFile", {
-            sources: [S3Deployment.Source.asset(CONFIG_FILE_PATH)],
-            destinationBucket: bucket,
-        });
+        // Create an S3 bucket to store the access logs
+        const accessLogsBucket = new s3.Bucket(this, 'AccessLogsBucket');
+        ALBFargateService.loadBalancer.logAccessLogs(accessLogsBucket, "ALB-log");
     }
 }
