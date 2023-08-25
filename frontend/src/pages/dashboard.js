@@ -7,6 +7,7 @@ import SideBar from '../components/sideBar';
 import SearchBar from '../components/searchBar';
 import PatientTable from '../components/table';
 import LoadMoreDataPopUp from '../components/med_diag_popup';
+import ErrorDisplay from '../components/ErrorDisplay';
 
 // Material UI
 import Button from '@mui/material/Button';
@@ -54,19 +55,6 @@ const assessmentTypes = [
     'Additional Assessment'
 ];
 
-// function createPatientMedicalSummaryData(listOfMedications, listOfDiagnoses){
-//     if (listOfMedications != null && !Array.isArray(listOfMedications))
-//         return null;
-    
-//     if (listOfDiagnoses != null && !Array.isArray(listOfDiagnoses))
-//         return null;
-        
-//     return {
-//         listOfMedications, 
-//         listOfDiagnoses
-//     };
-// }
-
 export default function Dashboard(){
     const [clientReady, setClientReady] = useState(false);
     const [text, setText] = useState(undefined);
@@ -88,23 +76,23 @@ export default function Dashboard(){
     const [statusList, setStatusList] = useState(null);
     const [popupTitle, setPopupTitle] = useState(null);
 
+    // Medical Code
     const [totalLOINC_codesData, settotalLOINC_codesData] = useState(null);
     const LOINC_codesData = {}; // Object to hold state variables
 
     const LOINC_codes = Object.entries(imported_LOINC_Codes);
     
-
-    
-
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
     // const [patientData, setPatientData] = useState(null);
-
 
     // Search Filter State Variables
     const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
     const [selectAssessmentType, setSelectAssessmentType] = useState([]);             // Current selection for assessment type
     const [searchInput, setSearchInput] = useState("");
+
+    // Other UI State Variables
+    const [errorMessage, setErrorMsg] = useState(undefined); 
     
     useEffect(() => {
         // Resolver funcitons
@@ -171,6 +159,7 @@ export default function Dashboard(){
     }, []);
 
     function onErr(err) {
+        setErrorMsg(err.message);
         console.log("Error, ", err);
     }
 
@@ -257,91 +246,98 @@ export default function Dashboard(){
         <div>
             {clientReady && dataReady &&
             <React.Fragment>
-                <Grid container spacing={0}>
-                    {/* Left-hand side elements */}
-                    <Grid sm={4} xs={12}>
-                        <div style={{
-                            marginTop: '4vh',
-                        }}>
-                            <SideBar 
-                            patientData = {patientData}
-                            MedicationData = {MedicationData}
-                            DiagnosticReportData = {ConditionData}
-                            ObservationData = {ObservationData}
+                {errorMessage == undefined &&
+                    <Grid container spacing={0}>
+                        {/* Left-hand side elements */}
+                        <Grid sm={4} xs={12}>
+                            <div style={{
+                                marginTop: '4vh',
+                            }}>
+                                <SideBar 
+                                patientData = {patientData}
+                                MedicationData = {MedicationData}
+                                DiagnosticReportData = {ConditionData}
+                                ObservationData = {ObservationData}
 
-                            loadMoreMedicationHandler={loadMoreMedicationHandler}
-                            loadMoreDiagnoseHandler={loadMoreDiagnoseHandler}
-                            />
-                        </div>
-                    </Grid>
+                                loadMoreMedicationHandler={loadMoreMedicationHandler}
+                                loadMoreDiagnoseHandler={loadMoreDiagnoseHandler}
+                                />
+                            </div>
+                        </Grid>
 
-                    {/* Right-hand side elements */}
-                    <Grid sm={8} xs={12}>
-                        <div style={{
-                            marginTop: '4vh',
-                        }}>
-                            {!loadPopup &&
-                            <React.Fragment>
-                                <Grid container spacing={0}>
-                                    <Grid sm={11} >
-                                        <SearchBar 
-                                        statusTypeList={statusTypes}
-                                        selectStatusType = {selectStatusType}
-                                        statusTypeHandle = {statusTypeHandle}
-
-                                        assessmentTypeList={assessmentTypes}
-                                        selectAssessmentType = {selectAssessmentType}
-                                        assessmentTypeHandle = {assessmentTypeHandle}
-
-                                        searchInput = {searchInput}
-
-                                        searchInputHandle = {searchInputHandle}                                     
-                                        />
-                                    </Grid>
-                                    <Grid sm={1} />
-
-                                    <Grid sm={11} >
-                                        <div style={{paddingTop:'2vh'}}>
-                                            <div style={{
-                                                display: 'flex',
-                                                flexFlow: 'row',
-                                                alignItems: 'center',
-                                                flexWrap: 'nowrap',
-                                                justifyContent: 'space-between',
-                                                }}>
-
-                                                <h1>Patient Assessment Information</h1>
-                                            </div>
-                                            
-                                            <PatientTable 
-                                            fhirData = {[]} 
+                        {/* Right-hand side elements */}
+                        <Grid sm={8} xs={12}>
+                            <div style={{
+                                marginTop: '4vh',
+                            }}>
+                                {!loadPopup &&
+                                <React.Fragment>
+                                    <Grid container spacing={0}>
+                                        <Grid sm={11} >
+                                            <SearchBar 
+                                            statusTypeList={statusTypes}
                                             selectStatusType = {selectStatusType}
-                                            selectAssessmentType = {selectAssessmentType}
-                                            searchInput = {searchInput}
-                                            ImmunizationData = {ImmunizationData}
-                                            ObservationData = {ObservationData}
-                                            LabData = {DiagnosticReportData}
-                                            totalLOINC_codesData = {totalLOINC_codesData}
-                                            />
-                                        </div>
-                                    </Grid>
-                                    <Grid sm={1} />
+                                            statusTypeHandle = {statusTypeHandle}
 
-                                    
-                                </Grid>
-                            </React.Fragment>
-                            }
-                            {loadPopup && 
-                            <LoadMoreDataPopUp
-                            parsedTableData = {medDiagData} 
-                            loadData = {true}
-                            statusList = {statusList}
-                            popupTitle = {popupTitle}
-                            setLoadPopup = {setLoadPopup}/>
-                            }
-                        </div>
+                                            assessmentTypeList={assessmentTypes}
+                                            selectAssessmentType = {selectAssessmentType}
+                                            assessmentTypeHandle = {assessmentTypeHandle}
+
+                                            searchInput = {searchInput}
+
+                                            searchInputHandle = {searchInputHandle}                                     
+                                            />
+                                        </Grid>
+                                        <Grid sm={1} />
+
+                                        <Grid sm={11} >
+                                            <div style={{paddingTop:'2vh'}}>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    flexFlow: 'row',
+                                                    alignItems: 'center',
+                                                    flexWrap: 'nowrap',
+                                                    justifyContent: 'space-between',
+                                                    }}>
+
+                                                    <h1>Patient Assessment Information</h1>
+                                                </div>
+                                                
+                                                <PatientTable 
+                                                fhirData = {[]} 
+                                                selectStatusType = {selectStatusType}
+                                                selectAssessmentType = {selectAssessmentType}
+                                                searchInput = {searchInput}
+                                                ImmunizationData = {ImmunizationData}
+                                                ObservationData = {ObservationData}
+                                                LabData = {DiagnosticReportData}
+                                                totalLOINC_codesData = {totalLOINC_codesData}
+                                                />
+                                            </div>
+                                        </Grid>
+                                        <Grid sm={1} />
+
+                                        
+                                    </Grid>
+                                </React.Fragment>
+                                }
+                                {loadPopup && 
+                                <LoadMoreDataPopUp
+                                parsedTableData = {medDiagData} 
+                                loadData = {true}
+                                statusList = {statusList}
+                                popupTitle = {popupTitle}
+                                setLoadPopup = {setLoadPopup}/>
+                                }
+                            </div>
+                        </Grid>
                     </Grid>
-                </Grid>
+                }
+
+                {errorMessage != undefined && 
+                    <ErrorDisplay msg={errorMessage} />
+                    // <p>Error Dashboard: {errorMessage}</p>
+                }
             </React.Fragment>
             }
 
