@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
-import * as imported_LOINC_Codes from '../DataProcessing/codes/LOINC_codes';
+import imported_LOINC_Codes from '../config/codes.json';
 
 // Components
 import SideBar from '../components/sideBar';
@@ -124,9 +124,9 @@ export default function Dashboard(){
                 const parsedData = processPatientData(patient)[0];
                 
                 parsedData.PatientContactInfo = parsedData.PatientContactInfo.replace(/[-()]/g, '');
-                console.log('contact info: ', parsedData.PatientContactInfo);
-                parsedData.PatientContactInfo = `(${parsedData.PatientContactInfo.slice(0, 3)}) ${parsedData.PatientContactInfo.slice(3, 6)}-${parsedData.PatientContactInfo.slice(6)}`;
-
+                if (parsedData.PatientContactInfo != "N/A"){
+                    parsedData.PatientContactInfo = `(${parsedData.PatientContactInfo.slice(0, 3)}) ${parsedData.PatientContactInfo.slice(3, 6)}-${parsedData.PatientContactInfo.slice(6)}`;
+                }
                 const patient_dataCleanUp = createPatientData(parsedData.PatientName, parsedData.PatientMRN, parsedData.PatientContactName, parsedData.PatientContactInfo);
                 setPatientData(patient_dataCleanUp);
             }).catch(onErr);
