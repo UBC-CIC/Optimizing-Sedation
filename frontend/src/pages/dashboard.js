@@ -12,6 +12,7 @@ import ErrorDisplay from '../components/ErrorDisplay';
 // Material UI
 import Button from '@mui/material/Button';
 import {Grid, Link, Typography} from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // Data processing modules
 import processPatientData from '../DataProcessing/patientProcessing';
@@ -159,8 +160,9 @@ export default function Dashboard(){
     }, []);
 
     function onErr(err) {
+        setClientReady(false);
         setErrorMsg(err.message);
-        console.log("Error, ", err);
+        console.log(err);
     }
 
     //// Handler Functions////
@@ -244,109 +246,138 @@ export default function Dashboard(){
 
     return(
         <div>
-            {clientReady && dataReady &&
-            <React.Fragment>
-                {errorMessage == undefined &&
-                    <Grid container spacing={0}>
-                        {/* Left-hand side elements */}
-                        <Grid sm={4} xs={12}>
-                            <div style={{
-                                marginTop: '4vh',
-                            }}>
-                                <SideBar 
-                                patientData = {patientData}
-                                MedicationData = {MedicationData}
-                                DiagnosticReportData = {ConditionData}
-                                ObservationData = {ObservationData}
+            {!clientReady && errorMessage == undefined &&
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexWrap: 'nowrap',
+                    height: '100vh',
+                    backgroundColor: 'lightcyan',
+                    gap: '10px',
+                }}>
+                    <Typography variant={"h5"}>Welcome to</Typography>
+                    <Typography variant={"h4"} fontWeight={100}>Optimizing Sedation Dashboard</Typography>
 
-                                loadMoreMedicationHandler={loadMoreMedicationHandler}
-                                loadMoreDiagnoseHandler={loadMoreDiagnoseHandler}
-                                />
-                            </div>
-                        </Grid>
+                    <CircularProgress color="inherit"/>
+                    <Typography variant={"subtitle"} color="inherit">Trying to connect to the server.</Typography>
 
-                        {/* Right-hand side elements */}
-                        <Grid sm={8} xs={12}>
-                            <div style={{
-                                marginTop: '4vh',
-                            }}>
-                                {!loadPopup &&
-                                <React.Fragment>
-                                    <Grid container spacing={0}>
-                                        <Grid sm={11} >
-                                            <SearchBar 
-                                            statusTypeList={statusTypes}
-                                            selectStatusType = {selectStatusType}
-                                            statusTypeHandle = {statusTypeHandle}
+                    <Typography variant={"h6"} color="blue">Make sure to launch the dashboard from an EHR.</Typography>
+                </div>
+            }
 
-                                            assessmentTypeList={assessmentTypes}
-                                            selectAssessmentType = {selectAssessmentType}
-                                            assessmentTypeHandle = {assessmentTypeHandle}
+            {clientReady && !dataReady && errorMessage == undefined && 
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexWrap: 'nowrap',
+                    height: '100vh',
+                    backgroundColor: 'lightcyan',
+                    gap: '10px',
+                }}>
+                    <Typography variant={"h5"}>Welcome to</Typography>
+                    <Typography variant={"h4"} fontWeight={100}>Optimizing Sedation Dashboard</Typography>
 
-                                            searchInput = {searchInput}
+                    <CircularProgress color="success"/>
+                    <Typography variant={"subtitle"} color="green">Fetching data from server.</Typography>
 
-                                            searchInputHandle = {searchInputHandle}                                     
-                                            />
-                                        </Grid>
-                                        <Grid sm={1} />
+                    <Typography variant={"h6"} color="blue">This might take some time.</Typography>
+                </div>
+            }
 
-                                        <Grid sm={11} >
-                                            <div style={{paddingTop:'2vh'}}>
-                                                <div style={{
-                                                    display: 'flex',
-                                                    flexFlow: 'row',
-                                                    alignItems: 'center',
-                                                    flexWrap: 'nowrap',
-                                                    justifyContent: 'space-between',
-                                                    }}>
+            {clientReady && dataReady && errorMessage == undefined &&
+                <Grid container spacing={0}>
+                    {/* Left-hand side elements */}
+                    <Grid sm={4} xs={12}>
+                        <div style={{
+                            marginTop: '4vh',
+                        }}>
+                            <SideBar 
+                            patientData = {patientData}
+                            MedicationData = {MedicationData}
+                            DiagnosticReportData = {ConditionData}
+                            ObservationData = {ObservationData}
 
-                                                    <h1>Patient Assessment Information</h1>
-                                                </div>
-                                                
-                                                <PatientTable 
-                                                fhirData = {[]} 
-                                                selectStatusType = {selectStatusType}
-                                                selectAssessmentType = {selectAssessmentType}
-                                                searchInput = {searchInput}
-                                                ImmunizationData = {ImmunizationData}
-                                                ObservationData = {ObservationData}
-                                                LabData = {DiagnosticReportData}
-                                                totalLOINC_codesData = {totalLOINC_codesData}
-                                                />
-                                            </div>
-                                        </Grid>
-                                        <Grid sm={1} />
-
-                                        
-                                    </Grid>
-                                </React.Fragment>
-                                }
-                                {loadPopup && 
-                                <LoadMoreDataPopUp
-                                parsedTableData = {medDiagData} 
-                                loadData = {true}
-                                statusList = {statusList}
-                                popupTitle = {popupTitle}
-                                setLoadPopup = {setLoadPopup}/>
-                                }
-                            </div>
-                        </Grid>
+                            loadMoreMedicationHandler={loadMoreMedicationHandler}
+                            loadMoreDiagnoseHandler={loadMoreDiagnoseHandler}
+                            />
+                        </div>
                     </Grid>
-                }
 
-                {errorMessage != undefined && 
-                    <ErrorDisplay msg={errorMessage} />
-                    // <p>Error Dashboard: {errorMessage}</p>
-                }
-            </React.Fragment>
+                    {/* Right-hand side elements */}
+                    <Grid sm={8} xs={12}>
+                        <div style={{
+                            marginTop: '4vh',
+                        }}>
+                            {!loadPopup &&
+                            <React.Fragment>
+                                <Grid container spacing={0}>
+                                    <Grid sm={11} >
+                                        <SearchBar 
+                                        statusTypeList={statusTypes}
+                                        selectStatusType = {selectStatusType}
+                                        statusTypeHandle = {statusTypeHandle}
+
+                                        assessmentTypeList={assessmentTypes}
+                                        selectAssessmentType = {selectAssessmentType}
+                                        assessmentTypeHandle = {assessmentTypeHandle}
+
+                                        searchInput = {searchInput}
+
+                                        searchInputHandle = {searchInputHandle}                                     
+                                        />
+                                    </Grid>
+                                    <Grid sm={1} />
+
+                                    <Grid sm={11} >
+                                        <div style={{paddingTop:'2vh'}}>
+                                            <div style={{
+                                                display: 'flex',
+                                                flexFlow: 'row',
+                                                alignItems: 'center',
+                                                flexWrap: 'nowrap',
+                                                justifyContent: 'space-between',
+                                                }}>
+
+                                                <h1>Patient Assessment Information</h1>
+                                            </div>
+                                            
+                                            <PatientTable 
+                                            fhirData = {[]} 
+                                            selectStatusType = {selectStatusType}
+                                            selectAssessmentType = {selectAssessmentType}
+                                            searchInput = {searchInput}
+                                            ImmunizationData = {ImmunizationData}
+                                            ObservationData = {ObservationData}
+                                            LabData = {DiagnosticReportData}
+                                            totalLOINC_codesData = {totalLOINC_codesData}
+                                            />
+                                        </div>
+                                    </Grid>
+                                    <Grid sm={1} />
+
+                                    
+                                </Grid>
+                            </React.Fragment>
+                            }
+                            {loadPopup && 
+                            <LoadMoreDataPopUp
+                            parsedTableData = {medDiagData} 
+                            loadData = {true}
+                            statusList = {statusList}
+                            popupTitle = {popupTitle}
+                            setLoadPopup = {setLoadPopup}/>
+                            }
+                        </div>
+                    </Grid>
+                </Grid>
             }
 
-            {!clientReady && 
-                <h1>Waiting for server to response...</h1>
-            }
-            
-            {!dataReady && 
-                <h1>Fetching data from server...</h1>
+            {errorMessage != undefined && 
+                <ErrorDisplay msg={errorMessage} />
             }
         </div>
     );

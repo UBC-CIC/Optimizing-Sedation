@@ -1,11 +1,6 @@
-import React, { useEffect } from 'react';
 import {Typography} from '@mui/material';
 
 export default function ErrorDisplay({msg}) {
-    useEffect(() => {
-        console.log(msg);
-    },[msg]);
-
     return (
         <div style={{
             display: 'flex',
