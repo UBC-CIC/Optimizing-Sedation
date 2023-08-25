@@ -77,8 +77,8 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                         marginTop: '10vh'
                     }}>
                         <Typography variant={"subtitle1"}>Contact</Typography>
-                        <Typography variant={"h6"}>{patientData.contactFullname}</Typography>
-                        <Typography variant={"h6"}>{patientData.contactNumber}</Typography>
+                        <Typography variant={"h6"}>Name: {patientData.contactFullname}</Typography>
+                        <Typography variant={"h6"}>Info: {patientData.contactNumber}</Typography>
                     </div>
                 </Grid>
                 <Grid sm={1} xs={0}/>
