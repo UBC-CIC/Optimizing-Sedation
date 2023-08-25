@@ -119,10 +119,12 @@ export default function Dashboard(){
 
             // Operations
             await client.request(`Patient/${client.patient.id}`).then((patient) => {
-                //console.log("Raw Patient Data: ", patient);
+                console.log("Raw Patient Data: ", patient);
 
                 const parsedData = processPatientData(patient)[0];
                 
+                parsedData.PatientContactInfo = parsedData.PatientContactInfo.replace(/[-()]/g, '');
+                console.log('contact info: ', parsedData.PatientContactInfo);
                 parsedData.PatientContactInfo = `(${parsedData.PatientContactInfo.slice(0, 3)}) ${parsedData.PatientContactInfo.slice(3, 6)}-${parsedData.PatientContactInfo.slice(6)}`;
 
                 const patient_dataCleanUp = createPatientData(parsedData.PatientName, parsedData.PatientMRN, parsedData.PatientContactName, parsedData.PatientContactInfo);
@@ -133,8 +135,8 @@ export default function Dashboard(){
             fetchData(`MedicationRequest/?patient=${client.patient.id}`, processMedicationData, setMedicationData);
             fetchData(`Condition/?patient=${client.patient.id}`, processConditionData, setConditionData);
             fetchData(`DiagnosticReport/?patient=${client.patient.id}`, processDiagnosticReportData, setDiagnosticReportData);
+            //fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
             fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
-            fetchData(`Observation/?patient=${client.patient.id}`, processObservationData, setLabData);
             settotalLOINC_codesData(fetchCodeData(LOINC_codes));
 
             function fetchData(url, processData, setData, accumulatedResults = []) {
@@ -157,8 +159,9 @@ export default function Dashboard(){
 
             function fetchCodeData(LOINC_codes){
                 LOINC_codes.map(([name, array]) => {
-                    client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => {    
-                        LOINC_codesData[`${name}`] = processObservationData(Bundle); // Dynamically assign variable
+                    LOINC_codesData[`${name}`] = null;
+                    client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => { 
+                            LOINC_codesData[`${name}`] = processAllObservationData(Bundle); // Dynamically assign variable
                     }).catch(onErr);
                 });
                 return LOINC_codesData;
