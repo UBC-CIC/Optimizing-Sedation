@@ -2,7 +2,7 @@ function processConditionData(ConditionData) {
     const results = [];
     const uniqueEntries = new Set();
   
-    if (ConditionData && ConditionData.entry[0].resource) {
+    if (ConditionData && ConditionData.entry) {
       ConditionData.entry.forEach((entry) => {
         const ConditionType =
           entry.resource.code.coding && entry.resource.code.coding.length > 0

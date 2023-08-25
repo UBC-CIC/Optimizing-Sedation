@@ -4,7 +4,7 @@ function processObservationData(ObservationData) {
     const results = [];
     const uniqueEntries = new Set();
   
-    if (ObservationData && ObservationData.entry[0].resource) {
+    if (ObservationData && ObservationData.entry) {
       ObservationData.entry.forEach((entry) => {
         if (entry.resource.category) {
           if (entry.resource.category[0].coding) {
@@ -43,7 +43,7 @@ function processAllObservationData(ObservationData) {
   const results = [];
   const uniqueEntries = new Set();
 
-  if (ObservationData && ObservationData.entry[0].resource) {
+  if (ObservationData && ObservationData.entry) {
     ObservationData.entry.forEach((entry) => {
 
       const en = getReadableObservation(entry);

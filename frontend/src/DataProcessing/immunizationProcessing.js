@@ -2,7 +2,7 @@ function processImmunizationData(ImmunizationData) {
   const results = [];
   const uniqueEntries = new Set();
 
-  if (ImmunizationData && ImmunizationData.entry[0].resource) {
+  if (ImmunizationData && ImmunizationData.entry) {
     ImmunizationData.entry.forEach((entry) => {
       const ImmunizationType = entry.resource
         ? entry.resource.vaccineCode.text
