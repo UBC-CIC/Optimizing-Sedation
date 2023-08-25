@@ -118,8 +118,8 @@ export class HostStack extends Stack {
             // healthCheckGracePeriod: Duration.seconds(150)
         });
 
-        // Create an S3 bucket to store the access logs
-        const accessLogsBucket = new s3.Bucket(this, 'AccessLogsBucket');
-        ALBFargateService.loadBalancer.logAccessLogs(accessLogsBucket, "ALB-log");
+        // Create an S3 bucket to store the access logs for debugging purpose
+        // const accessLogsBucket = new s3.Bucket(this, 'AccessLogsBucket');
+        // ALBFargateService.loadBalancer.logAccessLogs(accessLogsBucket, "ALB-log");
     }
 }
