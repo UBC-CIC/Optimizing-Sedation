@@ -103,8 +103,8 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
             return null;
         });
         
-        if(labProcessedData != null){
-            //console.log("labProcessedData: ", labProcessedData);
+        if(labProcessedData != null && labProcessedData.length != 0){
+            console.log("labProcessedData: ", labProcessedData);
             const observationHeader = ["Lab Type", "Value", "Date"];
             data.push(createData("Labs", "Done", labProcessedData, observationHeader));
         } else {
@@ -115,7 +115,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
     }
 
     // Convert ImmunizationData
-    if(ImmunizationData != null){
+    if(ImmunizationData != null && ImmunizationData.length != 0){
         const vaccination = ImmunizationData.map(row =>{
             const modified = row.ImmunizationType.charAt(0).toUpperCase() + row.ImmunizationType.slice(1);
             return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime && (row.ImmunizationTime.split('T'))[0] });
@@ -129,7 +129,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
 
     for (const property in totalLOINC_codesData) {
         if (totalLOINC_codesData.hasOwnProperty(property)) {
-            if (totalLOINC_codesData[property] != null) {
+            if (totalLOINC_codesData[property] != null && totalLOINC_codesData[property].length != 0) {
                 const observationData = totalLOINC_codesData[property].map(row => {
                     const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
                     return ({ title: modified, col1: row.ObservationValue, col2: row.ObservationTime });
