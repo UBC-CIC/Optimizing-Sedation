@@ -7,7 +7,6 @@ import SideBar from '../components/sideBar';
 import SearchBar from '../components/searchBar';
 import PatientTable from '../components/table';
 import LoadMoreDataPopUp from '../components/med_diag_popup';
-import LoadRawDataDisplay from '../components/loadRawDataDisplay';
 
 // Material UI
 import Button from '@mui/material/Button';
@@ -88,9 +87,6 @@ export default function Dashboard(){
     const [medDiagData, setMedDiagData] = useState([]);
     const [statusList, setStatusList] = useState(null);
     const [popupTitle, setPopupTitle] = useState(null);
-
-    // View Raw Data states variables
-    const [loadRawData, setLoadRawData] = useState(false);
 
     const [totalLOINC_codesData, settotalLOINC_codesData] = useState(null);
     const LOINC_codesData = {}; // Object to hold state variables
@@ -284,7 +280,7 @@ export default function Dashboard(){
                         <div style={{
                             marginTop: '4vh',
                         }}>
-                            {!loadPopup && !loadRawData &&
+                            {!loadPopup &&
                             <React.Fragment>
                                 <Grid container spacing={0}>
                                     <Grid sm={11} >
@@ -315,7 +311,6 @@ export default function Dashboard(){
                                                 }}>
 
                                                 <h1>Patient Assessment Information</h1>
-                                                <Link onClick={() => {setLoadRawData(true)}}>View Raw Data</Link>
                                             </div>
                                             
                                             <PatientTable 
@@ -335,15 +330,6 @@ export default function Dashboard(){
                                     
                                 </Grid>
                             </React.Fragment>
-                            }
-                            {!loadPopup && loadRawData && 
-                                <LoadRawDataDisplay
-                                observationData = {ObservationData}
-                                diagnosticData = {DiagnosticReportData}
-                                conditionData = {ConditionData}
-                                MedicationData = {MedicationData}
-                                setLoadRawData = {setLoadRawData}
-                                />
                             }
                             {loadPopup && 
                             <LoadMoreDataPopUp
