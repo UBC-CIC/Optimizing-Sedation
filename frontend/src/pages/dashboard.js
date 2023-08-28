@@ -70,7 +70,6 @@ export default function Dashboard(){
     const [LabData, setLabData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
 
-
     // Popup states variables
     const [loadPopup, setLoadPopup] = useState(false);
     const [medDiagData, setMedDiagData] = useState([]);
