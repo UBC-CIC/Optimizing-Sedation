@@ -39,7 +39,7 @@ function createData(assessment, status, others, tableHeader){
         return null;
     
     if(others != null){
-        console.log("createData.other: ", others);
+        //console.log("createData.other: ", others);
         const isValidFormat = others.every(item => {
             let output = typeof item.title === 'string';
             
@@ -63,7 +63,7 @@ function createData(assessment, status, others, tableHeader){
     };
 }
 
-function convertData(ImmunizationData, LabData, ObservationData){
+function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData){
     let data = [];
     /**
      * 'LabData' Structure
@@ -81,7 +81,7 @@ function convertData(ImmunizationData, LabData, ObservationData){
     data.push(createData("Labs", "Not done", lab)); */
 
     // Convert lab data
-    if(LabData != null){
+    if(LabData != null && ObservationData != null){
         const labProcessedData = LabData.map(row =>{
             const modifiedTitle = (row.title) && (row.title.charAt(0).toUpperCase() + row.title.slice(1));
             if(row.references){
@@ -104,7 +104,7 @@ function convertData(ImmunizationData, LabData, ObservationData){
         });
         
         if(labProcessedData != null){
-            console.log("labProcessedData: ", labProcessedData);
+            //console.log("labProcessedData: ", labProcessedData);
             const observationHeader = ["Lab Type", "Value", "Date"];
             data.push(createData("Labs", "Done", labProcessedData, observationHeader));
         } else {
@@ -122,21 +122,28 @@ function convertData(ImmunizationData, LabData, ObservationData){
         });
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
-        data.push(createData("Vaccinations", "Up to date", vaccination, vaccinationHeader));
+        data.push(createData("Vaccinations", "Done", vaccination, vaccinationHeader));
     } else if (ImmunizationData == null || ImmunizationData == []) {
         data.push(createData("Vaccinations", "No Data", null, null));
     }
 
+    for (const property in totalLOINC_codesData) {
+        if (totalLOINC_codesData.hasOwnProperty(property)) {
+            if (totalLOINC_codesData[property] != null) {
+                const observationData = totalLOINC_codesData[property].map(row => {
+                    const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
+                    return ({ title: modified, col1: row.ObservationValue, col2: row.ObservationTime });
+                });
     
-    data.push(createData("ECG", "No Data", null));
-    data.push(createData("EEG", "No Data", null));
-    data.push(createData("ENT", "No Data", null));
-    data.push(createData("Ophthalmologist", "No Data", null));
-    data.push(createData("ASD", "No Data", null));
-    data.push(createData("Previous Sedation", "No Data", null));
-    data.push(createData("Dentistry", "No Data", null));
+                const header = ["Result Type", "Value", "Date"];
+                data.push(createData(property, "Done", observationData, header));
+            } else {
+                data.push(createData(property, "No Data", null, null));
+            }
+        }
+    }
 
-    console.log("data: ", data);
+    //console.log("data: ", data);
     return data;
 }
 // Custome Row Design
@@ -266,7 +273,7 @@ function Row(props){
     )
 }
 
-export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData}){
+export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData, totalLOINC_codesData}){
     // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
 
     // Convert input data into current format of this table
@@ -275,7 +282,8 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
     //         <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
     //     );
     
-    const data = convertData(ImmunizationData, LabData, ObservationData);
+
+    const data = convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
     //console.log("data: ", data);
 
     const style = {
