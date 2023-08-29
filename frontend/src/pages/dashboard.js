@@ -80,7 +80,7 @@ export default function Dashboard(){
     const [totalLOINC_codesData, settotalLOINC_codesData] = useState(null);
     const LOINC_codesData = {}; // Object to hold state variables
 
-    const LOINC_codes = Object.entries(imported_LOINC_Codes);
+    const LOINC_codes = imported_LOINC_Codes;
     
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
@@ -142,11 +142,12 @@ export default function Dashboard(){
             }
 
             function fetchCodeData(LOINC_codes){
-                LOINC_codes.map(([name, array]) => {
-                    LOINC_codesData[`${name}`] = null;
-                    client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => { 
-                            LOINC_codesData[`${name}`] = processAllObservationData(Bundle); // Dynamically assign variable
-                    }).catch(onErr);
+                console.log("Codes:  ", LOINC_codes);
+                LOINC_codes.forEach((entry) => {
+                    LOINC_codesData[`${entry.name}`] = null;
+                        client.request(`Observation/?patient=${client.patient.id}&code=${entry.codes}`).then((Bundle) => { 
+                                LOINC_codesData[`${entry.name}`] = processAllObservationData(Bundle); // Dynamically assign variable
+                        }).catch(onErr);
                 });
                 return LOINC_codesData;
             }
