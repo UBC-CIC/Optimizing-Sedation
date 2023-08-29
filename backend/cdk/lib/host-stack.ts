@@ -1,4 +1,4 @@
-import { Stack, StackProps, RemovalPolicy} from 'aws-cdk-lib';
+import { Stack, StackProps, RemovalPolicy, aws_cloudfront_origins} from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecs from "aws-cdk-lib/aws-ecs";
@@ -7,6 +7,8 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecspatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as secretmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 
 export class HostStack extends Stack {
@@ -47,8 +49,16 @@ export class HostStack extends Stack {
             allowAllOutbound: true,
             disableInlineRules: true,
             vpc: vpc,
-            securityGroupName: "cdkVpcSecurityGroup",
+            securityGroupName: "FargateClusterSecurityGroup",
+            description: "Security group for ALB; Allow all outbound rule, but only cloudfront for inbound."
         });
+
+        // // Add an inbound rule to allow incoming traffic on a specific port
+        // securityGroup.addIngressRule(
+        //     ec2.Peer.anyIpv4(), 
+        //     ec2.Port.tcp(80), 
+        //     'Allow HTTP traffic');
+
         
         // Create ECS Cluster which use to run Task on ECS Farget instance
         const cluster = new ecs.Cluster(this, "fargateCluster", {
@@ -115,8 +125,30 @@ export class HostStack extends Stack {
                 subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
             },
             loadBalancerName: "Dashboard-LoadBalancer",
-            // healthCheckGracePeriod: Duration.seconds(150)
         });
+
+        // Create ALB as CloudFront Origin
+        const origin_ALB = new origins.LoadBalancerV2Origin(ALBFargateService.loadBalancer,{
+            protocolPolicy: cloudfront.OriginProtocolPolicy.HTTP_ONLY
+        });
+        
+        // Create a CloudFront distribution with ALB as origin
+        const CFDistribution = new cloudfront.Distribution(this, 'CloudFront-Distribution', {
+            defaultBehavior: {
+                origin: origin_ALB,
+            },
+            comment: "CloudFront distribution for ALB as origin",
+            // webAclId: // Add WAF configuration
+        });
+
+        // Add behaviour for /smartAuth to forward all request to origin
+        CFDistribution.addBehavior('/smartAuth*', origin_ALB, {
+            originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER
+        });
+
+        // Craete a security group for ALB to only accept CloudFront
+
+        // ALBFargateService.loadBalancer.connections.allowFrom(CFDistribution, ec2.Port.tcp(80), 'Allow request from CloudFront on port 80');
 
         // Create an S3 bucket to store the access logs for debugging purpose
         // const accessLogsBucket = new s3.Bucket(this, 'AccessLogsBucket');
