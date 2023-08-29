@@ -7,11 +7,12 @@ import SideBar from '../components/sideBar';
 import SearchBar from '../components/searchBar';
 import PatientTable from '../components/table';
 import LoadMoreDataPopUp from '../components/med_diag_popup';
-import LoadRawDataDisplay from '../components/loadRawDataDisplay';
+import ErrorDisplay from '../components/ErrorDisplay';
 
 // Material UI
 import Button from '@mui/material/Button';
 import {Grid, Link, Typography} from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // Data processing modules
 import processPatientData from '../DataProcessing/patientProcessing';
@@ -55,19 +56,6 @@ const assessmentTypes = [
     'Additional Assessment'
 ];
 
-// function createPatientMedicalSummaryData(listOfMedications, listOfDiagnoses){
-//     if (listOfMedications != null && !Array.isArray(listOfMedications))
-//         return null;
-    
-//     if (listOfDiagnoses != null && !Array.isArray(listOfDiagnoses))
-//         return null;
-        
-//     return {
-//         listOfMedications, 
-//         listOfDiagnoses
-//     };
-// }
-
 export default function Dashboard(){
     const [clientReady, setClientReady] = useState(false);
     const [text, setText] = useState(undefined);
@@ -82,33 +70,29 @@ export default function Dashboard(){
     const [LabData, setLabData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
 
-
     // Popup states variables
     const [loadPopup, setLoadPopup] = useState(false);
     const [medDiagData, setMedDiagData] = useState([]);
     const [statusList, setStatusList] = useState(null);
     const [popupTitle, setPopupTitle] = useState(null);
 
-    // View Raw Data states variables
-    const [loadRawData, setLoadRawData] = useState(false);
-
+    // Medical Code
     const [totalLOINC_codesData, settotalLOINC_codesData] = useState(null);
     const LOINC_codesData = {}; // Object to hold state variables
 
     const LOINC_codes = Object.entries(imported_LOINC_Codes);
     
-
-    
-
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
     // const [patientData, setPatientData] = useState(null);
-
 
     // Search Filter State Variables
     const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
     const [selectAssessmentType, setSelectAssessmentType] = useState([]);             // Current selection for assessment type
     const [searchInput, setSearchInput] = useState("");
+
+    // Other UI State Variables
+    const [errorMessage, setErrorMsg] = useState(undefined); 
     
     useEffect(() => {
         // Resolver funcitons
@@ -175,7 +159,9 @@ export default function Dashboard(){
     }, []);
 
     function onErr(err) {
-        console.log("Error, ", err);
+        setClientReady(false);
+        setErrorMsg(err.message);
+        console.log(err);
     }
 
     //// Handler Functions////
@@ -259,8 +245,49 @@ export default function Dashboard(){
 
     return(
         <div>
-            {clientReady && dataReady &&
-            <React.Fragment>
+            {!clientReady && errorMessage == undefined &&
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexWrap: 'nowrap',
+                    height: '100vh',
+                    backgroundColor: 'lightcyan',
+                    gap: '10px',
+                }}>
+                    <Typography variant={"h5"}>Welcome to</Typography>
+                    <Typography variant={"h4"} fontWeight={100}>Optimizing Sedation Dashboard</Typography>
+
+                    <CircularProgress color="inherit"/>
+                    <Typography variant={"subtitle"} color="inherit">Trying to connect to the server.</Typography>
+
+                    <Typography variant={"h6"} color="blue">Make sure to launch the dashboard from an EHR.</Typography>
+                </div>
+            }
+
+            {clientReady && !dataReady && errorMessage == undefined && 
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexWrap: 'nowrap',
+                    height: '100vh',
+                    backgroundColor: 'lightcyan',
+                    gap: '10px',
+                }}>
+                    <Typography variant={"h5"}>Welcome to</Typography>
+                    <Typography variant={"h4"} fontWeight={100}>Optimizing Sedation Dashboard</Typography>
+
+                    <CircularProgress color="success"/>
+                    <Typography variant={"subtitle"} color="green">Fetching data from server.</Typography>
+
+                    <Typography variant={"h6"} color="blue">This might take some time.</Typography>
+                </div>
+            }
+
+            {clientReady && dataReady && errorMessage == undefined &&
                 <Grid container spacing={0}>
                     {/* Left-hand side elements */}
                     <Grid sm={4} xs={12}>
@@ -284,7 +311,7 @@ export default function Dashboard(){
                         <div style={{
                             marginTop: '4vh',
                         }}>
-                            {!loadPopup && !loadRawData &&
+                            {!loadPopup &&
                             <React.Fragment>
                                 <Grid container spacing={0}>
                                     <Grid sm={11} >
@@ -315,7 +342,6 @@ export default function Dashboard(){
                                                 }}>
 
                                                 <h1>Patient Assessment Information</h1>
-                                                <Link onClick={() => {setLoadRawData(true)}}>View Raw Data</Link>
                                             </div>
                                             
                                             <PatientTable 
@@ -336,15 +362,6 @@ export default function Dashboard(){
                                 </Grid>
                             </React.Fragment>
                             }
-                            {!loadPopup && loadRawData && 
-                                <LoadRawDataDisplay
-                                observationData = {ObservationData}
-                                diagnosticData = {DiagnosticReportData}
-                                conditionData = {ConditionData}
-                                MedicationData = {MedicationData}
-                                setLoadRawData = {setLoadRawData}
-                                />
-                            }
                             {loadPopup && 
                             <LoadMoreDataPopUp
                             parsedTableData = {medDiagData} 
@@ -356,15 +373,10 @@ export default function Dashboard(){
                         </div>
                     </Grid>
                 </Grid>
-            </React.Fragment>
             }
 
-            {!clientReady && 
-                <h1>Waiting for server to response...</h1>
-            }
-            
-            {!dataReady && 
-                <h1>Fetching data from server...</h1>
+            {errorMessage != undefined && 
+                <ErrorDisplay msg={errorMessage} />
             }
         </div>
     );
