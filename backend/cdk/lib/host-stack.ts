@@ -9,10 +9,13 @@ import * as secretmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
+import * as wafClassic from 'aws-cdk-lib/aws-waf';
+
 import * as s3 from 'aws-cdk-lib/aws-s3';
 
 export class HostStack extends Stack {
-    constructor(scope: Construct, id: string, repo: ecr.Repository, props?: StackProps) {
+    constructor(scope: Construct, id: string, repo: ecr.Repository, WAFInstance: wafv2.CfnWebACL, props?: StackProps) {
         super(scope, id, props);
 
         // Create a VPC stack
@@ -127,6 +130,56 @@ export class HostStack extends Stack {
             loadBalancerName: "Dashboard-LoadBalancer",
         });
 
+        // Create WAFvs As web ACL using AWSManagedRulesCommonRuleSet
+        // More info on https://aws.amazon.com/blogs/devops/easily-protect-your-aws-cdk-defined-infrastructure-with-aws-wafv2/
+        // const webACL = new wafv2.CfnWebACL(this, 'Sedation-WebACL', {
+        //     defaultAction: {
+        //         allow: {}
+        //     },
+        //     scope: 'CLOUDFRONT',
+        //     visibilityConfig: {
+        //         cloudWatchMetricsEnabled: true,
+        //         metricName:'MetricForWebACLCDK',
+        //         sampledRequestsEnabled: true,
+        //     },
+        //     name: 'Sedation-WAF-WebACL',
+        //     description: 'This WAF-WebACL run on basic rule, AWSManagedRulesCommonRuleSet.',
+        //     rules: [{
+        //         name: 'AWS-AWSManagedRulesCommonRuleSet',
+        //         priority: 0,
+        //         statement: {
+        //             managedRuleGroupStatement: {
+        //             name:'AWSManagedRulesCommonRuleSet',
+        //             vendorName:'AWS'
+        //             }
+        //         },
+        //         visibilityConfig: {
+        //             cloudWatchMetricsEnabled: true,
+        //             sampledRequestsEnabled: true,
+        //             metricName:'AWS-AWSManagedRulesCommonRuleSet',
+        //         },
+        //         overrideAction: {
+        //             none: {}
+        //         },
+        //     }]
+        // });
+
+        // const webACLClassic = new wafClassic.CfnWebACL(this, 'WAF-Classic-WebACL', {
+        //     defaultAction: {
+        //         type: 'ALLOW'
+        //     },
+        //     name: 'Sedation-WAF-WebACL',
+        //     metricName: 'SedationWAFWebACLMetric',
+        //     rules: [{
+        //         priority: 0,
+        //         ruleId: 'AWSManagedRulesCommonRuleSet',
+        //         action: {
+        //             type: 'BLOCK'
+        //         },
+        //     }]
+        // });
+
+
         // Create ALB as CloudFront Origin
         const origin_ALB = new origins.LoadBalancerV2Origin(ALBFargateService.loadBalancer,{
             protocolPolicy: cloudfront.OriginProtocolPolicy.HTTP_ONLY
@@ -138,7 +191,7 @@ export class HostStack extends Stack {
                 origin: origin_ALB,
             },
             comment: "CloudFront distribution for ALB as origin",
-            // webAclId: // Add WAF configuration
+            webAclId: WAFInstance.attrArn,
         });
 
         // Add behaviour for /smartAuth to forward all request to origin
