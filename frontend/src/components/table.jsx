@@ -184,9 +184,9 @@ function Row(props){
                 <StyledTableCell component="th" scope="row">{data.assessment}</StyledTableCell>
                 <StyledTableCell align="center">
                     <Grid container style={{alignItems: 'center'}}>
-                        <Grid sm={11} style={{ textAlign: 'left' }}>
-                            {data.status}
-                        </Grid>
+                    <Grid sm={11} style={{ textAlign: 'left', color: data.status === 'Data Available' ? 'green' : data.status === 'No Data' ? 'red' : 'inherit' }}>
+                        {data.status}
+                    </Grid>
                         <Grid sm={1}>
                         {data.others != null &&
                             <IconButton
