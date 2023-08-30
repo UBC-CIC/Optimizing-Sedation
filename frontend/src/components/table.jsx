@@ -106,7 +106,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
         if(labProcessedData != null && labProcessedData.length != 0){
             console.log("labProcessedData: ", labProcessedData);
             const observationHeader = ["Lab Type", "Value", "Date"];
-            data.push(createData("Labs", "Done", labProcessedData, observationHeader));
+            data.push(createData("Labs", "Data Available", labProcessedData, observationHeader));
         } else {
             data.push(createData("Labs", "No Data", null, null));
         }
@@ -122,7 +122,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
         });
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
-        data.push(createData("Vaccinations", "Done", vaccination, vaccinationHeader));
+        data.push(createData("Vaccinations", "Data Available", vaccination, vaccinationHeader));
     } else if (ImmunizationData == null || ImmunizationData == []) {
         data.push(createData("Vaccinations", "No Data", null, null));
     }
@@ -136,7 +136,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
                 });
     
                 const header = ["Result Type", "Value", "Date"];
-                data.push(createData(property, "Done", observationData, header));
+                data.push(createData(property, "Data Available", observationData, header));
             } else {
                 data.push(createData(property, "No Data", null, null));
             }
