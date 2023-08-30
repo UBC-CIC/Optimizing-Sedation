@@ -22,7 +22,7 @@ function processDiagnosticReportData(DiagnosticReportData) {
         }
 
         const DiagnosticReportTime = entry.resource.effectiveDateTime
-          ? entry.resource.effectiveDateTime
+          ? entry.resource.effectiveDateTime.substring(0, 10)
           : 'N/A';
 
         const entryString = `${DiagnosticReportType}-${DiagnosticReportReferences.join(",")}-${DiagnosticReportTime}`;

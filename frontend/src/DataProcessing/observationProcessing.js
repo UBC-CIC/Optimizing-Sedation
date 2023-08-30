@@ -18,7 +18,7 @@ function processObservationData(ObservationData) {
                 : 'N/A';
         
                 const ObservationTime = entry.resource.effectiveDateTime
-                ? entry.resource.effectiveDateTime
+                ? entry.resource.effectiveDateTime.substring(0, 10)
                 : 'N/A';
 
                 const ObservationID = entry.resource.id

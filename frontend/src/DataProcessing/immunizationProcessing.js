@@ -13,7 +13,7 @@ function processImmunizationData(ImmunizationData) {
         : 'N/A';
 
       const ImmunizationTime = entry.resource.occurrenceDateTime
-        ? entry.resource.occurrenceDateTime
+        ? entry.resource.occurrenceDateTime.substring(0, 10)
         : 'N/A';
 
       const entryString = `${ImmunizationType}-${ImmunizationStatus}-${ImmunizationTime}`;

@@ -14,10 +14,11 @@ function processConditionData(ConditionData) {
             ? entry.resource.clinicalStatus.coding[0].code
             : 'N/A';
 
-        const ConditionTime =
-          entry.resource.recordedDate
-            ? entry.resource.recordedDate
-            : 'N/A';
+        let ConditionTime = "N/A";
+        if(entry.resource.recordedDate)
+        ConditionTime = entry.resource.recordedDate.substring(0, 10)
+        else if (entry.resource.onsetDateTime)
+        ConditionTime = entry.resource.onsetDateTime.substring(0, 10)
   
         const entryString = `${ConditionType}-${ConditionStatus}-${ConditionTime}`;
           if (!uniqueEntries.has(entryString)) {

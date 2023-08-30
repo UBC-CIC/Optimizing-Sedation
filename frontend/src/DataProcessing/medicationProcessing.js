@@ -16,7 +16,7 @@ function processMedicationData(MedicationData) {
 
       const MedicationTime =
         entry.resource.authoredOn
-          ? entry.resource.authoredOn
+          ? entry.resource.authoredOn.substring(0, 10)
           : 'N/A';
 
       const entryString = `${MedicationType}-${MedicationStatus}-${MedicationTime}`;
