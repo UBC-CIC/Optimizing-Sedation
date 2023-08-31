@@ -2,7 +2,7 @@ function processImmunizationData(ImmunizationData) {
   const results = [];
   const uniqueEntries = new Set();
 
-  if (ImmunizationData && ImmunizationData.entry[0].resource) {
+  if (ImmunizationData && ImmunizationData.entry) {
     ImmunizationData.entry.forEach((entry) => {
       const ImmunizationType = entry.resource
         ? entry.resource.vaccineCode.text
@@ -13,7 +13,7 @@ function processImmunizationData(ImmunizationData) {
         : 'N/A';
 
       const ImmunizationTime = entry.resource.occurrenceDateTime
-        ? entry.resource.occurrenceDateTime
+        ? entry.resource.occurrenceDateTime.substring(0, 10)
         : 'N/A';
 
       const entryString = `${ImmunizationType}-${ImmunizationStatus}-${ImmunizationTime}`;

@@ -103,10 +103,10 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
             return null;
         });
         
-        if(labProcessedData != null){
-            //console.log("labProcessedData: ", labProcessedData);
+        if(labProcessedData != null && labProcessedData.length != 0){
+            console.log("labProcessedData: ", labProcessedData);
             const observationHeader = ["Lab Type", "Value", "Date"];
-            data.push(createData("Labs", "Done", labProcessedData, observationHeader));
+            data.push(createData("Labs", "Data Available", labProcessedData, observationHeader));
         } else {
             data.push(createData("Labs", "No Data", null, null));
         }
@@ -115,28 +115,28 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
     }
 
     // Convert ImmunizationData
-    if(ImmunizationData != null){
+    if(ImmunizationData != null && ImmunizationData.length != 0){
         const vaccination = ImmunizationData.map(row =>{
             const modified = row.ImmunizationType.charAt(0).toUpperCase() + row.ImmunizationType.slice(1);
             return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime && (row.ImmunizationTime.split('T'))[0] });
         });
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
-        data.push(createData("Vaccinations", "Done", vaccination, vaccinationHeader));
+        data.push(createData("Vaccinations", "Data Available", vaccination, vaccinationHeader));
     } else if (ImmunizationData == null || ImmunizationData == []) {
         data.push(createData("Vaccinations", "No Data", null, null));
     }
 
     for (const property in totalLOINC_codesData) {
         if (totalLOINC_codesData.hasOwnProperty(property)) {
-            if (totalLOINC_codesData[property] != null) {
+            if (totalLOINC_codesData[property] != null && totalLOINC_codesData[property].length != 0) {
                 const observationData = totalLOINC_codesData[property].map(row => {
                     const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
                     return ({ title: modified, col1: row.ObservationValue, col2: row.ObservationTime });
                 });
     
                 const header = ["Result Type", "Value", "Date"];
-                data.push(createData(property, "Done", observationData, header));
+                data.push(createData(property, "Data Available", observationData, header));
             } else {
                 data.push(createData(property, "No Data", null, null));
             }
@@ -184,9 +184,9 @@ function Row(props){
                 <StyledTableCell component="th" scope="row">{data.assessment}</StyledTableCell>
                 <StyledTableCell align="center">
                     <Grid container style={{alignItems: 'center'}}>
-                        <Grid sm={11} style={{ textAlign: 'left' }}>
-                            {data.status}
-                        </Grid>
+                    <Grid sm={11} style={{ textAlign: 'left', color: data.status === 'Data Available' ? 'green' : data.status === 'No Data' ? 'red' : 'inherit' }}>
+                        {data.status}
+                    </Grid>
                         <Grid sm={1}>
                         {data.others != null &&
                             <IconButton

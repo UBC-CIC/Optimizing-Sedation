@@ -2,7 +2,7 @@ function processDiagnosticReportData(DiagnosticReportData) {
   const results = [];
   const uniqueEntries = new Set();
 
-  if (DiagnosticReportData && DiagnosticReportData.entry[0].resource) {
+  if (DiagnosticReportData && DiagnosticReportData.entry) {
     DiagnosticReportData.entry.forEach((entry) => {
       if (
         entry.resource.category &&
@@ -22,7 +22,7 @@ function processDiagnosticReportData(DiagnosticReportData) {
         }
 
         const DiagnosticReportTime = entry.resource.effectiveDateTime
-          ? entry.resource.effectiveDateTime
+          ? entry.resource.effectiveDateTime.substring(0, 10)
           : 'N/A';
 
         const entryString = `${DiagnosticReportType}-${DiagnosticReportReferences.join(",")}-${DiagnosticReportTime}`;
