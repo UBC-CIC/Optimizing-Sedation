@@ -1,4 +1,4 @@
-import { Stack, StackProps, Aws, CfnParameter, aws_elasticloadbalancingv2, CfnOutput} from 'aws-cdk-lib';
+import { Stack, StackProps, CfnParameter, aws_elasticloadbalancingv2, CfnOutput} from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecs from "aws-cdk-lib/aws-ecs";
@@ -15,28 +15,27 @@ interface AwsRegions2PrefixListID {
     [key: string]: string;
 }
 
-// Array of regions and it prefixListId
-// Collected by https://aws.amazon.com/blogs/networking-and-content-delivery/limit-access-to-your-origins-using-the-aws-managed-prefix-list-for-amazon-cloudfront/
-const awsRegions2PrefixListID: AwsRegions2PrefixListID = {
-    'ap-northeast-1': 'pl-58a04531',
-    'ap-northeast-2': 'pl-22a6434b',
-    'ap-south-1': 'pl-9aa247f3',
-    'ap-southeast-1': 'pl-31a34658',
-    'ap-southeast-2': 'pl-b8a742d1',
-    'ca-central-1': 'pl-38a64351',
-    'eu-central-1': 'pl-a3a144ca',
-    'eu-north-1': 'pl-fab65393',
-    'eu-west-1': 'pl-4fa04526',
-    'eu-west-2': 'pl-93a247fa',
-    'eu-west-3': 'pl-75b1541c',
-    'sa-east-1': 'pl-5da64334',
-    'us-east-1': 'pl-3b927c52',
-    'us-east-2': 'pl-b6a144df',
-    'us-west-1': 'pl-4ea04527',
-    'us-west-2': 'pl-82a045eb',
-};
-
 export class HostStack extends Stack {
+    // Array of regions and it prefixListId
+    // Collected by https://aws.amazon.com/blogs/networking-and-content-delivery/limit-access-to-your-origins-using-the-aws-managed-prefix-list-for-amazon-cloudfront/
+    private readonly awsRegions2PrefixListID: AwsRegions2PrefixListID = {
+        'ap-northeast-1': 'pl-58a04531',
+        'ap-northeast-2': 'pl-22a6434b',
+        'ap-south-1': 'pl-9aa247f3',
+        'ap-southeast-1': 'pl-31a34658',
+        'ap-southeast-2': 'pl-b8a742d1',
+        'ca-central-1': 'pl-38a64351',
+        'eu-central-1': 'pl-a3a144ca',
+        'eu-north-1': 'pl-fab65393',
+        'eu-west-1': 'pl-4fa04526',
+        'eu-west-2': 'pl-93a247fa',
+        'eu-west-3': 'pl-75b1541c',
+        'sa-east-1': 'pl-5da64334',
+        'us-east-1': 'pl-3b927c52',
+        'us-east-2': 'pl-b6a144df',
+        'us-west-1': 'pl-4ea04527',
+        'us-west-2': 'pl-82a045eb',
+    };
     constructor(scope: Construct, id: string, repo: ecr.Repository, WAFInstance: wafv2.CfnWebACL, props?: StackProps) {
         super(scope, id, props);
 
@@ -104,11 +103,12 @@ export class HostStack extends Stack {
         const prefixListIdParam = new CfnParameter(this, "prefixListID", {
             type: 'String',
             description: 'Custome prefix list ID for region that are not in the list',
-            default: awsRegions2PrefixListID['ca-central-1']
+            default: this.awsRegions2PrefixListID['ca-central-1']
         });
 
         // Get prefixListId of CloudFront
-        const CFPrefixListId = awsRegions2PrefixListID[Aws.REGION] !== undefined ? awsRegions2PrefixListID[Aws.REGION]: prefixListIdParam.valueAsString;
+        // cdk deploy ECSHost --profile Sedation_Dev_1 --parameters ECSHost:prefixListID=pl-82a045eb
+        let CFPrefixListId = this.awsRegions2PrefixListID[Stack.of(this).region] ? this.awsRegions2PrefixListID[Stack.of(this).region] : prefixListIdParam.valueAsString;
 
         // Set ALBSecurityGroup inbound to CloudFront
         ALBSecurityGroup.addIngressRule(
@@ -215,11 +215,10 @@ export class HostStack extends Stack {
             originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER
         });
 
-        // Output Messages
+        // // Output Messages
         new CfnOutput(this, 'Output-Message', {
             value: `
                 CloudFront URL: ${CFDistribution.distributionDomainName}
-                Parameter Value: ${prefixListIdParam.valueAsString}
             `,
         })
     }
