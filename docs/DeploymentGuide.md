@@ -91,13 +91,26 @@ You may choose to run the following command to deploy the stacks all at once. Pl
 For CDK deployment, we are going to do the following:
 1. Create Elastic Container Registry (ECR) name 'docker-repo'
 2. Create Docker image and push to ECR
-3. Create a stack for hosting
+3. Create a stack for Web Application Firewall (WAF)
+4. Create a stack for hosting
+
+Make sure to fill necessary infomation in the <>. 
+
+Most of the commands assume you are in ```Optimizing-Sedation/backend/cdk/``` directory unless the instruction says to change the directory.
 
 #### 1. Create Elastic Container Registry (ECR)
 
 This will create a repository call 'docker-repo'. It is important to not change this name since the script in step 2 will need that.
 
-Make sure to add your profile name in the <aws-profile-name>.
+First, initialize CDK stacks at based on your region (only require for if you have not deploy any resources yet).
+
+NEED TO CONFIRM 
+
+```bash
+cdk bootstrap aws://<YOUR_AWS_ACCOUNT_ID>/<YOUR_AWS_ACCOUNT_REGION> --profile <your-profile-name>
+```
+
+Then, run the following command to create an ECR repository.
 
 ```bash
 cdk deploy Create-ECR --profile <aws-profile-name>
@@ -105,8 +118,6 @@ cdk deploy Create-ECR --profile <aws-profile-name>
 #### 2. Push Docker Image to ECR
 
 Once a repository is created, we can create and push Docker images. Luckily, this is done for you. You can check in the ```Optimizing-Sedation/backend/scripts/push_image.sh``` for more detail.
-
-Assume you are in ```Optimizing-Sedation/backend/cdk/``` directory. 
 
 To run a script file, you might need to change file mode to execution mode.
 
@@ -127,14 +138,56 @@ Example,
 ```
 Note: you can reuse this file to push to ECR everytime you make changes on the dashboard and make those changes live.
 
-#### 3. Create Host Stack
+#### 3. Create a stack for Web Application Firewall (WAF)
+This step will create a Web Application Firewall (WAF) to secure the dashboard from attacks.
 
-This step will create a CloudFormation stack to host the dashboard on ECS. Assume you are in ```Optimizing-Sedation/backend/cdk/``` directory.
+Due to the limitation of CDK, we create another stack for this because we need to launch this stack from 'us-east-1' region.
+More detail on the limite of CDK WAF could be found at https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_wafv2.CfnWebACL.html#scope.
 
-Make sure to add your profile name in the <>. This will take some time.
+First initialize CDK stacks at 'us-east-1' region (only require for if you have not deploy any resources yet).
+
+NEED TO CONFIRM 
+
+```bash
+cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/us-east-1 --profile <your-profile-name>
+```
+
+Then deploy Create-WAFWebACL stack, 
+
+```bash 
+cdk deploy Create-WAFWebACL --profile <aws-profile-name>
+```
+
+You can confirm your deployment in AWS Console: AWS WAF > Web ACLs. Make sure you select 'Global (CloudFront)' on top right corner.
+
+
+#### 4. Create Host Stack
+
+This step will create a CloudFormation stack to host the dashboard on ECS. Assume you are in ```Optimizing-Sedation/backend/cdk/``` directory. This will take some time.
+
+Based on the network diagram, the ALB's security group will have an inbound rule only from CloudFront. To do this, we filter security group source by prefix of CloudFront. Table below shows each region and its corresponding prefix list ID. 
+
+If your default region is on the table, then use the command below.
 
 ```bash
 cdk deploy DevOrg-dev-Host --profile <aws-profile-name>
+```
+Example,
+
+```bash
+cdk deploy ECSHost --profile profile1
+```
+
+If your default region is not on the table, you first need to find your predix list ID and then run the command below. This page will tell you how find your prefix list ID: https://aws.amazon.com/blogs/networking-and-content-delivery/limit-access-to-your-origins-using-the-aws-managed-prefix-list-for-amazon-cloudfront/
+
+```bash
+cdk deploy DevOrg-dev-Host --profile <aws-profile-name> --parameters ECSHost:prefixListID=<your-prefix-list-id>
+```
+
+Example,
+
+```bash
+cdk deploy ECSHost --profile profile1 --parameters ECSHost:prefixListID=pl-82a045eb
 ```
 
 ### Extra: Taking down the deployed stacks
