@@ -10,7 +10,8 @@ export class WAFStack extends Stack {
         super(scope, id, props);
 
         // Create WAFvs As web ACL using AWSManagedRulesCommonRuleSet
-        // More info on https://aws.amazon.com/blogs/devops/easily-protect-your-aws-cdk-defined-infrastructure-with-aws-wafv2/
+        // Adapted from https://aws.amazon.com/blogs/devops/easily-protect-your-aws-cdk-defined-infrastructure-with-aws-wafv2/
+        // Limitation as to why only use 'us-east-1': https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_wafv2.CfnWebACL.html
         this.WAFwebACL = new wafv2.CfnWebACL(this, 'Sedation-WebACL', {
             defaultAction: {
                 allow: {}

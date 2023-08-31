@@ -1,4 +1,4 @@
-import { Stack, StackProps, RemovalPolicy, aws_cloudfront_origins} from 'aws-cdk-lib';
+import { Stack, StackProps, Aws, CfnParameter, aws_elasticloadbalancingv2, CfnOutput} from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecs from "aws-cdk-lib/aws-ecs";
@@ -10,9 +10,31 @@ import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
-import * as wafClassic from 'aws-cdk-lib/aws-waf';
 
-import * as s3 from 'aws-cdk-lib/aws-s3';
+interface AwsRegions2PrefixListID {
+    [key: string]: string;
+}
+
+// Array of regions and it prefixListId
+// Collected by https://aws.amazon.com/blogs/networking-and-content-delivery/limit-access-to-your-origins-using-the-aws-managed-prefix-list-for-amazon-cloudfront/
+const awsRegions2PrefixListID: AwsRegions2PrefixListID = {
+    'ap-northeast-1': 'pl-58a04531',
+    'ap-northeast-2': 'pl-22a6434b',
+    'ap-south-1': 'pl-9aa247f3',
+    'ap-southeast-1': 'pl-31a34658',
+    'ap-southeast-2': 'pl-b8a742d1',
+    'ca-central-1': 'pl-38a64351',
+    'eu-central-1': 'pl-a3a144ca',
+    'eu-north-1': 'pl-fab65393',
+    'eu-west-1': 'pl-4fa04526',
+    'eu-west-2': 'pl-93a247fa',
+    'eu-west-3': 'pl-75b1541c',
+    'sa-east-1': 'pl-5da64334',
+    'us-east-1': 'pl-3b927c52',
+    'us-east-2': 'pl-b6a144df',
+    'us-west-1': 'pl-4ea04527',
+    'us-west-2': 'pl-82a045eb',
+};
 
 export class HostStack extends Stack {
     constructor(scope: Construct, id: string, repo: ecr.Repository, WAFInstance: wafv2.CfnWebACL, props?: StackProps) {
@@ -21,7 +43,6 @@ export class HostStack extends Stack {
         // Create a VPC stack
         // For a region, create upto 2 AZ with a public subset each.
         const vpc = new ec2.Vpc(this, `Dev-vpc`, {
-            // cidr: props.cidr,
             ipAddresses: ec2.IpAddresses.cidr("10.0.0.0/16"),
             maxAzs: 2,
             subnetConfiguration:[
@@ -47,21 +68,65 @@ export class HostStack extends Stack {
 
         secret.grantRead(accessSecretRole);
 
-        // Simple security group that allows all outbound traffic
-        const securityGroup = new ec2.SecurityGroup(this, "securityGroup", {
+        // Security group for FargateService
+        const fargateSecurityGroup = new ec2.SecurityGroup(this, "Fargate-SecurityGroup", {
             allowAllOutbound: true,
             disableInlineRules: true,
             vpc: vpc,
             securityGroupName: "FargateClusterSecurityGroup",
-            description: "Security group for ALB; Allow all outbound rule, but only cloudfront for inbound."
+            description: "Security group for FargateCluster; Allow all outbound rule, but only ALBSecurityGroup for inbound."
         });
 
-        // // Add an inbound rule to allow incoming traffic on a specific port
-        // securityGroup.addIngressRule(
-        //     ec2.Peer.anyIpv4(), 
-        //     ec2.Port.tcp(80), 
-        //     'Allow HTTP traffic');
+        // Security group for ALB
+        const ALBSecurityGroup = new ec2.SecurityGroup(this, "ALB-SecurityGroup", {
+            allowAllOutbound: false,
+            disableInlineRules: true,
+            vpc: vpc,
+            securityGroupName: "ALBSecurityGroup",
+            description: "Security group for ALB; Allow only fargateSecurityGroup outbound rule, and only CloudFront for inbound."
+        });
 
+        // Set fargateSecurityGroup inbound to ALBSecurityGroup as source at port 3000
+        fargateSecurityGroup.addIngressRule(
+            ec2.Peer.securityGroupId(ALBSecurityGroup.securityGroupId),
+            ec2.Port.tcp(3000),
+            'Allow traffic only from ALB'
+        );
+
+        // Set ALBSecurityGroup outbound to fargateSecurityGroup as source at port 3000
+        ALBSecurityGroup.addEgressRule(
+            ec2.Peer.securityGroupId(fargateSecurityGroup.securityGroupId),
+            ec2.Port.tcp(3000),
+            'Allow traffic only to Fargate Service security group'
+        );
+        
+        // Read parameter from user 
+        const prefixListIdParam = new CfnParameter(this, "prefixListID", {
+            type: 'String',
+            description: 'Custome prefix list ID for region that are not in the list',
+            default: awsRegions2PrefixListID['ca-central-1']
+        });
+
+        // Get prefixListId of CloudFront
+        const CFPrefixListId = awsRegions2PrefixListID[Aws.REGION] !== undefined ? awsRegions2PrefixListID[Aws.REGION]: prefixListIdParam.valueAsString;
+
+        // Set ALBSecurityGroup inbound to CloudFront
+        ALBSecurityGroup.addIngressRule(
+            ec2.Peer.prefixList(CFPrefixListId), 
+            ec2.Port.tcp(80), 
+            'Allow traffic only from CloudFront');
+
+        // Create a ALB for ECS Cluster Service
+        const ALB = new aws_elasticloadbalancingv2.ApplicationLoadBalancer(this, 'ALB-Fargate-Service', {
+            vpc: vpc,
+            vpcSubnets: {
+                subnetType: ec2.SubnetType.PUBLIC
+            },
+            internetFacing: true,
+            loadBalancerName: "FargateService-LoadBalancer",
+            securityGroup: ALBSecurityGroup,
+            
+        });
         
         // Create ECS Cluster which use to run Task on ECS Farget instance
         const cluster = new ecs.Cluster(this, "fargateCluster", {
@@ -119,7 +184,7 @@ export class HostStack extends Stack {
         const ALBFargateService = new ecspatterns.ApplicationLoadBalancedFargateService(this, "Host-With-LoadBalancer-Dashboard", {
             cluster: cluster,
             taskDefinition: ecsTask,
-            securityGroups: [securityGroup],
+            securityGroups: [fargateSecurityGroup],
             serviceName: "Dashboard-Service",
             memoryLimitMiB: 2048,
             cpu: 1024,
@@ -127,58 +192,9 @@ export class HostStack extends Stack {
             taskSubnets: {
                 subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
             },
-            loadBalancerName: "Dashboard-LoadBalancer",
+            loadBalancer: ALB,
+            openListener: false,
         });
-
-        // Create WAFvs As web ACL using AWSManagedRulesCommonRuleSet
-        // More info on https://aws.amazon.com/blogs/devops/easily-protect-your-aws-cdk-defined-infrastructure-with-aws-wafv2/
-        // const webACL = new wafv2.CfnWebACL(this, 'Sedation-WebACL', {
-        //     defaultAction: {
-        //         allow: {}
-        //     },
-        //     scope: 'CLOUDFRONT',
-        //     visibilityConfig: {
-        //         cloudWatchMetricsEnabled: true,
-        //         metricName:'MetricForWebACLCDK',
-        //         sampledRequestsEnabled: true,
-        //     },
-        //     name: 'Sedation-WAF-WebACL',
-        //     description: 'This WAF-WebACL run on basic rule, AWSManagedRulesCommonRuleSet.',
-        //     rules: [{
-        //         name: 'AWS-AWSManagedRulesCommonRuleSet',
-        //         priority: 0,
-        //         statement: {
-        //             managedRuleGroupStatement: {
-        //             name:'AWSManagedRulesCommonRuleSet',
-        //             vendorName:'AWS'
-        //             }
-        //         },
-        //         visibilityConfig: {
-        //             cloudWatchMetricsEnabled: true,
-        //             sampledRequestsEnabled: true,
-        //             metricName:'AWS-AWSManagedRulesCommonRuleSet',
-        //         },
-        //         overrideAction: {
-        //             none: {}
-        //         },
-        //     }]
-        // });
-
-        // const webACLClassic = new wafClassic.CfnWebACL(this, 'WAF-Classic-WebACL', {
-        //     defaultAction: {
-        //         type: 'ALLOW'
-        //     },
-        //     name: 'Sedation-WAF-WebACL',
-        //     metricName: 'SedationWAFWebACLMetric',
-        //     rules: [{
-        //         priority: 0,
-        //         ruleId: 'AWSManagedRulesCommonRuleSet',
-        //         action: {
-        //             type: 'BLOCK'
-        //         },
-        //     }]
-        // });
-
 
         // Create ALB as CloudFront Origin
         const origin_ALB = new origins.LoadBalancerV2Origin(ALBFargateService.loadBalancer,{
@@ -199,12 +215,12 @@ export class HostStack extends Stack {
             originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER
         });
 
-        // Craete a security group for ALB to only accept CloudFront
-
-        // ALBFargateService.loadBalancer.connections.allowFrom(CFDistribution, ec2.Port.tcp(80), 'Allow request from CloudFront on port 80');
-
-        // Create an S3 bucket to store the access logs for debugging purpose
-        // const accessLogsBucket = new s3.Bucket(this, 'AccessLogsBucket');
-        // ALBFargateService.loadBalancer.logAccessLogs(accessLogsBucket, "ALB-log");
+        // Output Messages
+        new CfnOutput(this, 'Output-Message', {
+            value: `
+                CloudFront URL: ${CFDistribution.distributionDomainName}
+                Parameter Value: ${prefixListIdParam.valueAsString}
+            `,
+        })
     }
 }
