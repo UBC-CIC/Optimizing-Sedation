@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
-import * as imported_LOINC_Codes from '../DataProcessing/codes/LOINC_codes';
+import imported_LOINC_Codes from '../config/codes.json';
 
 // Components
 import SideBar from '../components/sideBar';
@@ -80,7 +80,7 @@ export default function Dashboard(){
     const [totalLOINC_codesData, settotalLOINC_codesData] = useState(null);
     const LOINC_codesData = {}; // Object to hold state variables
 
-    const LOINC_codes = Object.entries(imported_LOINC_Codes);
+    const LOINC_codes = imported_LOINC_Codes;
     
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
@@ -108,9 +108,9 @@ export default function Dashboard(){
                 const parsedData = processPatientData(patient)[0];
                 
                 parsedData.PatientContactInfo = parsedData.PatientContactInfo.replace(/[-()]/g, '');
-                console.log('contact info: ', parsedData.PatientContactInfo);
-                parsedData.PatientContactInfo = `(${parsedData.PatientContactInfo.slice(0, 3)}) ${parsedData.PatientContactInfo.slice(3, 6)}-${parsedData.PatientContactInfo.slice(6)}`;
-
+                if (parsedData.PatientContactInfo != "N/A"){
+                    parsedData.PatientContactInfo = `(${parsedData.PatientContactInfo.slice(0, 3)}) ${parsedData.PatientContactInfo.slice(3, 6)}-${parsedData.PatientContactInfo.slice(6)}`;
+                }
                 const patient_dataCleanUp = createPatientData(parsedData.PatientName, parsedData.PatientMRN, parsedData.PatientContactName, parsedData.PatientContactInfo);
                 setPatientData(patient_dataCleanUp);
             }).catch(onErr);
@@ -142,11 +142,12 @@ export default function Dashboard(){
             }
 
             function fetchCodeData(LOINC_codes){
-                LOINC_codes.map(([name, array]) => {
-                    LOINC_codesData[`${name}`] = null;
-                    client.request(`Observation/?patient=${client.patient.id}&code=${array}`).then((Bundle) => { 
-                            LOINC_codesData[`${name}`] = processAllObservationData(Bundle); // Dynamically assign variable
-                    }).catch(onErr);
+                console.log("Codes:  ", LOINC_codes);
+                LOINC_codes.forEach((entry) => {
+                    LOINC_codesData[`${entry.name}`] = null;
+                        client.request(`Observation/?patient=${client.patient.id}&code=${entry.codes}`).then((Bundle) => { 
+                                LOINC_codesData[`${entry.name}`] = processAllObservationData(Bundle); // Dynamically assign variable
+                        }).catch(onErr);
                 });
                 return LOINC_codesData;
             }

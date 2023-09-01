@@ -22,7 +22,7 @@ export default function getReadableObservation(entry){
     value = entry.resource.valueRatio.numerator && entry.resource.valueRange.denominator	 ? entry.resource.valueRatio.numerator.value + ':' + entry.resource.valueRange.denominator.value: 'N/A';
 
     const time = entry.resource.effectiveDateTime
-    ? entry.resource.effectiveDateTime
+    ? entry.resource.effectiveDateTime.substring(0, 10)
     : 'N/A';
 
     const id = entry.resource.id

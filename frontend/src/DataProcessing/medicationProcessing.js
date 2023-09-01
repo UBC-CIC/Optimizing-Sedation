@@ -2,7 +2,7 @@ function processMedicationData(MedicationData) {
   const results = [];
   const uniqueEntries = new Set();
 
-  if (MedicationData && MedicationData.entry[0].resource) {
+  if (MedicationData && MedicationData.entry) {
     MedicationData.entry.forEach((entry) => {
       const MedicationType =
         entry.resource.medicationCodeableConcept
@@ -16,7 +16,7 @@ function processMedicationData(MedicationData) {
 
       const MedicationTime =
         entry.resource.authoredOn
-          ? entry.resource.authoredOn
+          ? entry.resource.authoredOn.substring(0, 10)
           : 'N/A';
 
       const entryString = `${MedicationType}-${MedicationStatus}-${MedicationTime}`;
