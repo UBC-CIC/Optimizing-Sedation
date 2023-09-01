@@ -67,7 +67,7 @@
             {
                 "system": "http://snomed.info/sct ",
                 "codes": [
-                    "3130004", "32880-7"
+                    "3130004"
                 ]
             }
         ],
