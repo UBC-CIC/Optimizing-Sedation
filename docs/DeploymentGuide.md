@@ -57,7 +57,7 @@ It's time to set up everything that goes on behind the scenes! For more informat
 The first step is to get into the backend folder. Assuming you are currently still inside the root folder `Optimizing-Sedation/`, this can be done with the following commands:
 
 ```bash
-cd back_end/cdk
+cd backend/cdk
 ```
 
 Now that you are in the backend directory, install the core dependencies with the following command:
@@ -190,7 +190,7 @@ Based on the network diagram, the ALB's security group has an inbound rule only 
 If your default region is on the table, then use the command below.
 
 ```bash
-cdk deploy DevOrg-dev-Host --profile <aws-profile-name>
+cdk deploy ECSHost --profile <aws-profile-name>
 ```
 Example,
 
@@ -201,13 +201,35 @@ cdk deploy ECSHost --profile profile1
 If your default region is not on the table, then you first need to find your prefix list ID and then run the command below. This page will tell you how find your prefix list ID: https://aws.amazon.com/blogs/networking-and-content-delivery/limit-access-to-your-origins-using-the-aws-managed-prefix-list-for-amazon-cloudfront/
 
 ```bash
-cdk deploy DevOrg-dev-Host --profile <aws-profile-name> --parameters ECSHost:prefixListID=<your-prefix-list-id>
+cdk deploy ECSHost --profile <aws-profile-name> --parameters ECSHost:prefixListID=<your-prefix-list-id>
 ```
 
 Example,
 
 ```bash
 cdk deploy ECSHost --profile profile1 --parameters ECSHost:prefixListID=pl-82a045eb
+```
+After deployment completed, look for 'CloudFront URL:' in the terminal. This is the host link for the application.
+
+This is an example of an output
+```bash
+Outputs:
+ECSHost.HostWithLoadBalancerDashboardLoadBalancerDNSD373F489 = FargateService-LoadBalancer-2079544227.ca-central-1.elb.amazonaws.com
+ECSHost.HostWithLoadBalancerDashboardServiceURL34B8FA55 = http://FargateService-LoadBalancer-2079544227.ca-central-1.elb.amazonaws.com
+ECSHost.OutputMessage = 
+                CloudFront URL: d8ymgdw9fdxjc.cloudfront.net
+```
+
+This is the expected Smart on Fhir URLs:
+```bash
+Launch URL: [CloudFront URL]/smartAuth
+Redirect URL: [CloudFront URL]/
+```
+
+Based on the CloudFront URL above, we would have
+```bash
+Launch URL: https://d8ymgdw9fdxjc.cloudfront.net/smartAuth
+Redirect URL: https://d8ymgdw9fdxjc.cloudfront.net/
 ```
 
 ### Extra: Taking down the deployed stacks
