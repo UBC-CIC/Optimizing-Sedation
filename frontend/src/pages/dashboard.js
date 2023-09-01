@@ -35,13 +35,8 @@ function createPatientData(fullname, MRN, contactFullname, contactNumber){
 
 // Selector Options
 const statusTypes = [
-    'Not done',
-    'Up to date',
-    'Done',
-    'Seen',
-    'Yes',
-    'No',
-    'Done/Not done',
+    'Data Available',
+    'No Data'
 ];
 
 const assessmentTypes = [
@@ -50,10 +45,10 @@ const assessmentTypes = [
     'ECG',
     'EEG',
     'ENT',
-    'Ophthalmologist',
+    'OPTHALMOLOGY',
     'ASD',
-    'Previous Sedation',
-    'Additional Assessment'
+    'SEDATION',
+    'DENTISTRY'
 ];
 
 export default function Dashboard(){
@@ -121,7 +116,13 @@ export default function Dashboard(){
             fetchData(`DiagnosticReport/?patient=${client.patient.id}`, processDiagnosticReportData, setDiagnosticReportData);
             //fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
             fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
-            settotalLOINC_codesData(fetchCodeData(LOINC_codes));
+            fetchCodeData(LOINC_codes)
+                .then(LOINC_codesData => {
+                    settotalLOINC_codesData(LOINC_codesData);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
 
             function fetchData(url, processData, setData, accumulatedResults = []) {
                 client.request(url).then((Bundle) => {
@@ -141,15 +142,41 @@ export default function Dashboard(){
                     .catch(onErr);
             }
 
-            function fetchCodeData(LOINC_codes){
+            function fetchCodeData(LOINC_codes) {
                 console.log("Codes:  ", LOINC_codes);
-                LOINC_codes.forEach((entry) => {
-                    LOINC_codesData[`${entry.name}`] = null;
-                        client.request(`Observation/?patient=${client.patient.id}&code=${entry.codes}`).then((Bundle) => { 
-                                LOINC_codesData[`${entry.name}`] = processAllObservationData(Bundle); // Dynamically assign variable
-                        }).catch(onErr);
+                
+                // Initialize an object to store unique results for each entry
+                const uniqueResultsMap = {};
+            
+                return Promise.all(LOINC_codes.map(entry => {
+                    const entryName = entry.name;
+                    const uniqueResultsSet = new Set();
+            
+                    return Promise.all(entry.resources.map(resource => {
+                        return Promise.all(entry.coding.map(coding => {
+                            return client.request(`${resource}/?patient=${client.patient.id}&code=${coding.codes}`)
+                                .then(Bundle => {
+                                    const results = processAllObservationData(Bundle);
+            
+                                    // Add unique results to the Set
+                                    results.forEach(result => {
+                                        if (!uniqueResultsSet.has(result)) {
+                                            uniqueResultsSet.add(result);
+                                        }
+                                    });
+                                })
+                                .catch(onErr);
+                        }));
+                    }))
+                    .then(() => {
+                        // Convert the Set back to an array and store it in the uniqueResultsMap
+                        uniqueResultsMap[entryName] = Array.from(uniqueResultsSet);
+                    });
+                }))
+                .then(() => {
+                    // Return the object containing unique results for each entry
+                    return uniqueResultsMap;
                 });
-                return LOINC_codesData;
             }
 
             setDataReady(true);
