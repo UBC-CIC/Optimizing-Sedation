@@ -4,3 +4,11 @@
 REACT_APP_CLIENT_SECRET=secret
 REACT_APP_CLIENT_ID=id
 ```
+
+# Creating Local Docker Image and Run
+```
+docker build -t sedation .
+cd frontend
+docker run --env-file .env -p 3000:3000 sedation 
+```
+

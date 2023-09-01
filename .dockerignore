@@ -1,0 +1,13 @@
+# Sensitive Files
+.aws
+.env
+.git
+
+# Large Files
+**/node_modules/
+**/amplify/
+
+# Unneeded files
+*.md
+npm-debug.log
+.DS_Store
