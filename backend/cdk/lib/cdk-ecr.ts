@@ -1,7 +1,6 @@
 import { RemovalPolicy, Stack, StackProps} from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as ecr from 'aws-cdk-lib/aws-ecr';
-import * as assets from 'aws-cdk-lib/aws-ecr-assets';
 
 export class EcrStack extends Stack {
     public readonly repo: ecr.Repository;

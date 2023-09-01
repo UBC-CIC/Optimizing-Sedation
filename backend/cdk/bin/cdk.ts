@@ -3,7 +3,9 @@ import * as cdk from 'aws-cdk-lib';
 import { EcrStack } from '../lib/cdk-ecr';
 import { HostStack } from '../lib/host-stack';
 import { WAFStack } from '../lib/WAF-stack';
+
 const app = new cdk.App();
+
 // Create stack for ECR
 // Run this stack: cdk deploy Create-ECR --profile <aws-profile-name>
 const loadDocker = new EcrStack(app, `Create-ECR`);
