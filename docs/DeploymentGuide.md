@@ -104,8 +104,6 @@ This will create a repository call 'docker-repo'. It is important to not change 
 
 First, initialize CDK stacks at based on your region (only require for if you have not deploy any resources yet).
 
-NEED TO CONFIRM 
-
 ```bash
 cdk bootstrap aws://<YOUR_AWS_ACCOUNT_ID>/<YOUR_AWS_ACCOUNT_REGION> --profile <your-profile-name>
 ```
@@ -145,8 +143,6 @@ Due to the limitation of CDK, we create another stack for this because we need t
 More detail on the limite of CDK WAF could be found at https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_wafv2.CfnWebACL.html#scope.
 
 First initialize CDK stacks at 'us-east-1' region (only require for if you have not deploy any resources yet).
-
-NEED TO CONFIRM 
 
 ```bash
 cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/us-east-1 --profile <your-profile-name>
