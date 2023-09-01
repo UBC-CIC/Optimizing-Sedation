@@ -198,7 +198,7 @@ Example,
 cdk deploy ECSHost --profile profile1
 ```
 
-If your default region is not on the table, you first need to find your predix list ID and then run the command below. This page will tell you how find your prefix list ID: https://aws.amazon.com/blogs/networking-and-content-delivery/limit-access-to-your-origins-using-the-aws-managed-prefix-list-for-amazon-cloudfront/
+If your default region is not on the table, then you first need to find your prefix list ID and then run the command below. This page will tell you how find your prefix list ID: https://aws.amazon.com/blogs/networking-and-content-delivery/limit-access-to-your-origins-using-the-aws-managed-prefix-list-for-amazon-cloudfront/
 
 ```bash
 cdk deploy DevOrg-dev-Host --profile <aws-profile-name> --parameters ECSHost:prefixListID=<your-prefix-list-id>

@@ -5,6 +5,7 @@
 
 # Large Files
 **/node_modules/
+**/amplify/
 
 # Unneeded files
 *.md
