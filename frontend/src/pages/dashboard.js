@@ -35,26 +35,14 @@ function createPatientData(fullname, MRN, contactFullname, contactNumber){
 
 // Selector Options
 const statusTypes = [
-    'Not done',
-    'Up to date',
-    'Done',
-    'Seen',
-    'Yes',
-    'No',
-    'Done/Not done',
+    'No Data',
+    'Data Available',
 ];
 
-const assessmentTypes = [
-    'Labs',
-    'Vaccinations',
-    'ECG',
-    'EEG',
-    'ENT',
-    'Ophthalmologist',
-    'ASD',
-    'Previous Sedation',
-    'Additional Assessment'
-];
+const assessmentTypes = ['Labs', 'Vaccinations'].concat(imported_LOINC_Codes
+                        .map(i => {
+                            return i.name;
+                        }));
 
 export default function Dashboard(){
     const [clientReady, setClientReady] = useState(false);
