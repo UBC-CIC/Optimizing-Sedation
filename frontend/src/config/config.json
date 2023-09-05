@@ -1,6 +1,7 @@
 {
     "generalConfig": {
-        "launchMode": "PUBLIC"
+        "launchMode": "PUBLIC",
+        "maxSizeInByte": 1541
     },
     "searchCodes": [
         {
