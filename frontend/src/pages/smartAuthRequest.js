@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {Typography} from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+import config from '../config/config.json';
 
 // FhirClient Library
 import FHIR from 'fhirclient';
@@ -8,15 +9,27 @@ import FHIR from 'fhirclient';
 export default function SmartAuth(){
     const [errorMsg, setErrorMsg] = useState(undefined);
 
-    FHIR.oauth2.authorize({
-        'redirectUri': '/',
-        // 'clientSecret': process.env.REACT_APP_CLIENT_SECRET,
-        'client_id': process.env.REACT_APP_CLIENT_ID,
-        'scope':  'patient/Patient.read patient/Observation.read patient/DiagnosticReport.read patient/Immunization.read patient/MedicationRequest.read patient/Condition.read launch online_access openid profile',
-    }).catch(err => {
-        console.log("/smartAuth error");
-        setErrorMsg(err.message);
-    });
+    if(config.generalConfig.launchMode === "PUBLIC"){
+        FHIR.oauth2.authorize({
+            'redirectUri': '/',
+            'client_id': process.env.REACT_APP_CLIENT_ID,
+            'scope':  'patient/Patient.read patient/Observation.read patient/DiagnosticReport.read patient/Immunization.read patient/MedicationRequest.read patient/Condition.read launch online_access openid profile',
+        }).catch(err => {
+            console.log("/smartAuth error");
+            setErrorMsg(err.message);
+        });
+    } else {
+        FHIR.oauth2.authorize({
+            'redirectUri': '/',
+            'clientSecret': process.env.REACT_APP_CLIENT_SECRET,
+            'client_id': process.env.REACT_APP_CLIENT_ID,
+            'scope':  'patient/Patient.read patient/Observation.read patient/DiagnosticReport.read patient/Immunization.read patient/MedicationRequest.read patient/Condition.read launch online_access openid profile',
+        }).catch(err => {
+            console.log("/smartAuth error");
+            setErrorMsg(err.message);
+        });
+    }
+    
    
     return(
         <div style={{
@@ -31,9 +44,8 @@ export default function SmartAuth(){
         }}>
             <Typography variant={"h5"}>Welcome to</Typography>
             <Typography variant={"h4"} fontWeight={100}>Optimizing Sedation Dashboard</Typography>
-
+            <Typography variant={"h6"} fontWeight={100}>Application launch on {config.generalConfig.launchMode === "PUBLIC" || config.generalConfig.launchMode === "CREDENTIAL" ? config.generalConfig.launchMode : "default (CREDENTIAL)"} mode.</Typography>
             
-
             {errorMsg == undefined && 
                 <React.Fragment>
                     <CircularProgress color="inherit"/>
