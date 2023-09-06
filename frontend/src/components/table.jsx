@@ -104,7 +104,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
         });
         
         if(labProcessedData != null && labProcessedData.length != 0){
-            console.log("labProcessedData: ", labProcessedData);
+            //console.log("labProcessedData: ", labProcessedData);
             const observationHeader = ["Lab Type", "Value", "Date"];
             data.push(createData("Labs", "Data Available", labProcessedData, observationHeader));
         } else {
@@ -206,66 +206,85 @@ function Row(props){
             <StyledTableRow>
                 <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     {data.others != null &&
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Container>
-
-                        <TableContainer style={{marginTop: '2vh', marginBottom: '2vh'}}>
-                        <Table size="small">
-                            {
-                                data.tableHeader != null &&
-                                <TableHead>
-                                    <TableRow>
-                                        { data.tableHeader.map((i)=>(
-                                            <TableCell align='left' style={{fontWeight: "bold"}}>{i}</TableCell>
-                                        ))}
-                                    </TableRow>
-                                </TableHead>
-                            }
-                            
-                            <TableBody>
-                                {
-                                    data.others
-                                    .sort((a, b) => {       // Sort based on time
-                                        if(a.col2 != null)
-                                            return b.col2.localeCompare(a.col2)
-                                        else
-                                            return 0;
-                                    })
-                                    .map((i)=>{
-                                        if(i.col1 != null && i.col2 != null && i.col2 == LINK){     // Display as link
-                                            return (
-                                                <Typography variant={"subtitle1"} component="h6">
-                                                    <Link href={i.col1} target="_blank" rel="noopener">
-                                                        {i.title}
-                                                    </Link> 
-                                                </Typography>);
-                                        } else if (i.col1 != null && i.col2 != null){               // Display as table
-                                            return (
-                                                    <DropDownTableRow rowData = {i}/>
-                                            );
-                                        } else if (i.col1 != null){
-                                            return (
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Container>
+                                <TableContainer style={{ marginTop: '2vh', marginBottom: '2vh' }}>
+                                    <Table size="small">
+                                        {data.tableHeader != null &&
+                                            <TableHead>
                                                 <TableRow>
-                                                    <TableCell align='left'>{i.title}</TableCell>
-                                                    <TableCell align='left'>{i.col1}</TableCell>
+                                                    {data.tableHeader.map((i, index) => (
+                                                        <TableCell
+                                                            align='left'
+                                                            style={{
+                                                                fontWeight: "bold",
+                                                                width: index === 0 ? '40%' : '40%' // Define column widths here
+                                                            }}
+                                                        >
+                                                            {i}
+                                                        </TableCell>
+                                                    ))}
                                                 </TableRow>
-                                            );
-                                        } 
-                                        else{        
-                                            return (
-                                                <TableRow>
-                                                    <TableCell align='left'>{i.title}</TableCell>
-                                                </TableRow>
-                                            );
+                                            </TableHead>
                                         }
-                                    })
-                                }
-                            </TableBody>
-                        </Table>
-                        </TableContainer>
-                            
-                        </Container>
-                    </Collapse>
+
+                                        <TableBody>
+                                            {data.others
+                                                .sort((a, b) => {
+                                                    if (a.col2 != null)
+                                                        return b.col2.localeCompare(a.col2);
+                                                    else
+                                                        return 0;
+                                                })
+                                                .map((i) => {
+                                                    if (i.col1 != null && i.col2 != null && i.col2 == LINK) {
+                                                        return (
+                                                            <Typography variant={"subtitle1"} component="h6">
+                                                                <Link href={i.col1} target="_blank" rel="noopener">
+                                                                    {i.title}
+                                                                </Link>
+                                                            </Typography>
+                                                        );
+                                                    } else if (i.col1 != null && i.col2 != null) {
+                                                        return (
+                                                            <DropDownTableRow rowData={i} />
+                                                        );
+                                                    } else if (i.col1 != null) {
+                                                        return (
+                                                            <TableRow>
+                                                                <TableCell
+                                                                    align='left'
+                                                                    style={{ width: '50%' }} 
+                                                                >
+                                                                    {i.title}
+                                                                </TableCell>
+                                                                <TableCell
+                                                                    align='left'
+                                                                    style={{ width: '50%' }}
+                                                                >
+                                                                    {i.col1}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        );
+                                                    } else {
+                                                        return (
+                                                            <TableRow>
+                                                                <TableCell
+                                                                    align='left'
+                                                                    colSpan={2} 
+                                                                    style={{ width: '100%' }} 
+                                                                >
+                                                                    {i.title}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        );
+                                                    }
+                                                })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Container>
+                        </Collapse>
                     }
                 </StyledTableCell>
             </StyledTableRow>
@@ -274,6 +293,7 @@ function Row(props){
 }
 
 export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData, totalLOINC_codesData}){
+    //console.log("Data from Codes: ", totalLOINC_codesData);
     // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
 
     // Convert input data into current format of this table
