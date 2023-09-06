@@ -37,12 +37,20 @@ function processPatientData(PatientData) {
 
         if (PatientData.contact){
             for (const contact of PatientData.contact){
-                if (contact.name.text && contact.telecom){
-                    PatientContactName = contact.name.text
+                    if (contact.name){
+                        if(contact.name.text){
+                            PatientContactName = contact.name.text
+                        }
+                        else if (contact.name.given && contact.name.family){
+                            PatientContactName = contact.name.family + ", " + contact.name.given.join(" ");
+                        }
                     for (const telecom of contact.telecom){
                         if (telecom.rank && telecom.rank === 1){
                             PatientContactInfo = telecom.value
                             break;
+                        }
+                        else if (telecom.value){
+                            PatientContactInfo = telecom.value
                         }
                     }
                 }
