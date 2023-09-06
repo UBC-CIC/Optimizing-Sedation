@@ -29,7 +29,6 @@ export default function SmartAuth(){
             setErrorMsg(err.message);
         });
     }
-    
    
     return(
         <div style={{
