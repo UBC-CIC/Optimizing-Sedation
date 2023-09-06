@@ -134,6 +134,7 @@ export default function Dashboard(){
                     })
                     .catch(onErr);
             }
+            
           
             function fetchCodeData(LOINC_codes) {
                 console.log("Codes:  ", LOINC_codes);
@@ -145,20 +146,30 @@ export default function Dashboard(){
                     const entryName = entry.name;
                     const uniqueResultsSet = new Set();
             
-                    return Promise.all(entry.resources.map(resource => {
-                        return Promise.all(entry.coding.map(coding => {
-                            return client.request(`${resource}/?patient=${client.patient.id}&code=${coding.codes}`)
+                    return Promise.all(entry.resources.map(resource => {            // Resources could be Observation, MedicalRequest, etc.
+                        return Promise.all(entry.coding.map(coding => {             // Code refers to each code system like LOINC, SNOMED CT, etc.
+
+                            // Break coding.codes to smaller chunks
+                            const codeChunks = generateSubarray(coding.codes, 1000);
+                            
+                            console.log(entryName, "-codeChunks: ", codeChunks);
+
+                            // Search based on each chunks
+                            return Promise.all(codeChunks.map(codeChunk =>{
+                                return client.request(`${resource}/?patient=${client.patient.id}&code=${codeChunk}`)
                                 .then(Bundle => {
                                     const results = processAllObservationData(Bundle);
             
                                     // Add unique results to the Set
                                     results.forEach(result => {
-                                        if (!uniqueResultsSet.has(result)) {
-                                            uniqueResultsSet.add(result);
-                                        }
+                                        // if (!uniqueResultsSet.has(result)) {
+                                        //     uniqueResultsSet.add(result);
+                                        // }
+                                        uniqueResultsSet.add(result);
                                     });
                                 })
                                 .catch(onErr);
+                            }));
                         }));
                     }))
                     .then(() => {
@@ -228,6 +239,7 @@ export default function Dashboard(){
         }
     }
 
+    // Return an array of subArry where each subArray size <= targetSizeInByte Bytes
     function generateSubarray(arr, targetSizeInByte){
         let subArray = [];
         let startIndex = 0;

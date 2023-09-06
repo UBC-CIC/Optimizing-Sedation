@@ -13,7 +13,7 @@ export default function SmartAuth(){
         FHIR.oauth2.authorize({
             'redirectUri': '/',
             'client_id': process.env.REACT_APP_CLIENT_ID,
-            'scope':  'patient/Patient.read patient/Observation.read patient/DiagnosticReport.read patient/Immunization.read patient/MedicationRequest.read patient/Condition.read launch online_access openid profile',
+            'scope':  'patient/Patient.read patient/Observation.read patient/DiagnosticReport.read patient/Immunization.read patient/MedicationRequest.read patient/Condition.read patient/Procedure.read launch online_access openid profile',
         }).catch(err => {
             console.log("/smartAuth error");
             setErrorMsg(err.message);
@@ -23,7 +23,7 @@ export default function SmartAuth(){
             'redirectUri': '/',
             'clientSecret': process.env.REACT_APP_CLIENT_SECRET,
             'client_id': process.env.REACT_APP_CLIENT_ID,
-            'scope':  'patient/Patient.read patient/Observation.read patient/DiagnosticReport.read patient/Immunization.read patient/MedicationRequest.read patient/Condition.read launch online_access openid profile',
+            'scope':  'patient/Patient.read patient/Observation.read patient/DiagnosticReport.read patient/Immunization.read patient/MedicationRequest.read patient/Condition.read patient/Procedure.read launch online_access openid profile',
         }).catch(err => {
             console.log("/smartAuth error");
             setErrorMsg(err.message);
