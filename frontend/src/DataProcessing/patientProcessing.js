@@ -12,6 +12,9 @@ function processPatientData(PatientData) {
                 if (name.use === "official"){
                     PatientName = name.family + ", " + name.given.join(" ");
                 }
+                else{
+                    PatientName = name.family + ", " + name.given.join(" ");
+                }
             }
         }
 
