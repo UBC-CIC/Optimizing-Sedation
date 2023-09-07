@@ -10,8 +10,7 @@ import LoadMoreDataPopUp from '../components/med_diag_popup';
 import ErrorDisplay from '../components/ErrorDisplay';
 
 // Material UI
-import Button from '@mui/material/Button';
-import {Grid, Link, Typography} from '@mui/material';
+import {Grid, Typography} from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 
 // Data processing modules
@@ -19,7 +18,7 @@ import processPatientData from '../DataProcessing/patientProcessing';
 import processImmunizationData from '../DataProcessing/immunizationProcessing';
 import processMedicationData from '../DataProcessing/medicationProcessing';
 import processConditionData from '../DataProcessing/conditionProcessing';
-import {processObservationData, processAllObservationData} from '../DataProcessing/observationProcessing';
+import {processAllObservationData} from '../DataProcessing/observationProcessing';
 
 import processDiagnosticReportData from '../DataProcessing/diagnosticReportProcessing';
 
@@ -142,7 +141,7 @@ export default function Dashboard(){
             // Promise on all request to FHIR Server
             return Promise.all(LOINC_codes.map(entry => {
                 const entryName = entry.name;
-                const uniqueResultsSet = new Set();
+                const uniqueResultsSet = [];
         
                 return Promise.all(entry.resources.map(resource => {            // Resources could be Observation, MedicalRequest, etc.
                     return Promise.all(entry.coding.map(coding => {             // Code refers to each code system like LOINC, SNOMED CT, etc.
@@ -180,10 +179,11 @@ export default function Dashboard(){
 
                             return client.request(requestString).then(Bundle => {
                                 const results = processAllObservationData(Bundle);
-        
                                 // Add unique results to the Set
                                 results.forEach(result => {
-                                    uniqueResultsSet.add(result);
+                                    if(!uniqueResultsSet.find(obj => obj.ObservationID === result.ObservationID)){
+                                        uniqueResultsSet.push(result);
+                                    }
                                 });
                             })
                             .catch(onErr);
@@ -192,7 +192,7 @@ export default function Dashboard(){
                 }))
                 .then(() => {
                     // Convert the Set back to an array and store it in the uniqueResultsMap
-                    uniqueResultsMap[entryName] = Array.from(uniqueResultsSet);
+                    uniqueResultsMap[entryName] = uniqueResultsSet;
                 });
             }))
             .then(() => {
@@ -301,7 +301,6 @@ export default function Dashboard(){
         });
 
         const statusList_ = getStatusList(dataCleaned);
-        console.log("statusList_: ", statusList_);
         setMedDiagData(dataCleaned);
         setStatusList(statusList_);
         setLoadPopup(true);

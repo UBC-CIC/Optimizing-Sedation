@@ -55,12 +55,8 @@ export default function SearchBar({ statusTypeDisplayText, statusTypeList, selec
 
         roundBoxNoHorizontalSpace: {
             padding: '3vh', 
-            // borderRadius: 10, 
-            // border: '2px solid #3e92fb', 
-            // backgroundColor:'#3e92fb', 
             marginTop: '0.7vh',
             marginBottom: '0.7vh',
-            // boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.1)'
         },
 
         roundBoxDropdownLists: {
