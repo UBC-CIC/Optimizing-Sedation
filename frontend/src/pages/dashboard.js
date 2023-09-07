@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
-import imported_LOINC_Codes from '../config/codes.json';
+import config from '../config/config.json';
 
 // Components
 import SideBar from '../components/sideBar';
@@ -39,7 +39,7 @@ const statusTypes = [
     'Data Available',
 ];
 
-const assessmentTypes = ['Labs', 'Vaccinations'].concat(imported_LOINC_Codes
+const assessmentTypes = ['Labs', 'Vaccinations'].concat(config.searchCodes
                         .map(i => {
                             return i.name;
                         }));
@@ -68,7 +68,7 @@ export default function Dashboard(){
     const [totalLOINC_codesData, settotalLOINC_codesData] = useState(null);
     
 
-    const LOINC_codes = imported_LOINC_Codes;
+    const LOINC_codes = config.searchCodes;
     
     // Data stream line State Variables
     const [dataReady, setDataReady] = useState(false);
@@ -83,117 +83,135 @@ export default function Dashboard(){
     const [errorMessage, setErrorMsg] = useState(undefined); 
     
     useEffect(() => {
-        // Resolver funcitons
-        async function onResolve(client) {
-            // Server succefully connected
-            setClientReady(true);
-            setClient(client);
-
-            // Operations
-            await client.request(`Patient/${client.patient.id}`).then((patient) => {
-                console.log("Raw Patient Data: ", patient);
-
-                const parsedData = processPatientData(patient)[0];
-                
-                parsedData.PatientContactInfo = parsedData.PatientContactInfo.replace(/[-()]/g, '');
-                if (parsedData.PatientContactInfo != "N/A"){
-                    parsedData.PatientContactInfo = `(${parsedData.PatientContactInfo.slice(0, 3)}) ${parsedData.PatientContactInfo.slice(3, 6)}-${parsedData.PatientContactInfo.slice(6)}`;
-                }
-                const patient_dataCleanUp = createPatientData(parsedData.PatientName, parsedData.PatientMRN, parsedData.PatientContactName, parsedData.PatientContactInfo);
-                setPatientData(patient_dataCleanUp);
-            }).catch(onErr);
-
-            fetchData(`Immunization/?patient=${client.patient.id}`, processImmunizationData, setImmunizationData);
-            fetchData(`MedicationRequest/?patient=${client.patient.id}`, processMedicationData, setMedicationData);
-            fetchData(`Condition/?patient=${client.patient.id}`, processConditionData, setConditionData);
-            fetchData(`DiagnosticReport/?patient=${client.patient.id}`, processDiagnosticReportData, setDiagnosticReportData);
-            //fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
-            fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
-            fetchCodeData(LOINC_codes)
-                .then(LOINC_codesData => {
-                    settotalLOINC_codesData(LOINC_codesData);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-
-            function fetchData(url, processData, setData, accumulatedResults = []) {
-                client.request(url).then((Bundle) => {
-                        const results = processData(Bundle);
-                        accumulatedResults.push(...results); // Append current results to accumulatedResults
-            
-                        const nextLink = Bundle.link.find(link => link.relation === 'next');
-                        if (nextLink) {
-                            //console.log("Next link: ", nextLink.url);
-                            fetchData(nextLink.url, processData, setData, accumulatedResults); // Recursive call with accumulatedResults
-                        } else {
-                            //console.log("No next link found");
-                            //console.log("Total observations: ", accumulatedResults);
-                            setData(accumulatedResults);
-                        }
-                    })
-                    .catch(onErr);
-            }
-            
-          
-            function fetchCodeData(LOINC_codes) {
-                console.log("Codes:  ", LOINC_codes);
-                
-                // Initialize an object to store unique results for each entry
-                const uniqueResultsMap = {};
-            
-                return Promise.all(LOINC_codes.map(entry => {
-                    const entryName = entry.name;
-                    const uniqueResultsSet = new Set();
-            
-                    return Promise.all(entry.resources.map(resource => {            // Resources could be Observation, MedicalRequest, etc.
-                        return Promise.all(entry.coding.map(coding => {             // Code refers to each code system like LOINC, SNOMED CT, etc.
-
-                            // Break coding.codes to smaller chunks
-                            const codeChunks = generateSubarray(coding.codes, 1000);
-                            
-                            console.log(entryName, "-codeChunks: ", codeChunks);
-
-                            // Search based on each chunks
-                            return Promise.all(codeChunks.map(codeChunk =>{
-                                return client.request(`${resource}/?patient=${client.patient.id}&code=${codeChunk}`)
-                                .then(Bundle => {
-                                    const results = processAllObservationData(Bundle);
-            
-                                    // Add unique results to the Set
-                                    results.forEach(result => {
-                                        // if (!uniqueResultsSet.has(result)) {
-                                        //     uniqueResultsSet.add(result);
-                                        // }
-                                        uniqueResultsSet.add(result);
-                                    });
-                                })
-                                .catch(onErr);
-                            }));
-                        }));
-                    }))
-                    .then(() => {
-                        // Convert the Set back to an array and store it in the uniqueResultsMap
-                        uniqueResultsMap[entryName] = Array.from(uniqueResultsSet);
-                    });
-                }))
-                .then(() => {
-                    // Return the object containing unique results for each entry
-                    return uniqueResultsMap;
-                });
-            }
-
-            setDataReady(true);
-        }
-
         // Wait for authrization status
         FHIR.oauth2.ready().then(onResolve).catch(onErr);
     }, []);
 
+    // Resolver funcitons
+    async function onResolve(client) {
+        // Server succefully connected
+        setClientReady(true);
+        setClient(client);
+
+        // FHIR Request Operations
+        await client.request(`Patient/${client.patient.id}`).then((patient) => {
+            const parsedData = processPatientData(patient)[0];
+            
+            parsedData.PatientContactInfo = parsedData.PatientContactInfo.replace(/[-()]/g, '');
+            if (parsedData.PatientContactInfo != "N/A"){
+                parsedData.PatientContactInfo = `(${parsedData.PatientContactInfo.slice(0, 3)}) ${parsedData.PatientContactInfo.slice(3, 6)}-${parsedData.PatientContactInfo.slice(6)}`;
+            }
+            const patient_dataCleanUp = createPatientData(parsedData.PatientName, parsedData.PatientMRN, parsedData.PatientContactName, parsedData.PatientContactInfo);
+            setPatientData(patient_dataCleanUp);
+        }).catch(onErr);
+
+        fetchData(`Immunization/?patient=${client.patient.id}`, processImmunizationData, setImmunizationData);
+        fetchData(`MedicationRequest/?patient=${client.patient.id}`, processMedicationData, setMedicationData);
+        fetchData(`Condition/?patient=${client.patient.id}`, processConditionData, setConditionData);
+        fetchData(`DiagnosticReport/?patient=${client.patient.id}`, processDiagnosticReportData, setDiagnosticReportData);
+        //fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
+        fetchData(`Observation/?patient=${client.patient.id}`, processAllObservationData, setObservationData);
+        fetchCodeData(LOINC_codes)
+            .then(LOINC_codesData => {
+                settotalLOINC_codesData(LOINC_codesData);
+            })
+            .catch(onErr);
+        
+        // Fetch data besed on Resource type
+        function fetchData(url, processData, setData, accumulatedResults = []) {
+            client.request(url).then((Bundle) => {
+                    const results = processData(Bundle);
+                    accumulatedResults.push(...results); // Append current results to accumulatedResults
+        
+                    const nextLink = Bundle.link.find(link => link.relation === 'next');
+                    if (nextLink) {
+                        fetchData(nextLink.url, processData, setData, accumulatedResults); // Recursive call with accumulatedResults
+                    } else {
+                        setData(accumulatedResults);
+                    }
+                })
+                .catch(onErr);
+        }
+        
+        // Fetch data besed on Resource types, Medical Code types, and Medical Codes
+        function fetchCodeData(LOINC_codes) {
+            // Initialize an object to store unique results for each entry
+            const uniqueResultsMap = {};
+            const sandbox = config.generalConfig.sandbox;
+            
+            // Promise on all request to FHIR Server
+            return Promise.all(LOINC_codes.map(entry => {
+                const entryName = entry.name;
+                const uniqueResultsSet = new Set();
+        
+                return Promise.all(entry.resources.map(resource => {            // Resources could be Observation, MedicalRequest, etc.
+                    return Promise.all(entry.coding.map(coding => {             // Code refers to each code system like LOINC, SNOMED CT, etc.
+
+                        // Break coding.codes to smaller chunks
+                        const codeChunks = generateSubarray(coding.codes, config.generalConfig.maxSizeInByte);
+                        
+                        // Search based on each chunks
+                        return Promise.all(codeChunks.map(codeChunk =>{
+                            let requestString = `${resource}/?patient=${client.patient.id}&`;
+
+                            // Search codes based on specific sandbox
+                            if(sandbox === "LOGICA"){
+                                if(coding.system === "KEYWORDS"){
+                                    requestString += `code:text=${codeChunk}`;  // Any codes that start with or equal the string {codeChunk} (case-insensitive)
+                                } else {
+                                    requestString += `code=${codeChunk}`;
+                                }
+                            } else if (sandbox === "CERNER") {
+                                if(coding.system === "KEYWORDS"){
+                                    return new Promise((resolve, reject) => {
+                                        resolve("Cerner doesn't support keyword search.");
+                                    });
+                                } else {
+                                    requestString += `code=${coding.system}|${codeChunk}`;
+                                }
+                            } else { 
+                                // default: "SMART_LAUNCHER"
+                                if(coding.system === "KEYWORDS"){
+                                    requestString += `code:text=${codeChunk}`;
+                                } else {
+                                    requestString += `code=${coding.system}|${codeChunk}`;
+                                }
+                            }
+
+                            return client.request(requestString).then(Bundle => {
+                                const results = processAllObservationData(Bundle);
+        
+                                // Add unique results to the Set
+                                results.forEach(result => {
+                                    uniqueResultsSet.add(result);
+                                });
+                            })
+                            .catch(onErr);
+                        }));
+                    }));
+                }))
+                .then(() => {
+                    // Convert the Set back to an array and store it in the uniqueResultsMap
+                    uniqueResultsMap[entryName] = Array.from(uniqueResultsSet);
+                });
+            }))
+            .then(() => {
+                // Return the object containing unique results for each entry
+                return uniqueResultsMap;
+            });
+        }
+
+        setDataReady(true);
+    }
+
+    // Error function to handle all errors in the dashbaord
     function onErr(err) {
-        setClientReady(false);
-        setErrorMsg(err.message);
-        console.log(err);
+        if(!err.message.includes("invalid_grant")){
+            // Ignore CERNER "invalid_grant" error.
+            setClientReady(false);
+            setErrorMsg(err.message);
+            console.log(err);
+        }
     }
 
     //// Handler Functions////
@@ -444,24 +462,3 @@ export default function Dashboard(){
         </div>
     );
 }
-
-/**
- * 
- * Working amount of codes
- * "32864-1", "32865-8", "32866-6", "32867-4", "32868-2", "32869-0", "32871-6", "32874-0", "32875-7", "32876-5", 
-            "32877-3", "32878-1", "32879-9", "32880-7", "32881-5", "32882-3", "32883-1", "32888-0", "32889-8", "32890-6", 
-            "32891-4", "32892-2", "32894-8", "32895-5", "32898-9", "32899-7", "32900-3", "32901-1", "32902-9", "32904-5", 
-            "32906-0", "32907-8", "32908-6", "32910-2", "32911-0", "32913-6", "32914-4", "32915-1", "32916-9", "32917-7", 
-            "32918-5", "32919-3", "32920-1", "32921-9", "32922-7", "32923-5", "32924-3", "32925-0", "32926-8", "32927-6", 
-            "32928-4", "32929-2", "32930-0", "32931-8", "32932-6", "32933-4", "32934-2", "32935-9", "32936-7", "32937-5", 
-            "32938-3", "32939-1", "32940-9", "32941-7", "32942-5", "32945-8", "32946-6", "32947-4", "32948-2", "32949-0", 
-            "32950-8", "32951-6", "32952-4", "32953-2", "32954-0", "32955-7", "32956-5", "32957-3", "32958-1", "32959-9", 
-            "32960-7", "32961-5", "32962-3", "32963-1", "32964-9", "32965-6", "32966-4", "32967-2", "32968-0", "32969-8", 
-            "32970-6", "32971-4", "32972-2", "32973-0", "32975-5", "32976-3", "32977-1", "32978-9", "33992-9", "33993-7", 
-            "33994-5", "33995-2", "33996-0", "33997-8", "33998-6", "34000-0", "34001-8", "34002-6", "34003-4", "34004-2", 
-            "34005-9", "34006-7", "34007-5", "34009-1", "34010-9", "34011-7", "34012-5", "34013-3", "34014-1", "34015-8", 
-            "34016-6", "34017-4", "34021-6", "34024-0", "34025-7", "34026-5", "34028-1", "34029-9", "34030-7", "34031-5", 
-            "34032-3", "34033-1", "34034-9", "34035-6", "34036-4", "34037-2", "34038-0", "34039-8", "34040-6", "34041-4", 
-            "34042-2", "34043-0", "34044-8", "34045-5", "34047-1", "34048-9", "34049-7", "60601-2", "60602-0", "60603-8", 
-            "60604-6", "60605-3", "60606-1", "60607-9"
- */

@@ -21,6 +21,10 @@ export default function getReadableObservation(entry){
     else if (entry.resource.valueRatio)
     value = entry.resource.valueRatio.numerator && entry.resource.valueRange.denominator	 ? entry.resource.valueRatio.numerator.value + ':' + entry.resource.valueRange.denominator.value: 'N/A';
 
+
+    // Debug 
+    // value += "::" + entry.resource.code.coding[0].code ? entry.resource.code.coding[0].code:"";
+
     const time = entry.resource.effectiveDateTime
     ? entry.resource.effectiveDateTime.substring(0, 10)
     : 'N/A';
