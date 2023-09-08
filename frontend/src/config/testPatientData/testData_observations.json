@@ -7755,9 +7755,9 @@
           "resourceType": "Observation",
           "id": "15075",
           "meta": {
-            "versionId": "2",
-            "lastUpdated": "2023-07-26T16:30:16.000+00:00",
-            "source": "#nRj9KhDGqjCtxxAQ"
+            "versionId": "4",
+            "lastUpdated": "2023-09-08T23:24:11.000+00:00",
+            "source": "#8FTyVSHJi76XbpMU"
           },
           "status": "final",
           "code": {
@@ -7774,8 +7774,7 @@
             "reference": "Patient/smart-1186747"
           },
           "effectiveDateTime": "2023-07-26T12:00:00Z",
-          "issued": "2023-07-26T12:00:00Z",
-          "valueString": "Patient's ophthalmology notes will be documented here."
+          "valueString": "Patient presented with no significant changes in visual acuity. Pupil response is normal. Retina examination showed no signs of abnormalities."
         },
         "search": {
           "mode": "match"
