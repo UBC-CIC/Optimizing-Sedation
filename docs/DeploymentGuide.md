@@ -19,17 +19,14 @@ If you are on a Windows device, it is recommended to install the [Windows Subsys
   - [Deployment walkthrough](#deployment-walkthrough)
     - [Table of Contents](#table-of-contents)
   - [Step 1: Clone The Repository](#step-1-clone-the-repository)
-  - [Step 2: Deployment](#step-2-deployment)
+  - [Step 2: Application Configuration](#step-2-application-configuration)
+  - [Step 3: Local Deployment](#step-3-local-deploayment)
+  - [Step 4: Cloud Deployment](#step-2-cloud-deployment)
     - [Step 1: Install Dependencies](#step-1-install-dependencies)
-    - [Step 2: Upload the Database secret](#step-2-upload-the-database-secret)
+    - [Step 2: Upload Secrets](#step-2-upload-secret)
     - [Step 3: CDK Deployment](#step-3-cdk-deployment)
     - [Extra: Taking down the deployed stacks](#extra-taking-down-the-deployed-stacks)
-    - [Step 4: Uploading the Artifact files for the Deep Learning Pipeline](#step-4-uploading-the-artifact-files-for-the-deep-learning-pipeline)
-    - [Step 5: Uploading the syllabus files](#step-5-uploading-the-syllabus-files)
-    - [Step 6: Invoking the Deep Learning Pipeline](#step-6-invoking-the-deep-learning-pipeline)
-    - [Step 7: Creating a User](#step-7-creating-a-user)
-    - [Step 8: Deactivating User Self Sign up](#step-8-deactivating-user-self-sign-up)
-
+  - [Step 5: Register Application in Sandbox](#step-5-register-application-in-sandbox)
 ## Step 1: Clone The Repository
 
 First, clone the GitHub repository onto your machine. To do this:
@@ -39,13 +36,13 @@ First, clone the GitHub repository onto your machine. To do this:
 3. Clone the github repository by entering the following:
 
 ```bash
-git clone https://github.com/UBC-CIC/course-flexibility.git
+git clone https://github.com/UBC-CIC/Optimizing-Sedation.git
 ```
 
 The code should now be in the folder you created. Navigate into the root folder containing the entire codebase by running the command:
 
 ```bash
-cd course-flexibility
+cd Optimizing-Sedation
 ```
 
 ## Step 2: Deployment
