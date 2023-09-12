@@ -21,7 +21,7 @@ const WAFInstance = new WAFStack(app, `Create-WAFWebACL`, {
 
 // Create stack for hosting
 // Run this stack: cdk deploy DevOrg-dev-Host --profile <aws-profile-name>
-const HostDashboard = new HostStack(app, `ECSHost`, loadDocker.repo, WAFInstance.WAFwebACL, {
+const HostDashboard = new HostStack(app, `ECSHost`, loadDocker.repo, {
     env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
         region: process.env.CDK_DEFAULT_REGION,
