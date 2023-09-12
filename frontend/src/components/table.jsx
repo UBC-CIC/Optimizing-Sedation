@@ -40,7 +40,6 @@ function createData(assessment, status, others, tableHeader){
         return null;
     
     if(others != null){
-        //console.log("createData.other: ", others);
         const isValidFormat = others.every(item => {
             let output = typeof item.title === 'string';
             
@@ -92,20 +91,19 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
                 const col3Data = matchedObservationCode.map((obs)=>{
                     const modified = obs.ObservationType.charAt(0).toUpperCase() + obs.ObservationType.slice(1);
     
-                    return {title: modified, col1: obs.ObservationValue, col2: obs.ObservationTime && (obs.ObservationTime.split('T'))[0]}
+                    return {title: modified, col1: obs.ObservationValue, col2: obs.ObservationTime}
                 });
                 
                 const subHeaders = ["Observation Type", "Value", "Date"];
-                return ({title: modifiedTitle, col1: 'N/A', col2: row.time && (row.time.split('T'))[0], col3: col3Data, headers: subHeaders});
+                return ({title: modifiedTitle, col1: 'N/A', col2: row.time, col3: col3Data, headers: subHeaders});
             } else if (row.value){
-                return ({title: modifiedTitle, col1: row.value, col2: row.time && (row.time.split('T'))[0]});
+                return ({title: modifiedTitle, col1: row.value, col2: row.time});
             }
             
             return null;
         });
         
         if(labProcessedData != null && labProcessedData.length != 0){
-            //console.log("labProcessedData: ", labProcessedData);
             const observationHeader = ["Lab Type", "Value", "Date"];
             data.push(createData("Labs", "Data Available", labProcessedData, observationHeader));
         } else {
@@ -119,7 +117,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
     if(ImmunizationData != null && ImmunizationData.length != 0){
         const vaccination = ImmunizationData.map(row =>{
             const modified = row.ImmunizationType.charAt(0).toUpperCase() + row.ImmunizationType.slice(1);
-            return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime && (row.ImmunizationTime.split('T'))[0] });
+            return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime});
         });
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
@@ -144,7 +142,6 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
         }
     }
 
-    //console.log("data: ", data);
     return data;
 }
 // Custome Row Design
@@ -340,12 +337,8 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
 
         roundBoxNoHorizontalSpace: {
             padding: '3vh', 
-            // borderRadius: 10, 
-            // border: '2px solid #3e92fb', 
-            // backgroundColor:'#3e92fb', 
             marginTop: '0.7vh',
             marginBottom: '0.7vh',
-            // boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.1)'
         },
 
         roundBoxDropdownLists: {
@@ -362,9 +355,6 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
 
 
     useEffect(() => {
-        //console.log("data: ", data);
-
-        
     }, []);
 
     return(
