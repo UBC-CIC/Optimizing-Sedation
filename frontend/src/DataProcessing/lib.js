@@ -21,13 +21,11 @@ export default function getReadableObservation(entry){
     else if (entry.resource.valueRatio)
     value = entry.resource.valueRatio.numerator && entry.resource.valueRange.denominator	 ? entry.resource.valueRatio.numerator.value + ':' + entry.resource.valueRange.denominator.value: 'N/A';
 
-
-    // Debug 
-    // value += "::" + entry.resource.code.coding[0].code ? entry.resource.code.coding[0].code:"";
-
-    const time = entry.resource.effectiveDateTime
-    ? entry.resource.effectiveDateTime.substring(0, 10)
-    : 'N/A';
+    let time = 'N/A';
+    if(entry.resource.effectiveDateTime)
+    time = entry.resource.effectiveDateTime.substring(0, 10);
+    else if (entry.resource.performedDateTime)
+    time = entry.resource.performedDateTime.substring(0,10);
 
     const id = entry.resource.id
     ? entry.resource.id

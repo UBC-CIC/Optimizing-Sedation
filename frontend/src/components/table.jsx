@@ -18,6 +18,7 @@ import {
     Typography,
     Link,
     Container,
+    Button,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -171,6 +172,10 @@ function Row(props){
     const [open, setOpen] = React.useState(false);
     const data = props.info; 
 
+    useEffect(() => {
+        setOpen(props.open);
+      }, [props.open]);
+
     if(!data)
         return null;
 
@@ -203,66 +208,85 @@ function Row(props){
             <StyledTableRow>
                 <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     {data.others != null &&
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Container>
-
-                        <TableContainer style={{marginTop: '2vh', marginBottom: '2vh'}}>
-                        <Table size="small">
-                            {
-                                data.tableHeader != null &&
-                                <TableHead>
-                                    <TableRow>
-                                        { data.tableHeader.map((i)=>(
-                                            <TableCell align='left' style={{fontWeight: "bold"}}>{i}</TableCell>
-                                        ))}
-                                    </TableRow>
-                                </TableHead>
-                            }
-                            
-                            <TableBody>
-                                {
-                                    data.others
-                                    .sort((a, b) => {       // Sort based on time
-                                        if(a.col2 != null)
-                                            return b.col2.localeCompare(a.col2)
-                                        else
-                                            return 0;
-                                    })
-                                    .map((i)=>{
-                                        if(i.col1 != null && i.col2 != null && i.col2 == LINK){     // Display as link
-                                            return (
-                                                <Typography variant={"subtitle1"} component="h6">
-                                                    <Link href={i.col1} target="_blank" rel="noopener">
-                                                        {i.title}
-                                                    </Link> 
-                                                </Typography>);
-                                        } else if (i.col1 != null && i.col2 != null){               // Display as table
-                                            return (
-                                                    <DropDownTableRow rowData = {i}/>
-                                            );
-                                        } else if (i.col1 != null){
-                                            return (
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Container>
+                                <TableContainer style={{ marginTop: '2vh', marginBottom: '2vh' }}>
+                                    <Table size="small">
+                                        {data.tableHeader != null &&
+                                            <TableHead>
                                                 <TableRow>
-                                                    <TableCell align='left'>{i.title}</TableCell>
-                                                    <TableCell align='left'>{i.col1}</TableCell>
+                                                    {data.tableHeader.map((i, index) => (
+                                                        <TableCell
+                                                            align='left'
+                                                            style={{
+                                                                fontWeight: "bold",
+                                                                width: index === 0 ? '40%' : '40%' // Define column widths here
+                                                            }}
+                                                        >
+                                                            {i}
+                                                        </TableCell>
+                                                    ))}
                                                 </TableRow>
-                                            );
-                                        } 
-                                        else{        
-                                            return (
-                                                <TableRow>
-                                                    <TableCell align='left'>{i.title}</TableCell>
-                                                </TableRow>
-                                            );
+                                            </TableHead>
                                         }
-                                    })
-                                }
-                            </TableBody>
-                        </Table>
-                        </TableContainer>
-                            
-                        </Container>
-                    </Collapse>
+
+                                        <TableBody>
+                                            {data.others
+                                                .sort((a, b) => {
+                                                    if (a.col2 != null)
+                                                        return b.col2.localeCompare(a.col2);
+                                                    else
+                                                        return 0;
+                                                })
+                                                .map((i) => {
+                                                    if (i.col1 != null && i.col2 != null && i.col2 == LINK) {
+                                                        return (
+                                                            <Typography variant={"subtitle1"} component="h6">
+                                                                <Link href={i.col1} target="_blank" rel="noopener">
+                                                                    {i.title}
+                                                                </Link>
+                                                            </Typography>
+                                                        );
+                                                    } else if (i.col1 != null && i.col2 != null) {
+                                                        return (
+                                                            <DropDownTableRow rowData={i} />
+                                                        );
+                                                    } else if (i.col1 != null) {
+                                                        return (
+                                                            <TableRow>
+                                                                <TableCell
+                                                                    align='left'
+                                                                    style={{ width: '50%' }} 
+                                                                >
+                                                                    {i.title}
+                                                                </TableCell>
+                                                                <TableCell
+                                                                    align='left'
+                                                                    style={{ width: '50%' }}
+                                                                >
+                                                                    {i.col1}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        );
+                                                    } else {
+                                                        return (
+                                                            <TableRow>
+                                                                <TableCell
+                                                                    align='left'
+                                                                    colSpan={2} 
+                                                                    style={{ width: '100%' }} 
+                                                                >
+                                                                    {i.title}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        );
+                                                    }
+                                                })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Container>
+                        </Collapse>
                     }
                 </StyledTableCell>
             </StyledTableRow>
@@ -271,7 +295,36 @@ function Row(props){
 }
 
 export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData, totalLOINC_codesData}){
+    //console.log("Data from Codes: ", totalLOINC_codesData);
+    // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
+
+    // Convert input data into current format of this table
+    // if(!Array.isArray(fhirData))
+    //     return (
+    //         <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
+    //     );
+    
+
     const data = convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
+    //console.log("data: ", data);
+    // State variables to manage expanded/collapsed state
+    const [allRowsExpanded, setAllRowsExpanded] = useState(null);
+
+    // Click handler for the "Expand All" button
+    const handleExpandAllClick = () => {
+        setAllRowsExpanded(1); // reset state before setting new state
+        setTimeout(() => {
+            setAllRowsExpanded(true);
+          }, 1); 
+    };
+
+    // Click handler for the "Collapse All" button
+    const handleCollapseAllClick = () => {
+        setAllRowsExpanded(0); // reset state before setting new state
+        setTimeout(() => {
+            setAllRowsExpanded(false); 
+          }, 1); 
+    };
 
     const style = {
         dropDown: {
@@ -306,6 +359,17 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
 
     return(
         <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div></div>
+                <div>
+                    <Button variant="outlined" onClick={handleExpandAllClick}>
+                        Expand All
+                    </Button>
+                    <Button variant="outlined" onClick={handleCollapseAllClick}>
+                        Collapse All
+                    </Button>
+                </div>
+            </div>
             <TableContainer component={Paper}>
                 <Table stickyHeader aria-label="collapsible table" >
                     <TableHead >
@@ -351,7 +415,7 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
                                 return row.assessment.toLowerCase().includes(searchInput.toLowerCase()) || row.status.toLowerCase().includes(searchInput.toLowerCase());
                             })
                             .map((row)=>(
-                                <Row info={row}/>
+                                <Row info={row} open={allRowsExpanded} />
                             ))
                         }
                     </TableBody>
