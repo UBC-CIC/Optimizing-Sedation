@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import FHIR from 'fhirclient';
 
 // Components
 import CustomedDataGrid from './CustomeDataGrid';
 
 // Material UI
-import Button from '@mui/material/Button';
-import {Grid, IconButton, Paper, Typography} from '@mui/material';
+import {Grid, IconButton, Paper} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 export default function LoadMoreDataPopUp({parsedTableData, loadData, popupTitle, setLoadPopup}){
@@ -28,9 +27,8 @@ export default function LoadMoreDataPopUp({parsedTableData, loadData, popupTitle
             <React.Fragment>
                 <Grid container spacing={0}>
                         <Grid sm={11} >
-                        <Paper elevation={3} style={{
+                        <div elevation={3} style={{
                             padding: '2vh 3vw 3vh 3vw',
-                            backgroundColor: '#f3f6f9',
                             margin: 0
                             }}>
                             {/* Popup Header */}
@@ -56,13 +54,8 @@ export default function LoadMoreDataPopUp({parsedTableData, loadData, popupTitle
                                     <h1>{loadData.title}</h1>
                                 </center>
                                 <CustomedDataGrid medDiagData={parsedTableData}/>
-                                {/* <LoadMoreDataTable 
-                                selectStatusType = {selectStatusType}
-                                searchInput = {searchInput}
-                                data = {parsedTableData}
-                                /> */}
                             </div>
-                        </Paper>
+                        </div>
                         </Grid>
                         <Grid sm={1} />
                 </Grid>

@@ -18,6 +18,7 @@ import {
     Typography,
     Link,
     Container,
+    Button,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -39,7 +40,6 @@ function createData(assessment, status, others, tableHeader){
         return null;
     
     if(others != null){
-        //console.log("createData.other: ", others);
         const isValidFormat = others.every(item => {
             let output = typeof item.title === 'string';
             
@@ -91,20 +91,19 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
                 const col3Data = matchedObservationCode.map((obs)=>{
                     const modified = obs.ObservationType.charAt(0).toUpperCase() + obs.ObservationType.slice(1);
     
-                    return {title: modified, col1: obs.ObservationValue, col2: obs.ObservationTime && (obs.ObservationTime.split('T'))[0]}
+                    return {title: modified, col1: obs.ObservationValue, col2: obs.ObservationTime}
                 });
                 
                 const subHeaders = ["Observation Type", "Value", "Date"];
-                return ({title: modifiedTitle, col1: 'N/A', col2: row.time && (row.time.split('T'))[0], col3: col3Data, headers: subHeaders});
+                return ({title: modifiedTitle, col1: 'N/A', col2: row.time, col3: col3Data, headers: subHeaders});
             } else if (row.value){
-                return ({title: modifiedTitle, col1: row.value, col2: row.time && (row.time.split('T'))[0]});
+                return ({title: modifiedTitle, col1: row.value, col2: row.time});
             }
             
             return null;
         });
         
         if(labProcessedData != null && labProcessedData.length != 0){
-            console.log("labProcessedData: ", labProcessedData);
             const observationHeader = ["Lab Type", "Value", "Date"];
             data.push(createData("Labs", "Data Available", labProcessedData, observationHeader));
         } else {
@@ -118,7 +117,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
     if(ImmunizationData != null && ImmunizationData.length != 0){
         const vaccination = ImmunizationData.map(row =>{
             const modified = row.ImmunizationType.charAt(0).toUpperCase() + row.ImmunizationType.slice(1);
-            return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime && (row.ImmunizationTime.split('T'))[0] });
+            return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime});
         });
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
@@ -143,7 +142,6 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
         }
     }
 
-    //console.log("data: ", data);
     return data;
 }
 // Custome Row Design
@@ -173,6 +171,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 function Row(props){
     const [open, setOpen] = React.useState(false);
     const data = props.info; 
+
+    useEffect(() => {
+        setOpen(props.open);
+      }, [props.open]);
 
     if(!data)
         return null;
@@ -206,66 +208,85 @@ function Row(props){
             <StyledTableRow>
                 <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     {data.others != null &&
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Container>
-
-                        <TableContainer style={{marginTop: '2vh', marginBottom: '2vh'}}>
-                        <Table size="small">
-                            {
-                                data.tableHeader != null &&
-                                <TableHead>
-                                    <TableRow>
-                                        { data.tableHeader.map((i)=>(
-                                            <TableCell align='left' style={{fontWeight: "bold"}}>{i}</TableCell>
-                                        ))}
-                                    </TableRow>
-                                </TableHead>
-                            }
-                            
-                            <TableBody>
-                                {
-                                    data.others
-                                    .sort((a, b) => {       // Sort based on time
-                                        if(a.col2 != null)
-                                            return b.col2.localeCompare(a.col2)
-                                        else
-                                            return 0;
-                                    })
-                                    .map((i)=>{
-                                        if(i.col1 != null && i.col2 != null && i.col2 == LINK){     // Display as link
-                                            return (
-                                                <Typography variant={"subtitle1"} component="h6">
-                                                    <Link href={i.col1} target="_blank" rel="noopener">
-                                                        {i.title}
-                                                    </Link> 
-                                                </Typography>);
-                                        } else if (i.col1 != null && i.col2 != null){               // Display as table
-                                            return (
-                                                    <DropDownTableRow rowData = {i}/>
-                                            );
-                                        } else if (i.col1 != null){
-                                            return (
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Container>
+                                <TableContainer style={{ marginTop: '2vh', marginBottom: '2vh' }}>
+                                    <Table size="small">
+                                        {data.tableHeader != null &&
+                                            <TableHead>
                                                 <TableRow>
-                                                    <TableCell align='left'>{i.title}</TableCell>
-                                                    <TableCell align='left'>{i.col1}</TableCell>
+                                                    {data.tableHeader.map((i, index) => (
+                                                        <TableCell
+                                                            align='left'
+                                                            style={{
+                                                                fontWeight: "bold",
+                                                                width: index === 0 ? '40%' : '40%' // Define column widths here
+                                                            }}
+                                                        >
+                                                            {i}
+                                                        </TableCell>
+                                                    ))}
                                                 </TableRow>
-                                            );
-                                        } 
-                                        else{        
-                                            return (
-                                                <TableRow>
-                                                    <TableCell align='left'>{i.title}</TableCell>
-                                                </TableRow>
-                                            );
+                                            </TableHead>
                                         }
-                                    })
-                                }
-                            </TableBody>
-                        </Table>
-                        </TableContainer>
-                            
-                        </Container>
-                    </Collapse>
+
+                                        <TableBody>
+                                            {data.others
+                                                .sort((a, b) => {
+                                                    if (a.col2 != null)
+                                                        return b.col2.localeCompare(a.col2);
+                                                    else
+                                                        return 0;
+                                                })
+                                                .map((i) => {
+                                                    if (i.col1 != null && i.col2 != null && i.col2 == LINK) {
+                                                        return (
+                                                            <Typography variant={"subtitle1"} component="h6">
+                                                                <Link href={i.col1} target="_blank" rel="noopener">
+                                                                    {i.title}
+                                                                </Link>
+                                                            </Typography>
+                                                        );
+                                                    } else if (i.col1 != null && i.col2 != null) {
+                                                        return (
+                                                            <DropDownTableRow rowData={i} />
+                                                        );
+                                                    } else if (i.col1 != null) {
+                                                        return (
+                                                            <TableRow>
+                                                                <TableCell
+                                                                    align='left'
+                                                                    style={{ width: '50%' }} 
+                                                                >
+                                                                    {i.title}
+                                                                </TableCell>
+                                                                <TableCell
+                                                                    align='left'
+                                                                    style={{ width: '50%' }}
+                                                                >
+                                                                    {i.col1}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        );
+                                                    } else {
+                                                        return (
+                                                            <TableRow>
+                                                                <TableCell
+                                                                    align='left'
+                                                                    colSpan={2} 
+                                                                    style={{ width: '100%' }} 
+                                                                >
+                                                                    {i.title}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        );
+                                                    }
+                                                })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Container>
+                        </Collapse>
                     }
                 </StyledTableCell>
             </StyledTableRow>
@@ -274,6 +295,7 @@ function Row(props){
 }
 
 export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData, totalLOINC_codesData}){
+    //console.log("Data from Codes: ", totalLOINC_codesData);
     // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
 
     // Convert input data into current format of this table
@@ -285,6 +307,24 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
 
     const data = convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
     //console.log("data: ", data);
+    // State variables to manage expanded/collapsed state
+    const [allRowsExpanded, setAllRowsExpanded] = useState(null);
+
+    // Click handler for the "Expand All" button
+    const handleExpandAllClick = () => {
+        setAllRowsExpanded(1); // reset state before setting new state
+        setTimeout(() => {
+            setAllRowsExpanded(true);
+          }, 1); 
+    };
+
+    // Click handler for the "Collapse All" button
+    const handleCollapseAllClick = () => {
+        setAllRowsExpanded(0); // reset state before setting new state
+        setTimeout(() => {
+            setAllRowsExpanded(false); 
+          }, 1); 
+    };
 
     const style = {
         dropDown: {
@@ -297,12 +337,8 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
 
         roundBoxNoHorizontalSpace: {
             padding: '3vh', 
-            // borderRadius: 10, 
-            // border: '2px solid #3e92fb', 
-            // backgroundColor:'#3e92fb', 
             marginTop: '0.7vh',
             marginBottom: '0.7vh',
-            // boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.1)'
         },
 
         roundBoxDropdownLists: {
@@ -319,13 +355,21 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
 
 
     useEffect(() => {
-        //console.log("data: ", data);
-
-        
     }, []);
 
     return(
         <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div></div>
+                <div>
+                    <Button variant="outlined" onClick={handleExpandAllClick}>
+                        Expand All
+                    </Button>
+                    <Button variant="outlined" onClick={handleCollapseAllClick}>
+                        Collapse All
+                    </Button>
+                </div>
+            </div>
             <TableContainer component={Paper}>
                 <Table stickyHeader aria-label="collapsible table" >
                     <TableHead >
@@ -371,7 +415,7 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
                                 return row.assessment.toLowerCase().includes(searchInput.toLowerCase()) || row.status.toLowerCase().includes(searchInput.toLowerCase());
                             })
                             .map((row)=>(
-                                <Row info={row}/>
+                                <Row info={row} open={allRowsExpanded} />
                             ))
                         }
                     </TableBody>

@@ -111,7 +111,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                                     <li>{med.MedicationType}
                                         <ul>
                                             <li>Status: {med.MedicationStatus}</li>
-                                            <li>Date: {med.MedicationTime && (med.MedicationTime.split('T'))[0]}</li>
+                                            <li>Date: {med.MedicationTime}</li>
                                         </ul>
                                     </li>
                                 ))
@@ -154,46 +154,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                                 <li>{dia.type} 
                                     <ul>
                                         <li>Status: {dia.status}</li>
-                                        <li>Date: {dia.time && (dia.time.split('T'))[0]}</li>
-                                        {/* <li>Observation: 
-                                            <Table size="small">
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell>Type</TableCell>
-                                                        <TableCell>Value</TableCell>
-                                                        <TableCell>Date</TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                {
-                                                    ObservationData && ObservationData.map((obs) => {
-                                                        // Diagnostic data format, "Observation/L-206031874" 
-                                                        if(dia.ref.includes("Observation/" + obs.ObservationID)){
-                                                            return (
-                                                                <React.Fragment>
-                                                                    <TableRow>
-                                                                        <TableCell>{obs.ObservationType}</TableCell>
-                                                                        <TableCell>{obs.ObservationValue}</TableCell>
-                                                                        <TableCell>{obs.ObservationTime && (obs.ObservationTime.split('T'))[0]}</TableCell>
-                                                                    </TableRow>
-                                                                </React.Fragment>
-                                                            )
-                                                        }
-                                                    })
-                                                }
-                                                </TableBody>
-                                            </Table>
-                                            <ul>
-                                                {
-                                                    ObservationData && ObservationData.map((obs) => {
-                                                        // Diagnostic data format, "Observation/L-206031874" 
-                                                        if(dia.ref.includes("Observation/" + obs.ObservationID)){
-                                                            return (<li>{obs.ObservationType} &nbsp; {obs.ObservationValue} &nbsp; {obs.ObservationTime && (obs.ObservationTime.split('T'))[0]}</li>);
-                                                        }
-                                                    })
-                                                }
-                                            </ul>
-                                        </li> */}
+                                        <li>Date: {dia.time}</li>
                                     </ul>
                                 </li>
                             ))
