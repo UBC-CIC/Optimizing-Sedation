@@ -45,7 +45,7 @@ export default function SmartAuth(){
             <Typography variant={"h4"} fontWeight={100}>Optimizing Sedation Dashboard</Typography>
             <Typography variant={"h6"} fontWeight={100}>Application launch on {config.generalConfig.launchMode === "PUBLIC" || config.generalConfig.launchMode === "CREDENTIAL" ? config.generalConfig.launchMode : "default (CREDENTIAL)"} mode.</Typography>
             
-            {errorMsg == undefined && 
+            {errorMsg === undefined && 
                 <React.Fragment>
                     <CircularProgress color="inherit"/>
                     <Typography variant={"subtitle1"}>Requesting to server for permission.</Typography>
@@ -54,7 +54,7 @@ export default function SmartAuth(){
                 </React.Fragment>
             }
 
-            {errorMsg != undefined &&
+            {errorMsg !== undefined &&
                 <React.Fragment>
                     <Typography variant={"h6"}>There is an error,</Typography>
         

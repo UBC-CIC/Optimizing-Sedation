@@ -54,7 +54,6 @@ export default function Dashboard(){
     const [MedicationData, setMedicationData] = useState(null);
     const [ConditionData, setConditionData] = useState(null);
     const [ObservationData, setObservationData] = useState(null);
-    const [LabData, setLabData] = useState(null);
     const [DiagnosticReportData, setDiagnosticReportData] = useState(null);
 
     // Popup states variables
@@ -97,7 +96,7 @@ export default function Dashboard(){
             const parsedData = processPatientData(patient)[0];
             
             parsedData.PatientContactInfo = parsedData.PatientContactInfo.replace(/[-()]/g, '');
-            if (parsedData.PatientContactInfo != "N/A"){
+            if (parsedData.PatientContactInfo !== "N/A"){
                 parsedData.PatientContactInfo = `(${parsedData.PatientContactInfo.slice(0, 3)}) ${parsedData.PatientContactInfo.slice(3, 6)}-${parsedData.PatientContactInfo.slice(6)}`;
             }
             const patient_dataCleanUp = createPatientData(parsedData.PatientName, parsedData.PatientMRN, parsedData.PatientContactName, parsedData.PatientContactInfo);
@@ -215,15 +214,6 @@ export default function Dashboard(){
     }
 
     //// Handler Functions////
-    async function loadPatientHandler(){
-        if(clientReady){
-            setText("Loading data...");
-            await client.request(`Patient/${client.patient.id}`).then((patient) => {
-                setText("Patient name: " + patient.name[0].text + " Patient birthday: " + patient.birthDate);
-            }).catch(onErr);
-        }
-    }
-
     const statusTypeHandle = (event) => {
         const { target: { value }, } = event;
         setSelectStatusType(
@@ -325,7 +315,7 @@ export default function Dashboard(){
 
     return(
         <div>
-            {!clientReady && errorMessage == undefined &&
+            {!clientReady && errorMessage === undefined &&
                 <div style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -346,7 +336,7 @@ export default function Dashboard(){
                 </div>
             }
 
-            {clientReady && !dataReady && errorMessage == undefined && 
+            {clientReady && !dataReady && errorMessage === undefined && 
                 <div style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -367,7 +357,7 @@ export default function Dashboard(){
                 </div>
             }
 
-            {clientReady && dataReady && errorMessage == undefined &&
+            {clientReady && dataReady && errorMessage === undefined &&
                 <Grid container spacing={0}>
                     {/* Left-hand side elements */}
                     <Grid sm={4} xs={12}>
@@ -455,7 +445,7 @@ export default function Dashboard(){
                 </Grid>
             }
 
-            {errorMessage != undefined && 
+            {errorMessage !== undefined && 
                 <ErrorDisplay msg={errorMessage} />
             }
         </div>

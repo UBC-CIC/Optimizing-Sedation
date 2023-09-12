@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 
 // Material UI
-import {Grid, Typography, Table, TableHead, TableBody, TableRow, TableCell} from '@mui/material';
+import {Grid, Typography} from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Link } from 'react-router-dom';
 
-export default function SideBar({patientData, MedicationData, DiagnosticReportData, ObservationData, loadMoreMedicationHandler,loadMoreDiagnoseHandler}){
-    const [clientReady, setClientReady] = useState(false);
+export default function SideBar({patientData, MedicationData, DiagnosticReportData, loadMoreMedicationHandler,loadMoreDiagnoseHandler}){
     const [openMedication, setOpenMedication] = React.useState(false);
     const [openDiagnose, setOpenDiagnose] = React.useState(false);
 
@@ -96,7 +95,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
 
                         {openMedication && 
                         <div style={style.roundBoxDropdownLists}>
-                            {MedicationData && MedicationData.length != 0 &&
+                            {MedicationData && MedicationData.length !== 0 &&
                             <ul>
                             {
                                 MedicationData
@@ -120,10 +119,10 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                             }
 
                             {
-                                (MedicationData && MedicationData.length != 0 && MedicationData.length > 5) ? (<Link onClick={loadMoreMedicationHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
+                                (MedicationData && MedicationData.length !== 0 && MedicationData.length > 5) ? (<Link onClick={loadMoreMedicationHandler}> Load More...</Link>) : (<React.Fragment></React.Fragment>)
                             }
 
-                            {(!MedicationData || MedicationData.length == 0) && (
+                            {(!MedicationData || MedicationData.length === 0) && (
                                 <Typography variant='subtitle1'>No Medication Data From The Past Six Months</Typography>
                             )}
                         </div>}
@@ -140,7 +139,7 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
 
                     {openDiagnose && 
                     <div style={style.roundBoxDropdownLists}>
-                        {DiagnosticReportData && DiagnosticReportData.length != 0 && (<ul>
+                        {DiagnosticReportData && DiagnosticReportData.length !== 0 && (<ul>
                         {
                             DiagnosticReportData
                             .sort((a, b) => a.ConditionTime.localeCompare(b.ConditionTime))
@@ -163,10 +162,10 @@ export default function SideBar({patientData, MedicationData, DiagnosticReportDa
                         </ul>)}
 
                         {
-                            (DiagnosticReportData && DiagnosticReportData.length != 0 && DiagnosticReportData.length > 5) ? (<Link onClick={loadMoreDiagnoseHandler}>Load More...</Link>) : (<React.Fragment></React.Fragment>)
+                            (DiagnosticReportData && DiagnosticReportData.length !== 0 && DiagnosticReportData.length > 5) ? (<Link onClick={loadMoreDiagnoseHandler}>Load More...</Link>) : (<React.Fragment></React.Fragment>)
                         }
 
-                        {(!DiagnosticReportData || DiagnosticReportData.length == 0) && (
+                        {(!DiagnosticReportData || DiagnosticReportData.length === 0) && (
                             <Typography variant='subtitle1'>No Diagnostic Data</Typography>
                         )}
                     </div>}

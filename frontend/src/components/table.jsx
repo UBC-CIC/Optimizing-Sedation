@@ -103,18 +103,18 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
             return null;
         });
         
-        if(labProcessedData != null && labProcessedData.length != 0){
+        if(labProcessedData !== null && labProcessedData.length !== 0){
             const observationHeader = ["Lab Type", "Value", "Date"];
             data.push(createData("Labs", "Data Available", labProcessedData, observationHeader));
         } else {
             data.push(createData("Labs", "No Data", null, null));
         }
-    } else if (LabData == null || LabData == []) {
+    } else if (LabData === null || LabData === []) {
         data.push(createData("Labs", "No Data", null, null));
     }
 
     // Convert ImmunizationData
-    if(ImmunizationData != null && ImmunizationData.length != 0){
+    if(ImmunizationData !== null && ImmunizationData.length !== 0){
         const vaccination = ImmunizationData.map(row =>{
             const modified = row.ImmunizationType.charAt(0).toUpperCase() + row.ImmunizationType.slice(1);
             return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime});
@@ -122,13 +122,13 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
         data.push(createData("Vaccinations", "Data Available", vaccination, vaccinationHeader));
-    } else if (ImmunizationData == null || ImmunizationData == []) {
+    } else if (ImmunizationData === null || ImmunizationData === []) {
         data.push(createData("Vaccinations", "No Data", null, null));
     }
 
     for (const property in totalLOINC_codesData) {
         if (totalLOINC_codesData.hasOwnProperty(property)) {
-            if (totalLOINC_codesData[property] != null && totalLOINC_codesData[property].length != 0) {
+            if (totalLOINC_codesData[property] !== null && totalLOINC_codesData[property].length !== 0) {
                 const observationData = totalLOINC_codesData[property].map(row => {
                     const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
                     return ({ title: modified, col1: row.ObservationValue, col2: row.ObservationTime });
@@ -182,7 +182,7 @@ function Row(props){
     return(
         <React.Fragment>
             {/* Main Row */}
-            <StyledTableRow sx={{ '& > *': { borderBottom: 'unset' }}} key={data.assessment}>
+            <StyledTableRow sx={{ '& > *': { borderBottom: 'unset' }}} key={data.assessment + "1"}>
                 <StyledTableCell component="th" scope="row">{data.assessment}</StyledTableCell>
                 <StyledTableCell align="center">
                     <Grid container style={{alignItems: 'center'}}>
@@ -205,7 +205,7 @@ function Row(props){
             </StyledTableRow>
             
             {/* Sub Row */}
-            <StyledTableRow>
+            <StyledTableRow key={data.assessment + "2"}>
                 <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     {data.others != null &&
                         <Collapse in={open} timeout="auto" unmountOnExit>
@@ -239,7 +239,7 @@ function Row(props){
                                                         return 0;
                                                 })
                                                 .map((i) => {
-                                                    if (i.col1 != null && i.col2 != null && i.col2 == LINK) {
+                                                    if (i.col1 !== null && i.col2 !== null && i.col2 === LINK) {
                                                         return (
                                                             <Typography variant={"subtitle1"} component="h6">
                                                                 <Link href={i.col1} target="_blank" rel="noopener">
@@ -295,18 +295,8 @@ function Row(props){
 }
 
 export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData, totalLOINC_codesData}){
-    //console.log("Data from Codes: ", totalLOINC_codesData);
-    // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
-
-    // Convert input data into current format of this table
-    // if(!Array.isArray(fhirData))
-    //     return (
-    //         <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
-    //     );
-    
-
     const data = convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
-    //console.log("data: ", data);
+    
     // State variables to manage expanded/collapsed state
     const [allRowsExpanded, setAllRowsExpanded] = useState(null);
 
@@ -383,22 +373,22 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
                             // Filter data before displaying in the .map() function
                             data
                             .filter(row => {
-                                if(selectAssessmentType.length == 0){
+                                if(selectAssessmentType.length === 0){
                                     return true;
                                 } else {
                                     for(let status_i in selectAssessmentType)
-                                        if(row.assessment == selectAssessmentType[status_i])
+                                        if(row.assessment === selectAssessmentType[status_i])
                                             return true;
                                 }
 
                                 return false;
                             })
                             .filter(row => {
-                                if(selectStatusType.length == 0){
+                                if(selectStatusType.length === 0){
                                     return true;
                                 } else {
                                     for(let status_i in selectStatusType)
-                                        if(row.status == selectStatusType[status_i])
+                                        if(row.status === selectStatusType[status_i])
                                             return true;
                                 }
 
@@ -415,7 +405,7 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
                                 return row.assessment.toLowerCase().includes(searchInput.toLowerCase()) || row.status.toLowerCase().includes(searchInput.toLowerCase());
                             })
                             .map((row)=>(
-                                <Row info={row} open={allRowsExpanded} />
+                                <Row info={row} open={allRowsExpanded}/>
                             ))
                         }
                     </TableBody>
