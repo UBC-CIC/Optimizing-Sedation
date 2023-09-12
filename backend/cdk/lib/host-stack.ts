@@ -1,4 +1,4 @@
-import { Stack, StackProps, CfnParameter, aws_elasticloadbalancingv2, CfnOutput} from 'aws-cdk-lib';
+import { Stack, StackProps, CfnParameter, aws_elasticloadbalancingv2, aws_certificatemanager, aws_elasticloadbalancingv2_targets, CfnOutput} from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecs from "aws-cdk-lib/aws-ecs";
@@ -10,6 +10,7 @@ import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
+import { SslPolicy } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 
 interface AwsRegions2PrefixListID {
     [key: string]: string;
@@ -125,9 +126,8 @@ export class HostStack extends Stack {
             internetFacing: true,
             loadBalancerName: "FargateService-LoadBalancer",
             securityGroup: ALBSecurityGroup,
-            
         });
-        
+
         // Create ECS Cluster which use to run Task on ECS Farget instance
         const cluster = new ecs.Cluster(this, "fargateCluster", {
             clusterName: "fargateCluster",
@@ -179,6 +179,9 @@ export class HostStack extends Stack {
             }),
         });
 
+        // Add HTTPS Listener
+        const CERTIFICATE_ARN = 'arn:aws:iam::<aws-account-number>:server-certificate/SedationCertificate';
+
         // Run Application Load Balancer in Fargate as an ECS Service
         // ALB in public subnet, ECS Service in private subnet
         const ALBFargateService = new ecspatterns.ApplicationLoadBalancedFargateService(this, "Host-With-LoadBalancer-Dashboard", {
@@ -194,8 +197,13 @@ export class HostStack extends Stack {
             },
             loadBalancer: ALB,
             openListener: false,
+            certificate: aws_certificatemanager.Certificate.fromCertificateArn(this, 'https-certificate', CERTIFICATE_ARN),
+            listenerPort: 443,
+
         });
 
+        // add to a target group so make containers discoverable by the application load balancer
+        // ALBFargateService.targetGroup.addTarget(targetGroupHttp);
         // Create ALB as CloudFront Origin
         const origin_ALB = new origins.LoadBalancerV2Origin(ALBFargateService.loadBalancer,{
             protocolPolicy: cloudfront.OriginProtocolPolicy.HTTP_ONLY
