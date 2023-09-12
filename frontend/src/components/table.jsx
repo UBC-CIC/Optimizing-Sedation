@@ -18,6 +18,7 @@ import {
     Typography,
     Link,
     Container,
+    Button,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -174,6 +175,10 @@ function Row(props){
     const [open, setOpen] = React.useState(false);
     const data = props.info; 
 
+    useEffect(() => {
+        setOpen(props.open);
+      }, [props.open]);
+
     if(!data)
         return null;
 
@@ -305,6 +310,24 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
 
     const data = convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
     //console.log("data: ", data);
+    // State variables to manage expanded/collapsed state
+    const [allRowsExpanded, setAllRowsExpanded] = useState(null);
+
+    // Click handler for the "Expand All" button
+    const handleExpandAllClick = () => {
+        setAllRowsExpanded(1); // reset state before setting new state
+        setTimeout(() => {
+            setAllRowsExpanded(true);
+          }, 1); 
+    };
+
+    // Click handler for the "Collapse All" button
+    const handleCollapseAllClick = () => {
+        setAllRowsExpanded(0); // reset state before setting new state
+        setTimeout(() => {
+            setAllRowsExpanded(false); 
+          }, 1); 
+    };
 
     const style = {
         dropDown: {
@@ -346,6 +369,17 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
 
     return(
         <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div></div>
+                <div>
+                    <Button variant="outlined" onClick={handleExpandAllClick}>
+                        Expand All
+                    </Button>
+                    <Button variant="outlined" onClick={handleCollapseAllClick}>
+                        Collapse All
+                    </Button>
+                </div>
+            </div>
             <TableContainer component={Paper}>
                 <Table stickyHeader aria-label="collapsible table" >
                     <TableHead >
@@ -391,7 +425,7 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
                                 return row.assessment.toLowerCase().includes(searchInput.toLowerCase()) || row.status.toLowerCase().includes(searchInput.toLowerCase());
                             })
                             .map((row)=>(
-                                <Row info={row}/>
+                                <Row info={row} open={allRowsExpanded} />
                             ))
                         }
                     </TableBody>
