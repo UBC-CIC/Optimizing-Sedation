@@ -18,7 +18,7 @@ import {
     Typography,
     Link,
     Container,
-    Button,
+    LinearProgress,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -28,6 +28,9 @@ import {DropDownTableRow} from './dropDownTable';
 
 // Constant Variables
 const LINK = "///LINK";
+
+// ID Variables holder
+var CURRENT_ID = 0;
 
 // Data Structuring
 function createData(assessment, status, others, tableHeader){
@@ -59,7 +62,8 @@ function createData(assessment, status, others, tableHeader){
         assessment, 
         status,
         others,
-        tableHeader
+        tableHeader,
+        id: String(CURRENT_ID++),
     };
 }
 
@@ -91,13 +95,13 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
                 const col3Data = matchedObservationCode.map((obs)=>{
                     const modified = obs.ObservationType.charAt(0).toUpperCase() + obs.ObservationType.slice(1);
     
-                    return {title: modified, col1: obs.ObservationValue, col2: obs.ObservationTime}
+                    return {id: String(CURRENT_ID++), title: modified, col1: obs.ObservationValue, col2: obs.ObservationTime}
                 });
                 
                 const subHeaders = ["Observation Type", "Value", "Date"];
-                return ({title: modifiedTitle, col1: 'N/A', col2: row.time, col3: col3Data, headers: subHeaders});
+                return ({id: String(CURRENT_ID++), title: modifiedTitle, col1: 'N/A', col2: row.time, col3: col3Data, headers: subHeaders});
             } else if (row.value){
-                return ({title: modifiedTitle, col1: row.value, col2: row.time});
+                return ({id: String(CURRENT_ID++), title: modifiedTitle, col1: row.value, col2: row.time});
             }
             
             return null;
@@ -117,7 +121,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
     if(ImmunizationData !== null && ImmunizationData.length !== 0){
         const vaccination = ImmunizationData.map(row =>{
             const modified = row.ImmunizationType.charAt(0).toUpperCase() + row.ImmunizationType.slice(1);
-            return ({title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime});
+            return ({id: CURRENT_ID++, title: modified, col1: row.ImmunizationStatus, col2:row.ImmunizationTime});
         });
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
@@ -126,12 +130,13 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
         data.push(createData("Vaccinations", "No Data", null, null));
     }
 
+    // Convert Other Data that searched by codes
     for (const property in totalLOINC_codesData) {
         if (totalLOINC_codesData.hasOwnProperty(property)) {
             if (totalLOINC_codesData[property] !== null && totalLOINC_codesData[property].length !== 0) {
                 const observationData = totalLOINC_codesData[property].map(row => {
                     const modified = row.ObservationType.charAt(0).toUpperCase() + row.ObservationType.slice(1);
-                    return ({ title: modified, col1: row.ObservationValue, col2: row.ObservationTime });
+                    return ({id: CURRENT_ID++, title: modified, col1: row.ObservationValue, col2: row.ObservationTime });
                 });
     
                 const header = ["Result Type", "Value", "Date"];
@@ -174,7 +179,7 @@ function Row(props){
 
     useEffect(() => {
         setOpen(props.open);
-      }, [props.open]);
+    }, [props.open]);
 
     if(!data)
         return null;
@@ -182,14 +187,14 @@ function Row(props){
     return(
         <React.Fragment>
             {/* Main Row */}
-            <StyledTableRow sx={{ '& > *': { borderBottom: 'unset' }}} key={data.assessment + "1"}>
+            <StyledTableRow sx={{ '& > *': { borderBottom: 'unset' }}} key={data.id + 'A'}>
                 <StyledTableCell component="th" scope="row">{data.assessment}</StyledTableCell>
                 <StyledTableCell align="center">
                     <Grid container style={{alignItems: 'center'}}>
-                    <Grid sm={11} style={{ textAlign: 'left', color: data.status === 'Data Available' ? 'green' : data.status === 'No Data' ? 'red' : 'inherit' }}>
-                        {data.status}
-                    </Grid>
-                        <Grid sm={1}>
+                        <Grid item={true} sm={11} style={{ textAlign: 'left', color: data.status === 'Data Available' ? 'green' : data.status === 'No Data' ? 'red' : 'inherit' }}>
+                            {data.status}
+                        </Grid>
+                        <Grid item={true} sm={1}>
                         {data.others != null &&
                             <IconButton
                                 aria-label="expand row"
@@ -205,7 +210,7 @@ function Row(props){
             </StyledTableRow>
             
             {/* Sub Row */}
-            <StyledTableRow key={data.assessment + "2"}>
+            <StyledTableRow key={data.id + 'B'}>
                 <StyledTableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     {data.others != null &&
                         <Collapse in={open} timeout="auto" unmountOnExit>
@@ -213,8 +218,8 @@ function Row(props){
                                 <TableContainer style={{ marginTop: '2vh', marginBottom: '2vh' }}>
                                     <Table size="small">
                                         {data.tableHeader != null &&
-                                            <TableHead>
-                                                <TableRow>
+                                            <TableHead >
+                                                <TableRow key={data.id + "0x07"}>
                                                     {data.tableHeader.map((i, index) => (
                                                         <TableCell
                                                             align='left'
@@ -222,6 +227,7 @@ function Row(props){
                                                                 fontWeight: "bold",
                                                                 width: index === 0 ? '40%' : '40%' // Define column widths here
                                                             }}
+                                                            key={data.id + String(index)}
                                                         >
                                                             {i}
                                                         </TableCell>
@@ -247,13 +253,13 @@ function Row(props){
                                                                 </Link>
                                                             </Typography>
                                                         );
-                                                    } else if (i.col1 != null && i.col2 != null) {
+                                                    } else if (i.col1 !== null && i.col2 !== null) {
                                                         return (
-                                                            <DropDownTableRow rowData={i} />
+                                                            <DropDownTableRow rowData={i} key={i.id}/>
                                                         );
                                                     } else if (i.col1 != null) {
                                                         return (
-                                                            <TableRow>
+                                                            <TableRow key={i.id}>
                                                                 <TableCell
                                                                     align='left'
                                                                     style={{ width: '50%' }} 
@@ -270,7 +276,7 @@ function Row(props){
                                                         );
                                                     } else {
                                                         return (
-                                                            <TableRow>
+                                                            <TableRow key={i.id}>
                                                                 <TableCell
                                                                     align='left'
                                                                     colSpan={2} 
@@ -294,28 +300,7 @@ function Row(props){
     )
 }
 
-export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData, totalLOINC_codesData}){
-    const data = convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
-    
-    // State variables to manage expanded/collapsed state
-    const [allRowsExpanded, setAllRowsExpanded] = useState(null);
-
-    // Click handler for the "Expand All" button
-    const handleExpandAllClick = () => {
-        setAllRowsExpanded(1); // reset state before setting new state
-        setTimeout(() => {
-            setAllRowsExpanded(true);
-          }, 1); 
-    };
-
-    // Click handler for the "Collapse All" button
-    const handleCollapseAllClick = () => {
-        setAllRowsExpanded(0); // reset state before setting new state
-        setTimeout(() => {
-            setAllRowsExpanded(false); 
-          }, 1); 
-    };
-
+export default function PatientTable({fhirData, selectStatusType, selectAssessmentType, searchInput, ImmunizationData, ObservationData, LabData, totalLOINC_codesData, allRowsExpanded}){
     const style = {
         dropDown: {
             display: 'flex',
@@ -343,23 +328,23 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
         },
     }
 
+    // Convert input data into table readable data
+    const [dataAvailable, setDataAvialable] = useState(false);
+    const [data, setData] = useState([]);
 
     useEffect(() => {
-    }, []);
+        // Wait for all to have some data even []
+        if (ImmunizationData && LabData && ObservationData && totalLOINC_codesData && !dataAvailable) {
+            // console.log(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
+            const data_ = convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
+            setData(data_);
+            setDataAvialable(true);
+            console.log(data_);
+        }
+    }, [ImmunizationData, LabData, ObservationData, totalLOINC_codesData]);
 
     return(
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div></div>
-                <div>
-                    <Button variant="outlined" onClick={handleExpandAllClick}>
-                        Expand All
-                    </Button>
-                    <Button variant="outlined" onClick={handleCollapseAllClick}>
-                        Collapse All
-                    </Button>
-                </div>
-            </div>
             <TableContainer component={Paper}>
                 <Table stickyHeader aria-label="collapsible table" >
                     <TableHead >
@@ -405,12 +390,15 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
                                 return row.assessment.toLowerCase().includes(searchInput.toLowerCase()) || row.status.toLowerCase().includes(searchInput.toLowerCase());
                             })
                             .map((row)=>(
-                                <Row info={row} open={allRowsExpanded}/>
+                                <Row info={row} open={allRowsExpanded} key={row.id}/>
                             ))
                         }
                     </TableBody>
                 </Table>
             </TableContainer>
+            {!dataAvailable &&
+                <LinearProgress color="success"/>
+            }
         </div>
     );
 }

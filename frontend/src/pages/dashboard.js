@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
 import config from '../config/config.json';
-
+import {Button} from '@mui/material';
 // Components
 import SideBar from '../components/sideBar';
 import SearchBar from '../components/searchBar';
@@ -64,8 +64,6 @@ export default function Dashboard(){
 
     // Medical Code
     const [totalLOINC_codesData, settotalLOINC_codesData] = useState(null);
-    
-
     const LOINC_codes = config.searchCodes;
     
     // Data stream line State Variables
@@ -79,6 +77,9 @@ export default function Dashboard(){
 
     // Other UI State Variables
     const [errorMessage, setErrorMsg] = useState(undefined); 
+
+    // State variables to manage expanded/collapsed state
+    const [allRowsExpanded, setAllRowsExpanded] = useState(null);
     
     useEffect(() => {
         // Wait for authrization status
@@ -116,6 +117,7 @@ export default function Dashboard(){
             .catch(onErr);
         
         // Fetch data besed on Resource type
+        // Default value of each state variable associated with setData() is empty array [].
         function fetchData(url, processData, setData, accumulatedResults = []) {
             client.request(url).then((Bundle) => {
                     const results = processData(Bundle);
@@ -311,6 +313,22 @@ export default function Dashboard(){
         setLoadPopup(true);
     }
 
+    // Click handler for the "Expand All" button
+    const handleExpandAllClick = () => {
+        setAllRowsExpanded(1); // reset state before setting new state
+        setTimeout(() => {
+            setAllRowsExpanded(true);
+          }, 1); 
+    };
+
+    // Click handler for the "Collapse All" button
+    const handleCollapseAllClick = () => {
+        setAllRowsExpanded(0); // reset state before setting new state
+        setTimeout(() => {
+            setAllRowsExpanded(false); 
+          }, 1); 
+    };
+
     //// End of Global Handlers ////
 
     return(
@@ -360,7 +378,7 @@ export default function Dashboard(){
             {clientReady && dataReady && errorMessage === undefined &&
                 <Grid container spacing={0}>
                     {/* Left-hand side elements */}
-                    <Grid sm={4} xs={12}>
+                    <Grid item={true} xs={12} sm={4} >
                         <div style={{
                             marginTop: '4vh',
                         }}>
@@ -377,14 +395,14 @@ export default function Dashboard(){
                     </Grid>
 
                     {/* Right-hand side elements */}
-                    <Grid sm={8} xs={12}>
+                    <Grid item={true} xs={12} sm={8} >
                         <div style={{
                             marginTop: '4vh',
                         }}>
                             {!loadPopup &&
                             <React.Fragment>
                                 <Grid container spacing={0}>
-                                    <Grid sm={11} >
+                                    <Grid item={true} sm={11} >
                                         <SearchBar 
                                         statusTypeList={statusTypes}
                                         selectStatusType = {selectStatusType}
@@ -399,9 +417,9 @@ export default function Dashboard(){
                                         searchInputHandle = {searchInputHandle}                                     
                                         />
                                     </Grid>
-                                    <Grid sm={1} />
+                                    <Grid item={true} sm={1} />
 
-                                    <Grid sm={11} >
+                                    <Grid item={true}sm={11} >
                                         <div style={{paddingTop:'2vh'}}>
                                             <div style={{
                                                 display: 'flex',
@@ -412,6 +430,15 @@ export default function Dashboard(){
                                                 }}>
 
                                                 <h1>Patient Assessment Information</h1>
+
+                                                <div style={{display: 'flex', gap: '5px'}}>
+                                                    <Button variant="outlined" onClick={handleExpandAllClick}>
+                                                        Expand All
+                                                    </Button>
+                                                    <Button variant="outlined" onClick={handleCollapseAllClick}>
+                                                        Collapse All
+                                                    </Button>
+                                                </div>
                                             </div>
                                             
                                             <PatientTable 
@@ -423,10 +450,11 @@ export default function Dashboard(){
                                             ObservationData = {ObservationData}
                                             LabData = {DiagnosticReportData}
                                             totalLOINC_codesData = {totalLOINC_codesData}
+                                            allRowsExpanded = {allRowsExpanded}
                                             />
                                         </div>
                                     </Grid>
-                                    <Grid sm={1} />
+                                    <Grid item={true} sm={1} />
 
                                     
                                 </Grid>

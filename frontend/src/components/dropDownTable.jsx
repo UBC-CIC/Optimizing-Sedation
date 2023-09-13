@@ -50,15 +50,15 @@ function DropDownTableRow({rowData}){
     return(
         <React.Fragment>
             {/* Main Row */}
-            <TableRow sx={{ '& > *': { borderBottom: '0px solid black' }}} key={data.title}>
+            <TableRow sx={{ '& > *': { borderBottom: '0px solid black' }}} key={data.id + "C"}>
                 <TableCell component="th" scope="row">{data.title}</TableCell>
                 <TableCell component="th" scope="row">{data.col1}</TableCell>
                 <TableCell align="center">
                     <Grid container style={{alignItems: 'center'}}>
-                        <Grid sm={11} style={{ textAlign: 'left' }}>
+                        <Grid item={true} sm={11} style={{ textAlign: 'left' }}>
                             {data.col2}
                         </Grid>
-                        <Grid sm={1}>
+                        <Grid item={true} sm={1}>
                         {data.col3 != null &&
                             <IconButton
                                 aria-label="expand row"
@@ -74,7 +74,7 @@ function DropDownTableRow({rowData}){
             </TableRow>
             
             {/* Sub Row */}
-            <TableRow style={{ '& > *': { borderBottom: '0px solid black' }, backgroundColor: "#f5f5f5"}} key={data.title}>
+            <TableRow style={{ '& > *': { borderBottom: '0px solid black' }, backgroundColor: "#f5f5f5"}} key={data.id + "D"}>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     {data.col3 != null &&
                     <Collapse in={open} timeout="auto" unmountOnExit>
@@ -83,19 +83,19 @@ function DropDownTableRow({rowData}){
                             {/* Design 1: display as table form */}
                             <Table size="small" style={{borderBottom: '0px solid black', marginBottom: 10, marginTop: 10}}>
                                 <TableHead>
-                                    <TableRow>
-                                        {data.headers && data.headers.map((i)=>{
+                                    <TableRow key={data.id + "0x1"}>
+                                        {data.headers && data.headers.map((i, index)=>{
                                             if(data.headers.indexOf(i) === 0)
-                                                return(<TableCell align="left" style={{fontWeight: "bold"}}>{i}</TableCell>);
+                                                return(<TableCell align="left" style={{fontWeight: "bold"}} key={data.id + String(index)}>{i}</TableCell>);
                                             
-                                            return(<TableCell align="center" style={{fontWeight: "bold"}}>{i}</TableCell>);
+                                            return(<TableCell align="center" style={{fontWeight: "bold"}} key={data.id + String(index)}>{i}</TableCell>);
                                         })}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {
                                         data.col3.map((r) => (
-                                            <TableRow>
+                                            <TableRow key={r.id}>
                                                 <TableCell>{r.title}</TableCell>
                                                 <TableCell align="center">{r.col1}</TableCell>
                                                 <TableCell align="center">{r.col2}</TableCell>
@@ -166,17 +166,17 @@ function DropDownTable({headers, data}){
             <TableContainer component={Paper}>
                 <Table size="small" stickyHeader aria-label="collapsible table" >
                     <TableHead >
-                        <TableRow>
+                        <TableRow key={data.id + "0x123"}>
                             {
-                                headers.map((header_i) =>{
-                                    <TableCell align="left">{header_i}</TableCell>
+                                headers.map((header_i, index) =>{
+                                    <TableCell align="left" key={data.id + "|" + String(index)}>{header_i}</TableCell>
                                 })
                             }
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data && data.map((row) => (
-                            <DropDownTableRow rowData={row}/>
+                        {data && data.map((row, index) => (
+                            <DropDownTableRow rowData={row} key={data.id + "*" + String(index)}/>
                         ))}
                     </TableBody>
                 </Table>
