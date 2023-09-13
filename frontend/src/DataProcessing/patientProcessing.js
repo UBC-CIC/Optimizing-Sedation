@@ -35,16 +35,18 @@ function processPatientData(PatientData) {
                     }
                 }
             }
+        
 
             if (PatientData.contact){
                 for (const contact of PatientData.contact){
-                    if (contact.name){
-                        if(contact.name.text){
-                            PatientContactName = contact.name.text
-                        }
-                        else if (contact.name.given && contact.name.family){
-                            PatientContactName = contact.name.family + ", " + contact.name.given.join(" ");
-                        }
+                        if (contact.name){
+                            if(contact.name.text){
+                                PatientContactName = contact.name.text
+                            }
+                            else if (contact.name.given && contact.name.family){
+                                PatientContactName = contact.name.family + ", " + contact.name.given.join(" ");
+                            }
+
                         for (const telecom of contact.telecom){
                             if (telecom.rank && telecom.rank === 1){
                                 PatientContactInfo = telecom.value
@@ -56,9 +58,11 @@ function processPatientData(PatientData) {
                         }
                     }
                 }
-            }
-            results.push({ PatientName, PatientMRN, PatientContactName, PatientContactInfo });
-        } catch (error) { }
+                
+                results.push({ PatientName, PatientMRN, PatientContactName, PatientContactInfo });
+            } 
+        } catch(error) { }
+
     }
 
     return results;
