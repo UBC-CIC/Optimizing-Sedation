@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect} from 'react';
+import React, { useRef, useEffect} from 'react';
 
 
 // Material UI
@@ -89,7 +89,7 @@ export default function SearchBar({ statusTypeDisplayText, statusTypeList, selec
     return(
         <div>
             <Grid container justify="center" alignItems="center" spacing={0} >
-                <Grid sm={4} xs={12}>
+                <Grid item={true} sm={4} xs={12}>
                     <Paper
                         ref={ref1}
                         component="form"
@@ -107,7 +107,7 @@ export default function SearchBar({ statusTypeDisplayText, statusTypeList, selec
                     </Paper>
                 </Grid>
 
-                <Grid sm={4} xs={12}>
+                <Grid item={true} sm={4} xs={12}>
                     <Paper style={{marginLeft:'10px', marginRight:'10px', backgroundColor:'#e7e8eb'}}>
                         <FormControl fullWidth>
                             <InputLabel id="demo-multiple-chip-label">{(assessmentTypeDisplayText != null) ? assessmentTypeDisplayText : "Type of Assessment"}</InputLabel>
@@ -145,7 +145,7 @@ export default function SearchBar({ statusTypeDisplayText, statusTypeList, selec
                     </Paper>
                 </Grid>
 
-                <Grid sm={4} xs={12}>
+                <Grid item={true} sm={4} xs={12}>
                     <Paper style={{marginLeft:'10px', marginRight:'10px', backgroundColor:'#e7e8eb'}}>
                         <FormControl fullWidth >
                             <InputLabel id="demo-multiple-chip-label">{(statusTypeDisplayText != null) ? statusTypeDisplayText : "Flag Type"}</InputLabel>
