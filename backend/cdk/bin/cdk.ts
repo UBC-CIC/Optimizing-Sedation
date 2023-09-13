@@ -10,15 +10,6 @@ const app = new cdk.App();
 // Run this stack: cdk deploy Create-ECR --profile <aws-profile-name>
 const loadDocker = new EcrStack(app, `Create-ECR`);
 
-// Create stack for ECR
-// Run this stack: cdk deploy Create-WAFWebACL --profile <aws-profile-name>
-const WAFInstance = new WAFStack(app, `Create-WAFWebACL`, {
-    env: {
-        account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: 'us-east-1',
-    },
-});
-
 // Create stack for hosting
 // Run this stack: cdk deploy DevOrg-dev-Host --profile <aws-profile-name>
 const HostDashboard = new HostStack(app, `ECSHost`, loadDocker.repo, {
@@ -26,5 +17,4 @@ const HostDashboard = new HostStack(app, `ECSHost`, loadDocker.repo, {
         account: process.env.CDK_DEFAULT_ACCOUNT,
         region: process.env.CDK_DEFAULT_REGION,
     },
-    crossRegionReferences: true,
 });
