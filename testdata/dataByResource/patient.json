@@ -1,0 +1,78 @@
+{
+    "resourceType": "Patient",
+    "id": "smart-1186747",
+    "meta": {
+      "versionId": "6",
+      "lastUpdated": "2023-09-11T20:19:28.000+00:00",
+      "source": "#8kMm427DFtTDhQeC"
+    },
+    "text": {
+      "status": "generated",
+      "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><div class=\"hapiHeaderText\">John <b>DOE </b></div><table class=\"hapiPropertyTable\"><tbody><tr><td>Identifier</td><td>MRN123456</td></tr></tbody></table></div>"
+    },
+    "identifier": [
+      {
+        "type": {
+          "coding": [
+            {
+              "system": "https://fhir.cerner.com/ec2458f2-1e24-41c8-b71b-0e701af7583d/codeSet/4",
+              "code": "2",
+              "display": "Medical Record Number",
+              "userSelected": true
+            }
+          ],
+          "text": "Medical Record Number"
+        },
+        "system": "http://example.org/medical-record",
+        "value": "MRN123456"
+      }
+    ],
+    "name": [
+      {
+        "use": "official",
+        "family": "Doe",
+        "given": ["John"]
+      }
+    ],
+    "telecom": [
+      {
+        "system": "phone",
+        "value": "555-555-5555",
+        "use": "home"
+      },
+      {
+        "system": "email",
+        "value": "johndoe@example.com",
+        "use": "home"
+      }
+    ],
+    "gender": "male",
+    "birthDate": "2010-10-29",
+    "contact": [
+      {
+        "relationship": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/v2/0131",
+                "code": "ECON",
+                "display": "Emergency Contact"
+              }
+            ]
+          }
+        ],
+        "name": {
+          "family": "Doe",
+          "given": ["Jane"]
+        },
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "555-555-5556",
+            "use": "home"
+          }
+        ]
+      }
+    ]
+  }
+  

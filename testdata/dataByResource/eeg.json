@@ -1,0 +1,21 @@
+{
+    "resourceType": "Observation",
+    "status": "final",
+    "code": {
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "11523-8",
+          "display": "Electroencephalogram (EEG) Study"
+        }
+      ],
+      "text": "Electroencephalogram (EEG) Study"
+    },
+    "subject": {
+      "reference": "Patient/smart-1186747"
+    },
+    "effectiveDateTime": "2023-03-16T12:00:00Z",
+    "issued": "2023-07-26T12:00:00Z",
+    "valueString": "The EEG study showed normal brain wave patterns with no signs of seizure activity. No abnormalities were observed during the recording period. Additional neurological evaluation recommended if symptoms persist."
+}
+  

@@ -1,0 +1,21 @@
+{
+    "resourceType": "Observation",
+    "status": "final",
+    "code": {
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "32880-7",
+          "display": "History of Dental Procedure"
+        }
+      ],
+      "text": "History of Dental Procedure"
+    },
+    "subject": {
+      "reference": "Patient/smart-1186747"
+    },
+    "issued": "2023-08-25T12:00:00Z",
+    "effectiveDateTime": "2023-08-25T12:00:00Z",
+    "valueString": "Root canal procedure performed on 2023-08-20." 
+  }
+  

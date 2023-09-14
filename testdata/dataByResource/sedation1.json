@@ -1,0 +1,21 @@
+{
+    "resource": {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "25047-2",
+            "display": "CT Unspecified body region W conscious sedation"
+          }
+        ],
+        "text": "CT Unspecified body region W conscious sedation"
+      },
+      "subject": {
+        "reference": "Patient/smart-1186747"
+      },
+      "effectiveDateTime": "2023-02-18T23:59:59+06:00",
+      "valueString": "The patient received conscious sedation for a medical procedure."
+    }
+  }

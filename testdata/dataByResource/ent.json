@@ -1,0 +1,22 @@
+{
+    "resourceType": "Observation",
+    "status": "final",
+    "code": {
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "34817-7",
+          "display": "Otolaryngology Note"
+        }
+      ],
+      "text": "Otolaryngology Note"
+    },
+    "subject": {
+      "reference": "Patient/smart-1186747"
+    },
+    "issued": "2023-07-26T12:00:00Z",
+    "effectiveDateTime": "2023-07-26T12:00:00Z",
+    "valueString": "Patient presented with complaints of mild throat pain and occasional hoarseness. Upon examination, the oropharynx appeared inflamed, and a small polyp was observed in the nasal cavity. No signs of infection were noted. Advised the patient to rest the voice and prescribed a short course of anti-inflammatory medication. Reevaluation scheduled in 2 weeks."
+  }
+  
+  
