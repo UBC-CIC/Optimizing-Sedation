@@ -72,6 +72,8 @@ npm start
 
 ## Step 4: Deployment
 
+![Network Diagram](./assets/Architecture-Diagram-Simplify.png)
+
 It's time to set up everything that goes on behind the scenes! For more information on how the backend works, feel free to refer to the Architecture Deep Dive, but an understanding of the backend is not necessary for deployment.
 
 ### Step 1: Install Dependencies
@@ -275,7 +277,9 @@ Cerner Sandbox contains pre-existing patients and has its own server configurati
   * ```RequiredSelect a Product Family``` choose 'Millennium'
   * ```Select Products``` choose 'Ignite APIs for Millennium: FHIR R4, All'
   * API Access choose the following
-    ![Cerner Scope](assets/sandbox/cerner_1.png)
+
+  ![Cerner Scope](assets/sandbox/cerner_1.png)
+
 5. Once registered, select the registered app and look for ```Client ID```; for client secret look for something like ```Cerner Central System Account Details``` and follow that link to get the client secret. This is the information one need to add to ```.env``` file or AWS Secret Manager
 6. Click on ```Test Sandbox``` and follow the instructions on the pop-up (choosing a patient) to launch the app.
 
