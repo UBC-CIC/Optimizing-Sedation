@@ -20,4 +20,5 @@ A more code system is at https://terminology.hl7.org/codesystems.html.
 Assume one created a sandbox and navigated to the correct sandbox. 
 
 Based on the picture below, navigate to number 1 ("Data Manager") and click on "Import" (2). There are two options to include test data. One can copy test data in JSON and paste it into number 3, then click IMPORT. Alternatively, one can also upload a JSON file of the test data and load using number 4.
+
 ![](./assets/sandbox/logica_1.png)

@@ -32,8 +32,8 @@ If you are on a Windows device, it is recommended to install the [Windows Subsys
 First, clone the GitHub repository onto your machine. To do this:
 
 1. Create a folder on your computer to contain the project code.
-2. For an Apple computer, open Terminal. If on a Windows machine, open Command Prompt or Windows Terminal. Enter into the folder you made using the command `cd path/to/folder`. To find the path to a folder on a Mac, right click on the folder and press `Get Info`, then select the whole text found under `Where:` and copy with ⌘C. On Windows (not WSL), enter into the folder on File Explorer and click on the path box (located to the left of the search bar), then copy the whole text that shows up.
-3. Clone the github repository by entering the following:
+2. For an Apple computer, open Terminal. If on a Windows machine, open Command Prompt or Windows Terminal. Enter into the folder you made using the command `cd path/to/folder`. To find the path to a folder on a Mac, right-click on the folder and press `Get Info`, then select the whole text found under `Where:` and copy with ⌘C. On Windows (not WSL), enter the folder on File Explorer and click on the path box (located to the left of the search bar), then copy the whole text that shows up.
+3. Clone the GitHub repository by entering the following:
 
 ```bash
 git clone https://github.com/UBC-CIC/Optimizing-Sedation.git
@@ -45,13 +45,13 @@ The code should now be in the folder you created. Navigate into the root folder 
 cd Optimizing-Sedation
 ```
 ## Step 2: Application Configuration
-Before hosting and launching the application, the configuration of the application need to setup first.
+Before hosting and launching the application, the configuration of the application needs to be set up first.
 
-Please follow this [application configuration guide](./Configuration.md) to setup configuration.
+Please follow this [application configuration guide](./Configuration.md) to set up the configuration.
 
 
 ## Step 3: Local Deployment
-For local deployment, we only need to add an ```.env``` file at ```Optimizing-Sedation/frontend/```. It should have the following values (one don't have to apply ```REACT_APP_CLIENT_SECRET``` if the app is configure to run ```PUBLIC``` mode):
+For local deployment, we only need to add an ```.env``` file at ```Optimizing-Sedation/frontend/```. It should have the following values (one doesn't have to apply ```REACT_APP_CLIENT_SECRET``` if the app is configured to run ```PUBLIC``` mode):
 
 ```bash
 REACT_APP_CLIENT_SECRET=<client-secrete>
@@ -90,7 +90,7 @@ npm install
 
 ### Step 2: Upload Secrets
 
-To store application secrets such as client id and client secrets, we are going to use AWS Secret Manager. Run the following command and make sure to change information that are in <>.
+To store application secrets such as client ID and client secret, we are going to use AWS Secret Manager. Run the following command and make sure to change the information that is in <>.
 
 ```bash
 aws secretsmanager create-secret 
@@ -112,19 +112,19 @@ You may choose to run the following command to deploy the stacks all at once. Pl
 
 For CDK deployment, we are going to do the following:
 1. Create Elastic Container Registry (ECR) name 'docker-repo'
-2. Create Docker image and push to ECR
-3. Create Self-Signed SSL Certificate and push to IAM
+2. Create a Docker image and push it to ECR
+3. Create a Self-Signed SSL Certificate and push it to IAM
 4. Create a stack for hosting
 
-Make sure to fill necessary infomation in the <>. 
+Make sure to fill necessary information in the <>. 
 
 Most of the commands assume you are in ```Optimizing-Sedation/backend/cdk/``` directory unless the instruction says to change the directory.
 
 #### 1. Create Elastic Container Registry (ECR)
 
-This will create a repository call 'docker-repo'. It is important to not change this name since the script in step 2 will need that.
+This will create a repository called 'docker-repo'. It is important to not change this name since the script in step 2 will need that.
 
-First, initialize CDK stacks at based on your region (only require for if you have not deploy any resources yet).
+First, initialize CDK stacks based on your region (only required if you have not deployed any resources yet).
 
 ```bash
 cdk bootstrap aws://<YOUR_AWS_ACCOUNT_ID>/<YOUR_AWS_ACCOUNT_REGION> --profile <your-profile-name>
@@ -145,7 +145,7 @@ To run a script file, you might need to change file mode to execution mode.
 chmod +x ../scripts/push_image.sh
 ```
 
-Now, let create Docker image and push to ECR. Make sure to change everything in the <>.
+Now, let's create a Docker image and push it to ECR. Make sure to change everything in the <>.
 
 ```bash
 ../scripts/push_image.sh <aws-profile-name> <aws-region> <aws-account-number> 
@@ -156,15 +156,15 @@ Example,
 ```bash
 ../scripts/push_image.sh Sedation_Dev_1 ca-central-1 0123456789
 ```
-Note: you can reuse this file to push to ECR everytime you make changes on the dashboard and make those changes live.
+Note: you can reuse this file to push to ECR every time you make changes on the dashboard and make those changes live.
 
 #### 3. Create Self-Signed SSL Certificate and push to IAM
 Some sandbox requires the app to have an ``https://`` for security purpose. Therefore, we need to add a listener for ```https://``` on port 443. Adding ```https://``` requires a certificate; since we do not use a domain name, we need to add a self-signed SSL certificate and attach that with ALB listener. 
 
-Below are steps to create and upload certificate following a [Medium post by Francis Yeo](https://medium.com/@francisyzy/create-aws-elb-with-self-signed-ssl-cert-cd1c352331f). 
-**Note,**  please follow the step below as there are some slight changes from the tutorial.
+Below are steps to create and upload a certificate following a [Medium post by Francis Yeo](https://medium.com/@francisyzy/create-aws-elb-with-self-signed-ssl-cert-cd1c352331f). 
+**Note,**  please follow the steps below as there are some slight changes from the tutorial.
 
-Create a self-signed SSL certificate. Make sure one is on the folder one want to save the certificate.
+Create a self-signed SSL certificate. Make sure one is in the folder where one wants to save the certificate.
 ```bash
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
 ```
@@ -181,7 +181,7 @@ openssl rsa -in privateKey.key -text > private.pem
 openssl x509 -inform PEM -in certificate.crt > public.pem
 ```
 
-Push certificate to AWS IAM, this assumes that AWS configuraiton is installed on local computer and IAM user is signed in with required permission to upload certificate.
+Push certificate to AWS IAM, this assumes that AWS configuration is installed on the local computer and the IAM user is signed in with the required permission to upload the certificate.
 ```bash
 aws iam upload-server-certificate 
   --server-certificate-name Sedation-Self-Signed-SSL-Certificate 
@@ -204,7 +204,7 @@ Sample output
 }
 ```
 
-Store the certificate ARN, ```ServerCertificateMetadata.Arn```, somewhere as we going to use it later. In this case it would be, 
+Store the certificate ARN, ```ServerCertificateMetadata.Arn```, somewhere as we going to use it later. In this case, it would be, 
 ```bash
 "arn:aws:iam::0123456789:server-certificate/Sedation-Self-Signed-SSL-Certificate"
 ```
@@ -223,7 +223,7 @@ Example,
 ```bash
 cdk deploy ECSHost --profile profile1 --parameters ECSHost:certificateARN=arn:aws:iam::0123456789:server-certificate/Sedation-Self-Signed-SSL-Certificate
 ```
-After deployment completed, look for 'CloudFront URL:' in the terminal. This is the host link for the application.
+After deployment is completed, look for 'CloudFront URL:' in the terminal. This is the host link for the application.
 
 This is an example of an output
 ```bash
@@ -246,7 +246,7 @@ Redirect URL: https://FargateService-LoadBalancer-1234567.ca-central-1.elb.amazo
 
 ### Extra: Taking down the deployed stacks
 
-To take down the deployed stack for a fresh redeployment in the future, navigate to AWS Cloudformation, click on the stack(s) and hit Delete. Please wait for the stacks in each step to be properly deleted before deleting the stack downstream. The deletion order is as followed:
+To take down the deployed stack for a fresh redeployment in the future, navigate to AWS Cloudformation, click on the stack(s), and hit Delete. Please wait for the stacks in each step to be properly deleted before deleting the stack downstream. The deletion order is as follows:
 
 1. `Create-ECR`
 2. `ECSHost`
@@ -254,21 +254,21 @@ To take down the deployed stack for a fresh redeployment in the future, navigate
 To delete Secret Manager, navigate to Secret Manager and select 'SedationSecrets' to delete.
 
 ## Step 5: Register Application in Sandbox
-After the application is hosted whether it is on AWS or localhost, one need to register the application on a sandbox is was set in the configuration file in [step 2.](#step-2-application-configuration) The sandboxes that this app has tested on are: 
+After the application is hosted whether it is on AWS or localhost, one needs to register the application on a sandbox is was set in the configuration file in [step 2.](#step-2-application-configuration) The sandboxes that this app has tested on are: 
 
 * Cerner Sandbox
 * SMART Launcher Sandbox
 * Logica Sandbox
 
 #### Cerner Sandbox
-Cerner Sandbox contain pre-existing patients and has its own server configuraiton. Below are steps to register the app:
+Cerner Sandbox contains pre-existing patients and has its own server configuration. Below are the steps to register for the app:
 1. Go to this link https://code-console.cerner.com/, and create an account there.
-2. On main page, click on ```Go to My Applications```
+2. On the main page, click on ```Go to My Applications```
 3. On My Applications page, click ```+ New Application```
 4. Fill out the required information: 
   * ```Application Type``` choose 'Provider'
   * ```Type of Access``` choose 'Online'
-  * ```Application Privacy``` choose based on the configured launch mode (PRIVATE means 'Confidential' in Cerner)
+  * ```Application Privacy```chosen based on the configured launch mode (PRIVATE means 'Confidential' in Cerner)
   * ```Redirect URI``` put '[domain]/'; for example 'http://localhost:3000/'
   * ```SMART® Launch UR``` put '[domain]/smartAuth/'; for example 'http://localhost:3000/smartAuth/'
   * ```Default FHIR® Version``` choose 'R4'
@@ -276,15 +276,15 @@ Cerner Sandbox contain pre-existing patients and has its own server configuraito
   * ```Select Products``` choose 'Ignite APIs for Millennium: FHIR R4, All'
   * API Access choose the following
     ![Cerner Scope](assets/sandbox/cerner_1.png)
-5. Once registered, select the registered app and look for ```Client ID```; for client secret look for something like ```Cerner Central System Account Details``` and follow that link to get the client secret. These are the information one need to add to ```.env``` file or AWS Secret Manager
+5. Once registered, select the registered app and look for ```Client ID```; for client secret look for something like ```Cerner Central System Account Details``` and follow that link to get the client secret. This is the information one need to add to ```.env``` file or AWS Secret Manager
 6. Click on ```Test Sandbox``` and follow the instructions on the pop-up (choosing a patient) to launch the app.
 
 #### Smart Launcher Sandbox
-This sandbox is similar to Cerner, and that it allows user to choose different launch mode and provide flexibiliy in SMART configuration. The step below is going with the simpliest configuraiton:
+This sandbox is similar to Cerner, and it allows users to choose different launch modes and provides flexibility in SMART configuration. The step below is going with the simplest configuration:
 1. Go to this link https://launch.smarthealthit.org/ and select ```Client Registration & Validation``` tab
 2. Choose the ```Client Type``` based on one setup on the configuration file
 3. Keep everything else as default and put '[domain]/smartAuth/' in 
-```App's Launch URL```. The default setup allows one to pass any client secret and client id. Therefore, in the ```.env``` or AWS Secrete Manager, one can add any string
+```App's Launch URL```. The default setup allows one to pass any client secret and client ID. Therefore, in the ```.env``` or AWS Secrete Manager, one can add any string
 4. Then click ```Launch``` to launch the app
 
 #### Logica Sandbox
@@ -292,12 +292,12 @@ Logica sandbox allows us to add patient data and other configurations regarding 
 1. Go to this link https://sandbox.logicahealth.org/, and register your account or sign in
 2. On the dashboard page (https://sandbox.logicahealth.org/dashboard), select ```NEW SANDBOX``` and fill out the required information. Please choose 'FHIR R4' as a ```FHIR Version```.
 3. On Apps tab, click ```+ icon``` to register an new app.
-4. Fill the required information same and Cerner sandbox config; in the ```Scopes``` selction add the scopes below. From our experience, there is some problem with Logica's Confidential Client mode; we suggest to use Public client mode.
+4. Fill in the required information similar to the instruction in Cerner sandbox config; in the ```Scopes```section add the scopes below. From our experience, there is some problem with Logica's Confidential Client mode; we suggest using Public Client mode.
 
 ```bash
 patient/Patient.read patient/Observation.read patient/DiagnosticReport.read patient/Immunization.read patient/MedicationRequest.read patient/Condition.read patient/Procedure.read launch online_access openid profile
 ```
-5. After register the application, one could hover on the app and click on ```SETTINGS``` to get the client id
-6. To launch the app, hover on the app then select ```LAUNCH``` and choose the correct patient and pratitioner
+5. After registering the application, one could hover on the app and click on ```SETTINGS``` to get the client ID
+6. To launch the app, hover on the app then select ```LAUNCH``` and choose the correct patient and practitioner
 
-We have some test patient data which could be upload to Logic sandbox using [this guide](./TestDataDeployment.md).
+We have some test patient data that could be uploaded to Logic sandbox using [this guide](./TestDataDeployment.md).
