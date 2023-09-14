@@ -88,7 +88,7 @@ You may choose to run the following command to deploy the stacks all at once. Pl
 For CDK deployment, we are going to do the following:
 1. Create Elastic Container Registry (ECR) name 'docker-repo'
 2. Create Docker image and push to ECR
-3. Create Self-Signed SSL Certificate and push to IAM
+3. Create a stack for Web Application Firewall (WAF)
 4. Create a stack for hosting
 
 Make sure to fill necessary infomation in the <>. 
@@ -133,52 +133,26 @@ Example,
 ```
 Note: you can reuse this file to push to ECR everytime you make changes on the dashboard and make those changes live.
 
-#### 3. Create Self-Signed SSL Certificate and push to IAM
+#### 3. Create a stack for Web Application Firewall (WAF)
+This step will create a Web Application Firewall (WAF) to secure the dashboard from attacks.
 
-Create a certificate.
+Due to the limitation of CDK, we create another stack for this because we need to launch this stack from 'us-east-1' region.
+More detail on the limite of CDK WAF could be found at https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_wafv2.CfnWebACL.html#scope.
+
+First initialize CDK stacks at 'us-east-1' region (only require for if you have not deploy any resources yet).
+
 ```bash
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
+cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/us-east-1 --profile <your-profile-name>
 ```
 
-Confirm certificate created
-```bash
-openssl rsa -in privateKey.key -check
-openssl x509 -in certificate.crt -text -noout
+Then deploy Create-WAFWebACL stack, 
+
+```bash 
+cdk deploy Create-WAFWebACL --profile <aws-profile-name>
 ```
 
-Convert to ```.pem``` encoded file
-```bash
-openssl rsa -in privateKey.key -text > private.pem
-openssl x509 -inform PEM -in certificate.crt > public.pem
-```
+You can confirm your deployment in AWS Console: AWS WAF > Web ACLs. Make sure you select 'Global (CloudFront)' on top right corner.
 
-Push certificate to IAM.
-```bash
-aws iam upload-server-certificate 
-  --server-certificate-name Sedation-Self-Signed-SSL-Certificate 
-  --certificate-body file://public.pem 
-  --private-key file://private.pem 
-  --profile Sedation_Dev_1
-```
-
-Sample output
-```bash
-{
-    "ServerCertificateMetadata": {
-        "Path": "/",
-        "ServerCertificateName": "Sedation-Self-Signed-SSL-Certificate",
-        "ServerCertificateId": "ABCDEFGHIJK",
-        "Arn": "arn:aws:iam::0123456789:server-certificate/Sedation-Self-Signed-SSL-Certificate",
-        "UploadDate": "2023-09-12T17:29:03+00:00",
-        "Expiration": "2024-09-10T18:40:06+00:00"
-    }
-}
-```
-
-Remember the certificate ARN: ```ServerCertificateMetadata.Arn```. In this case it would be, 
-```bash
-"arn:aws:iam::0123456789:server-certificate/Sedation-Self-Signed-SSL-Certificate"
-```
 
 #### 4. Create Host Stack
 
