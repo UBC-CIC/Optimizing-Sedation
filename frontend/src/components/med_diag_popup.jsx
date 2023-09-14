@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
-import FHIR from 'fhirclient';
 
 // Components
 import CustomedDataGrid from './CustomeDataGrid';
 
 // Material UI
-import {Grid, IconButton, Paper} from '@mui/material';
+import {Grid, IconButton} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 export default function LoadMoreDataPopUp({parsedTableData, loadData, popupTitle, setLoadPopup}){

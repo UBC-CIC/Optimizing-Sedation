@@ -2,7 +2,7 @@
     "generalConfig": {
         "launchMode": "PUBLIC",
         "maxSizeInByte": 1000,
-        "sandbox": "CERNER"
+        "sandbox": "LOGICA"
     },
     "searchCodes": [
         {
