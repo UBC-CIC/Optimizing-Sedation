@@ -11,15 +11,14 @@
 
 ## Demo 
 
-To run the application, you will need to launch the application from a SMART on FHIR compliant EHR simulator. To start running the application locally run the command
-```javascript
-npm start
-```
+To run the application, you will need to launch the application from a SMART on FHIR compliant EHR simulator.
 
 There are several EHR simulators available such as:
 * [SMART App Launcher Sandbox](https://launch.smarthealthit.org/)
 * [Cerner Code Console](https://code-console.cerner.com/)
 * [Logica Health Sandbox](https://sandbox.logicahealth.org/)
+
+More information on how to launch the app from an EHR simulator can be found in the [deployment guide](./DeploymentGuide.md#step-5-register-application-in-sandbox)
 
 ## Dashboard
 Once the application has been launched and a patient has been selected, a dashboard will appear that displays various information about a patient. On the left [sidebar](#sidebar) there is basic information about the patient and lists of the patient's medications and diagnoses. There is also a [table](#table) that displays more information about the patient such as labs and vaccinations. Above the table there are filters that can be used to search through the data in the table.
