@@ -300,4 +300,4 @@ patient/Patient.read patient/Observation.read patient/DiagnosticReport.read pati
 5. After register the application, one could hover on the app and click on ```SETTINGS``` to get the client id
 6. To launch the app, hover on the app then select ```LAUNCH``` and choose the correct patient and pratitioner
 
-We have some test patient data which could be upload to Logic sandbox using [this guide](./TestDeployment.md).
+We have some test patient data which could be upload to Logic sandbox using [this guide](./TestDataDeployment.md).
