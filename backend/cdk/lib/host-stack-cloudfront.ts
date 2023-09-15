@@ -1,4 +1,4 @@
-import { Stack, StackProps, aws_elasticloadbalancingv2, aws_certificatemanager,  CfnParameter,CfnOutput} from 'aws-cdk-lib';
+import { Stack, StackProps, CfnParameter, aws_elasticloadbalancingv2, CfnOutput} from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecs from "aws-cdk-lib/aws-ecs";
@@ -7,9 +7,36 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecspatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as secretmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
 
-export class HostStack extends Stack {
-    constructor(scope: Construct, id: string, repo: ecr.Repository, props?: StackProps) {
+interface AwsRegions2PrefixListID {
+    [key: string]: string;
+}
+
+export class HostStackCloudFront extends Stack {
+    // Array of regions and it prefixListId
+    // Collected by https://aws.amazon.com/blogs/networking-and-content-delivery/limit-access-to-your-origins-using-the-aws-managed-prefix-list-for-amazon-cloudfront/
+    private readonly awsRegions2PrefixListID: AwsRegions2PrefixListID = {
+        'ap-northeast-1': 'pl-58a04531',
+        'ap-northeast-2': 'pl-22a6434b',
+        'ap-south-1': 'pl-9aa247f3',
+        'ap-southeast-1': 'pl-31a34658',
+        'ap-southeast-2': 'pl-b8a742d1',
+        'ca-central-1': 'pl-38a64351',
+        'eu-central-1': 'pl-a3a144ca',
+        'eu-north-1': 'pl-fab65393',
+        'eu-west-1': 'pl-4fa04526',
+        'eu-west-2': 'pl-93a247fa',
+        'eu-west-3': 'pl-75b1541c',
+        'sa-east-1': 'pl-5da64334',
+        'us-east-1': 'pl-3b927c52',
+        'us-east-2': 'pl-b6a144df',
+        'us-west-1': 'pl-4ea04527',
+        'us-west-2': 'pl-82a045eb',
+    };
+    constructor(scope: Construct, id: string, repo: ecr.Repository, WAFInstance: wafv2.CfnWebACL, props?: StackProps) {
         super(scope, id, props);
 
         // Create a VPC stack
@@ -55,7 +82,7 @@ export class HostStack extends Stack {
             disableInlineRules: true,
             vpc: vpc,
             securityGroupName: "ALBSecurityGroup",
-            description: "Security group for ALB; Allow only fargateSecurityGroup outbound rule, and only Https:// for inbound."
+            description: "Security group for ALB; Allow only fargateSecurityGroup outbound rule, and only CloudFront for inbound."
         });
 
         // Set fargateSecurityGroup inbound to ALBSecurityGroup as source at port 3000
@@ -71,12 +98,23 @@ export class HostStack extends Stack {
             ec2.Port.tcp(3000),
             'Allow traffic only to Fargate Service security group'
         );
+        
+        // Read parameter from user 
+        const prefixListIdParam = new CfnParameter(this, "prefixListID", {
+            type: 'String',
+            description: 'Custome prefix list ID for region that are not in the list',
+            default: this.awsRegions2PrefixListID['ca-central-1']
+        });
 
-        // Set ALBSecurityGroup inbound to any IPv4 at HTTPS (443)
+        // Get prefixListId of CloudFront
+        // cdk deploy ECSHost --profile Sedation_Dev_1 --parameters ECSHost:prefixListID=pl-82a045eb
+        let CFPrefixListId = this.awsRegions2PrefixListID[Stack.of(this).region] ? this.awsRegions2PrefixListID[Stack.of(this).region] : prefixListIdParam.valueAsString;
+
+        // Set ALBSecurityGroup inbound to CloudFront
         ALBSecurityGroup.addIngressRule(
-            ec2.Peer.anyIpv4(),
-            ec2.Port.tcp(443), 
-            'Allow traffic from all IPv4');
+            ec2.Peer.prefixList(CFPrefixListId), 
+            ec2.Port.tcp(80), 
+            'Allow traffic only from CloudFront');
 
         // Create a ALB for ECS Cluster Service
         const ALB = new aws_elasticloadbalancingv2.ApplicationLoadBalancer(this, 'ALB-Fargate-Service', {
@@ -87,8 +125,9 @@ export class HostStack extends Stack {
             internetFacing: true,
             loadBalancerName: "FargateService-LoadBalancer",
             securityGroup: ALBSecurityGroup,
+            
         });
-
+        
         // Create ECS Cluster which use to run Task on ECS Farget instance
         const cluster = new ecs.Cluster(this, "fargateCluster", {
             clusterName: "fargateCluster",
@@ -140,15 +179,6 @@ export class HostStack extends Stack {
             }),
         });
 
-        // Certificate to attach to ALB for HTTPS
-        // Read parameter from user 
-        // aws iam upload-server-certificate --server-certificate-name Sedation-Self-Signed-SSL-Certificate --certificate-body file://public.pem --private-key file://private.pem --profile Sedation_Dev_1
-        const CERTIFICATE_ARN = new CfnParameter(this, "certificateARN", {
-            type: 'String',
-            description: 'ARN of the SSL certificate',
-            default: `arn:aws:iam::${process.env.CDK_DEFAULT_ACCOUNT}:server-certificate/Sedation-Self-Signed-SSL-Certificate`
-        });
-
         // Run Application Load Balancer in Fargate as an ECS Service
         // ALB in public subnet, ECS Service in private subnet
         const ALBFargateService = new ecspatterns.ApplicationLoadBalancedFargateService(this, "Host-With-LoadBalancer-Dashboard", {
@@ -162,12 +192,34 @@ export class HostStack extends Stack {
             taskSubnets: {
                 subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
             },
-            openListener: false,
-            // ALB Configuration
             loadBalancer: ALB,
-            certificate: aws_certificatemanager.Certificate.fromCertificateArn(this, 'https-certificate', CERTIFICATE_ARN.valueAsString),
-            listenerPort: 443,
-
+            openListener: false,
         });
+
+        // Create ALB as CloudFront Origin
+        const origin_ALB = new origins.LoadBalancerV2Origin(ALBFargateService.loadBalancer,{
+            protocolPolicy: cloudfront.OriginProtocolPolicy.HTTP_ONLY
+        });
+        
+        // Create a CloudFront distribution with ALB as origin
+        const CFDistribution = new cloudfront.Distribution(this, 'CloudFront-Distribution', {
+            defaultBehavior: {
+                origin: origin_ALB,
+            },
+            comment: "CloudFront distribution for ALB as origin",
+            webAclId: WAFInstance.attrArn,
+        });
+
+        // Add behaviour for /smartAuth to forward all request to origin
+        CFDistribution.addBehavior('/smartAuth*', origin_ALB, {
+            originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER
+        });
+
+        // // Output Messages
+        new CfnOutput(this, 'Output-Message', {
+            value: `
+                CloudFront URL: ${CFDistribution.distributionDomainName}
+            `,
+        })
     }
 }
