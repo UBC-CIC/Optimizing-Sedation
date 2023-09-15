@@ -58,9 +58,8 @@ function processPatientData(PatientData) {
                         }
                     }
                 }
-                
-                results.push({ PatientName, PatientMRN, PatientContactName, PatientContactInfo });
             } 
+            results.push({ PatientName, PatientMRN, PatientContactName, PatientContactInfo });
         } catch(error) { }
 
     }
