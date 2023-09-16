@@ -76,7 +76,8 @@ export default function Dashboard(){
     const [searchInput, setSearchInput] = useState("");
 
     // Other UI State Variables
-    const [errorMessage, setErrorMsg] = useState(undefined); 
+    const [errorMessage, setErrorMsg] = useState(undefined);
+    const [messageForUser, setMessageForUser] = useState(undefined);  
 
     // State variables to manage expanded/collapsed state
     const [allRowsExpanded, setAllRowsExpanded] = useState(null);
@@ -212,6 +213,22 @@ export default function Dashboard(){
             setClientReady(false);
             setErrorMsg(err.message);
             console.log(err);
+            console.log("Error constructor: ", err.name);
+            if(err.message.includes("invalid_client")){
+                setMessageForUser("There's an issue with your access credentials. Please double-check your client ID and client secret to ensure they are correct.");
+            }
+            else if(err.message.includes("invalid_request")){
+                setMessageForUser("It looks like there's an issue with the provided redirect URL.");    
+            }
+            else if(err.message.includes("invalid_scope")){
+                setMessageForUser("The requested scope is either missing or invalid. Please make sure you have the correct scope specified and try again.");    
+            }
+            else if(err.message.includes("invalid_scope")){
+                setMessageForUser("The requested scope is either missing or invalid. Please make sure you have the correct scope specified and try again.");    
+            }
+            else{
+                setMessageForUser("Unknown error.")
+            }
         }
     }
 
@@ -474,7 +491,7 @@ export default function Dashboard(){
             }
 
             {errorMessage !== undefined && 
-                <ErrorDisplay msg={errorMessage} />
+                <ErrorDisplay errorMsg={errorMessage} msgForUser={messageForUser}/>
             }
         </div>
     );

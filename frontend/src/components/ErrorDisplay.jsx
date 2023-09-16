@@ -1,6 +1,6 @@
 import {Typography} from '@mui/material';
 
-export default function ErrorDisplay({msg}) {
+export default function ErrorDisplay({errorMsg, msgForUser}) {
     return (
         <div style={{
             display: 'flex',
@@ -12,8 +12,9 @@ export default function ErrorDisplay({msg}) {
             backgroundColor: 'cornsilk'
         }}>
             <Typography variant={"h5"}>ERROR,</Typography>
-            <Typography variant={"h6"} color="green">maybe try relaunch the app.</Typography>
-            <Typography variant={"subtitle1"} color="#e91e63">{msg}</Typography>
+            <Typography variant={"h6"} color="green">{msgForUser}</Typography>
+            <Typography variant={"h6"} color="green">Maybe try relaunching the app</Typography>
+            <Typography variant={"subtitle1"} color="#e91e63">({errorMsg})</Typography>
         </div>
     );
 }
