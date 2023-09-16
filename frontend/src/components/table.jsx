@@ -113,7 +113,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
         } else {
             data.push(createData("Labs", "No Data", null, null));
         }
-    } else if (LabData === null || LabData === []) {
+    } else if (LabData === null || LabData == []) {
         data.push(createData("Labs", "No Data", null, null));
     }
 
@@ -126,7 +126,7 @@ function convertData(ImmunizationData, LabData, ObservationData, totalLOINC_code
     
         const vaccinationHeader = ["Vaccine", "Status", "Date"];
         data.push(createData("Vaccinations", "Data Available", vaccination, vaccinationHeader));
-    } else if (ImmunizationData === null || ImmunizationData === []) {
+    } else if (ImmunizationData === null || ImmunizationData == []) {
         data.push(createData("Vaccinations", "No Data", null, null));
     }
 
