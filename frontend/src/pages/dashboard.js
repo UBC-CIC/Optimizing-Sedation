@@ -212,8 +212,7 @@ export default function Dashboard(){
             // Ignore CERNER "invalid_grant" error.
             setClientReady(false);
             setErrorMsg(err.message);
-            console.log(err);
-            console.log("Error constructor: ", err.name);
+            
             if(err.message.includes("invalid_client")){
                 setMessageForUser("There's an issue with your access credentials. Please double-check your client ID and client secret to ensure they are correct.");
             }

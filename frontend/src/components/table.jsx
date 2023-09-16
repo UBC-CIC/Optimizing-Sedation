@@ -335,11 +335,9 @@ export default function PatientTable({fhirData, selectStatusType, selectAssessme
     useEffect(() => {
         // Wait for all to have some data even []
         if (ImmunizationData && LabData && ObservationData && totalLOINC_codesData && !dataAvailable) {
-            // console.log(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
             const data_ = convertData(ImmunizationData, LabData, ObservationData, totalLOINC_codesData);
             setData(data_);
             setDataAvialable(true);
-            console.log(data_);
         }
     }, [ImmunizationData, LabData, ObservationData, totalLOINC_codesData]);
 
