@@ -95,10 +95,7 @@ npm install
 To store application secrets such as client ID and client secret, we are going to use AWS Secret Manager. Run the following command and make sure to change the information that is in <>.
 
 ```bash
-aws secretsmanager create-secret 
-    --name SedationSecrets 
-    --secret-string '{"REACT_APP_CLIENT_SECRET":"<Your-Sandbox-Client-Secret>", "REACT_APP_CLIENT_ID":"<Your-Sandbox-Client-ID>"}' 
-    --profile <Your-profile-name>
+aws secretsmanager create-secret --name SedationSecrets --secret-string '{"REACT_APP_CLIENT_SECRET":"<Your-Sandbox-Client-Secret>", "REACT_APP_CLIENT_ID":"<Your-Sandbox-Client-ID>"}' --profile <Your-profile-name>
 
 ```
 
@@ -107,10 +104,10 @@ aws secretsmanager create-secret
 Initialize the CDK stacks (required only if you have not deployed this stack before). Note this CDK deployment was tested in `ca-central-1` region only.
 
 ```bash
-cdk synth --profile your-profile-name
+cdk synth --profile <aws-profile-name>
 ```
 
-You may choose to run the following command to deploy the stacks all at once. Please replace `your-profile-name` with the appropriate AWS profile used earlier:
+You may choose to run the following command to deploy the stacks all at once. Please replace `aws-profile-name` with the appropriate AWS profile used earlier:
 
 For CDK deployment, we are going to do the following:
 1. Create Elastic Container Registry (ECR) name 'docker-repo'
@@ -185,11 +182,7 @@ openssl x509 -inform PEM -in certificate.crt > public.pem
 
 Push certificate to AWS IAM, this assumes that AWS configuration is installed on the local computer and the IAM user is signed in with the required permission to upload the certificate.
 ```bash
-aws iam upload-server-certificate 
-  --server-certificate-name Sedation-Self-Signed-SSL-Certificate 
-  --certificate-body file://public.pem 
-  --private-key file://private.pem 
-  --profile Sedation_Dev_1
+aws iam upload-server-certificate --server-certificate-name Sedation-Self-Signed-SSL-Certificate --certificate-body file://public.pem --private-key file://private.pem --profile <aws-profile-name>
 ```
 
 Sample output
