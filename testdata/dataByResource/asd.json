@@ -1,21 +1,21 @@
 {
-    "resourceType": "Observation",
-    "status": "final",
-    "code": {
-      "coding": [
-        {
-          "system": "http://loinc.org",
-          "code": "65143-0",
-          "display": "Has your child ever been diagnosed with autism spectrum condition, including Asperger's syndrome [CAST]"
-        }
-      ],
-      "text": "Has your child ever been diagnosed with autism spectrum condition, including Asperger's syndrome [CAST]"
-    },
-    "subject": {
-      "reference": "Patient/smart-1186747"
-    },
-    "effectiveDateTime": "2023-07-26T12:00:00Z",
-    "issued": "2023-07-25T12:00:00Z",
-    "valueBoolean": true
-  }
+  "resourceType": "Observation",
+  "status": "final",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "65143-0",
+        "display": "Has your child ever been diagnosed with autism spectrum condition, including Asperger's syndrome [CAST]"
+      }
+    ],
+    "text": "Has your child ever been diagnosed with autism spectrum condition, including Asperger's syndrome [CAST]"
+  },
+  "subject": {
+    "reference": "Patient/smart-1186747"
+  },
+  "effectiveDateTime": "2023-07-26T12:00:00Z",
+  "issued": "2023-07-25T12:00:00Z",
+  "valueBoolean": true
+}
   

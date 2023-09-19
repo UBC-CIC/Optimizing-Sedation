@@ -1,21 +1,19 @@
 {
-    "resource": {
-      "resourceType": "Observation",
-      "status": "final",
-      "code": {
-        "coding": [
-          {
-            "system": "http://loinc.org",
-            "code": "90353-4",
-            "display": "Conscious Sedation Procedure Note"
-          }
-        ],
-        "text": "Conscious Sedation Procedure Note"
-      },
-      "subject": {
-        "reference": "Patient/smart-1186747"
-      },
-      "effectiveDateTime": "2021-03-08T20:50:29+06:00",
-      "valueString": "Patient underwent conscious sedation for a dental procedure."
-    }
-  }
+  "resourceType": "Observation",
+  "status": "final",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "90353-4",
+        "display": "Conscious Sedation Procedure Note"
+      }
+    ],
+    "text": "Conscious Sedation Procedure Note"
+  },
+  "subject": {
+    "reference": "Patient/smart-1186747"
+  },
+  "effectiveDateTime": "2021-03-08T20:50:29+06:00",
+  "valueString": "Patient underwent conscious sedation for a dental procedure."
+}

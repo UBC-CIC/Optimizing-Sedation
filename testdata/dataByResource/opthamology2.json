@@ -1,22 +1,20 @@
 {
-    "resource": {
-      "resourceType": "Observation",
-      "status": "final",
-      "code": {
-        "coding": [
-          {
-            "system": "http://loinc.org",
-            "code": "78573-3",
-            "display": "Ophthalmology Diagnostic Study Note"
-          }
-        ],
-        "text": "Ophthalmology Diagnostic Study Note"
-      },
-      "subject": {
-        "reference": "Patient/smart-1186747"
-      },
-      "effectiveDateTime": "2022-07-26T12:00:00Z",
-      "issued": "2023-07-26T12:00:00Z",
-      "valueString": "The diagnostic study conducted on the patient's eyes showed no signs of abnormalities. Visual acuity and intraocular pressure were within normal ranges. Further follow-up scheduled in 6 months."
-    }
-  }
+  "resourceType": "Observation",
+  "status": "final",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "78573-3",
+        "display": "Ophthalmology Diagnostic Study Note"
+      }
+    ],
+    "text": "Ophthalmology Diagnostic Study Note"
+  },
+  "subject": {
+    "reference": "Patient/smart-1186747"
+  },
+  "effectiveDateTime": "2022-07-26T12:00:00Z",
+  "issued": "2023-07-26T12:00:00Z",
+  "valueString": "The diagnostic study conducted on the patient's eyes showed no signs of abnormalities. Visual acuity and intraocular pressure were within normal ranges. Further follow-up scheduled in 6 months."
+}

@@ -1,21 +1,19 @@
 {
-    "resource": {
-      "resourceType": "Observation",
-      "status": "final",
-      "code": {
-        "coding": [
-          {
-            "system": "http://loinc.org",
-            "code": "78573-3",
-            "display": "Ophthalmology Note"
-          }
-        ],
-        "text": "Ophthalmology Note"
-      },
-      "subject": {
-        "reference": "Patient/smart-1186747"
-      },
-      "effectiveDateTime": "2023-07-26T12:00:00Z",
-      "valueString": "Patient presented with no significant changes in visual acuity. Pupil response is normal. Retina examination showed no signs of abnormalities."
-    }
-  }
+  "resourceType": "Observation",
+  "status": "final",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "78573-3",
+        "display": "Ophthalmology Note"
+      }
+    ],
+    "text": "Ophthalmology Note"
+  },
+  "subject": {
+    "reference": "Patient/smart-1186747"
+  },
+  "effectiveDateTime": "2023-07-26T12:00:00Z",
+  "valueString": "Patient presented with no significant changes in visual acuity. Pupil response is normal. Retina examination showed no signs of abnormalities."
+}

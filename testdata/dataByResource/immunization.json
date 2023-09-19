@@ -1,0 +1,107 @@
+[
+    {
+        "resourceType": "Immunization",
+        "status": "completed",
+        "date": "2023-09-18",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://www.cdc.gov/vaccines/covid-19",
+              "code": "J07BX03",
+              "display": "COVID-19 vaccine, mRNA, LNP-S, PF, 100 mcg/0.5 mL dose"
+            }
+          ],
+          "text": "COVID-19 vaccine, mRNA, LNP-S, PF, 100 mcg/0.5 mL dose"
+        },
+        "patient": {
+          "reference": "Patient/smart-1186747"
+        },
+        "lotNumber": "ABC12345",
+        "expirationDate": "2023-12-31",
+      "occurrenceDateTime": "2021-09-18T10:00:00Z",
+        "doseQuantity": {
+          "value": 1,
+          "unit": "mL",
+          "system": "http://unitsofmeasure.org",
+          "code": "mL"
+        },
+        "note": [
+          {
+            "text": "First dose of COVID-19 vaccine administered."
+          }
+        ]
+    },
+    {
+        "resourceType": "Immunization",
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/cvx",
+              "code": "08",
+              "display": "Hepatitis B vaccine"
+            }
+          ],
+          "text": "Hepatitis B vaccine"
+        },
+        "patient": {
+          "reference": "Patient/smart-1186747"
+        },
+        "occurrenceDateTime": "2023-09-18T14:30:00Z"
+    },
+    {
+        "resourceType": "Immunization",
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/cvx",
+              "code": "115",
+              "display": "Tetanus, diphtheria, pertussis (Tdap) vaccine"
+            }
+          ],
+          "text": "Tetanus, diphtheria, pertussis (Tdap) vaccine"
+        },
+        "patient": {
+          "reference": "Patient/smart-1186747"
+        },
+        "occurrenceDateTime": "2020-02-04T16:45:00Z"
+    },
+    {
+        "resourceType": "Immunization",
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/cvx",
+              "code": "03",
+              "display": "Measles, Mumps, Rubella (MMR) vaccine"
+            }
+          ],
+          "text": "Measles, Mumps, Rubella (MMR) vaccine"
+        },
+        "patient": {
+          "reference": "Patient/smart-1186747"
+        },
+        "occurrenceDateTime": "2023-09-18T18:15:00Z"
+    },
+    {
+        "resourceType": "Immunization",
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/cvx",
+              "code": "111",
+              "display": "Influenza, seasonal, injectable, preservative-free vaccine"
+            }
+          ],
+          "text": "Influenza, seasonal, injectable, preservative-free vaccine"
+        },
+        "patient": {
+          "reference": "Patient/smart-1186747"
+        },
+        "occurrenceDateTime": "2019-10-20T20:30:00Z"
+    }      
+                  
+]
