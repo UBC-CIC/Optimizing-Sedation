@@ -20,8 +20,8 @@ If you are on a Windows device, it is recommended to install the [Windows Subsys
     - [Table of Contents](#table-of-contents)
   - [Step 1: Clone The Repository](#step-1-clone-the-repository)
   - [Step 2: Application Configuration](#step-2-application-configuration)
-  - [Step 3: Local Deployment](#step-3-local-deploayment)
-  - [Step 4: Cloud Deployment](#step-2-cloud-deployment)
+  - [Step 3: Local Deployment](#step-3-local-deployment)
+  - [Step 4: Cloud Deployment](#step-4-cloud-deployment)
     - [Step 1: Install Dependencies](#step-1-install-dependencies)
     - [Step 2: Upload Secrets](#step-2-upload-secret)
     - [Step 3: CDK Deployment](#step-3-cdk-deployment)
@@ -50,6 +50,7 @@ Before hosting and launching the application, the configuration of the applicati
 Please follow this [application configuration guide](./Configuration.md) to set up the configuration.
 
 
+
 ## Step 3: Local Deployment
 For local deployment, we only need to add an ```.env``` file at ```Optimizing-Sedation/frontend/```. It should have the following values (one doesn't have to apply ```REACT_APP_CLIENT_SECRET``` if the app is configured to run ```PUBLIC``` mode):
 
@@ -70,7 +71,7 @@ Afterward, one can run the application by running,
 npm start
 ```
 
-## Step 4: Deployment
+## Step 4: Cloud Deployment
 
 ![Network Diagram](./assets/Architecture-Diagram-Simplify.png)
 
@@ -110,10 +111,10 @@ cdk synth --profile <aws-profile-name>
 You may choose to run the following command to deploy the stacks all at once. Please replace `aws-profile-name` with the appropriate AWS profile used earlier:
 
 For CDK deployment, we are going to do the following:
-1. Create Elastic Container Registry (ECR) name 'docker-repo'
-2. Create a Docker image and push it to ECR
-3. Create a Self-Signed SSL Certificate and push it to IAM
-4. Create a stack for hosting
+1. [Create Elastic Container Registry (ECR) name 'docker-repo'](#1-create-elastic-container-registry-ecr)
+2. [Create a Docker image and push it to ECR](#2-create-and-push-docker-image-to-ecr)
+3. [Create a Self-Signed SSL Certificate and push it to IAM](#3-create-self-signed-ssl-certificate-and-push-to-iam)
+4. [Create a stack for hosting](#4-create-host-stack)
 
 Make sure to fill necessary information in the <>. 
 
@@ -122,6 +123,8 @@ Most of the commands assume you are in ```Optimizing-Sedation/backend/cdk/``` di
 #### 1. Create Elastic Container Registry (ECR)
 
 This will create a repository called 'docker-repo'. It is important to not change this name since the script in step 2 will need that.
+
+**Note: ** The default platform intended for the container is --platform=linux/amd64. Might be able to run on MacOS. For Windows, you probably have to get rid of the flag inside the Dockerfile before building.
 
 First, initialize CDK stacks based on your region (only required if you have not deployed any resources yet).
 
@@ -134,7 +137,7 @@ Then, run the following command to create an ECR repository.
 ```bash
 cdk deploy Create-ECR --profile <aws-profile-name>
 ```
-#### 2. Push Docker Image to ECR
+#### 2. Create and Push Docker Image to ECR
 
 Once a repository is created, we can create and push Docker images. Luckily, this is done for you. You can check in the ```Optimizing-Sedation/backend/scripts/push_image.sh``` for more detail.
 
