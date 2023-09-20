@@ -124,7 +124,7 @@ Most of the commands assume you are in ```Optimizing-Sedation/backend/cdk/``` di
 
 This will create a repository called 'docker-repo'. It is important to not change this name since the script in step 2 will need that.
 
-**Note: ** The default platform intended for the container is --platform=linux/amd64. Might be able to run on MacOS. For Windows, you probably have to get rid of the flag inside the Dockerfile before building.
+Note: The default platform intended for the container is --platform=linux/amd64. Might be able to run on MacOS. For Windows, you probably have to get rid of the flag inside the Dockerfile before building.
 
 First, initialize CDK stacks based on your region (only required if you have not deployed any resources yet).
 
@@ -160,11 +160,17 @@ Example,
 ```
 Note: you can reuse this file to push to ECR every time you make changes on the dashboard and make those changes live.
 
+##### Extra
+If the provided script does not runs, one can do the following
+1. Go to ECR in AWS Console
+2. Look for `docker-repo` repository
+3. Click on `View push commands` and follow the instruction
+
 #### 3. Create Self-Signed SSL Certificate and push to IAM
 Some sandbox requires the app to have an ``https://`` for security purpose. Therefore, we need to add a listener for ```https://``` on port 443. Adding ```https://``` requires a certificate; since we do not use a domain name, we need to add a self-signed SSL certificate and attach that with ALB listener. 
 
 Below are steps to create and upload a certificate following a [Medium post by Francis Yeo](https://medium.com/@francisyzy/create-aws-elb-with-self-signed-ssl-cert-cd1c352331f). 
-**Note,**  please follow the steps below as there are some slight changes from the tutorial.
+Note: please follow the steps below as there are some slight changes from the tutorial.
 
 Create a self-signed SSL certificate. Make sure one is in the folder where one wants to save the certificate.
 ```bash
