@@ -26,7 +26,7 @@ For instructions on how to navigate the web app interface, refer to the [Web App
 
 ## Developer Guide
 
-For instructions on how to develop the application, refer to the [Developer Guide](docs/DeploymentGuide.md).
+For instructions on how to develop the application, refer to the [Deployment Guide](docs/DeploymentGuide.md).
 
 ## Test Data Deployment Guide
 For instructions on how to test the application, refer to the [Test Data Deployment Guide](docs/TestDataDeployment.md).
