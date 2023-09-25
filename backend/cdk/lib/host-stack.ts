@@ -1,4 +1,4 @@
-import { Stack, StackProps, aws_elasticloadbalancingv2, aws_certificatemanager,  CfnParameter,CfnOutput} from 'aws-cdk-lib';
+import { Stack, StackProps, aws_elasticloadbalancingv2, aws_certificatemanager,  CfnParameter} from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecs from "aws-cdk-lib/aws-ecs";
@@ -6,6 +6,7 @@ import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecspatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as secretmanager from 'aws-cdk-lib/aws-secretsmanager';
+import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 
 export class HostStack extends Stack {
@@ -39,6 +40,79 @@ export class HostStack extends Stack {
         })
 
         secret.grantRead(accessSecretRole);
+
+
+        // Create WAFvs As web ACL
+        // This will attach with ALB later on
+        const WAFwebACL = new wafv2.CfnWebACL(this, 'Sedation-WebACL', {
+            defaultAction: {
+                allow: {}
+            },
+            scope: 'REGIONAL',
+            visibilityConfig: {
+                cloudWatchMetricsEnabled: true,
+                metricName:'MetricForWebACLCDK',
+                sampledRequestsEnabled: true,
+            },
+            name: 'Sedation-WAF-WebACL',
+            description: 'This WAF-WebACL run on default rule: AWSManagedRulesAmazonIpReputationList, AWSManagedRulesCommonRuleSet, and AWSManagedRulesKnownBadInputsRuleSet.',
+            rules: [
+                {
+                    name: 'AWS-AWSManagedRulesAmazonIpReputationList',
+                    priority: 0,
+                    statement: {
+                        managedRuleGroupStatement: {
+                        name:'AWSManagedRulesAmazonIpReputationList',
+                        vendorName:'AWS'
+                        }
+                    },
+                    visibilityConfig: {
+                        cloudWatchMetricsEnabled: true,
+                        sampledRequestsEnabled: true,
+                        metricName:'AWS-AWSManagedRulesAmazonIpReputationList',
+                    },
+                    overrideAction: {
+                        none: {}
+                    },
+                },
+                {
+                    name: 'AWS-AWSManagedRulesCommonRuleSet',
+                    priority: 1,
+                    statement: {
+                        managedRuleGroupStatement: {
+                        name:'AWSManagedRulesCommonRuleSet',
+                        vendorName:'AWS'
+                        }
+                    },
+                    visibilityConfig: {
+                        cloudWatchMetricsEnabled: true,
+                        sampledRequestsEnabled: true,
+                        metricName:'AWS-AWSManagedRulesCommonRuleSet',
+                    },
+                    overrideAction: {
+                        none: {}
+                    },
+                },
+                {
+                    name: 'AWS-AWSManagedRulesKnownBadInputsRuleSet',
+                    priority: 2,
+                    statement: {
+                        managedRuleGroupStatement: {
+                        name:'AWSManagedRulesKnownBadInputsRuleSet',
+                        vendorName:'AWS'
+                        }
+                    },
+                    visibilityConfig: {
+                        cloudWatchMetricsEnabled: true,
+                        sampledRequestsEnabled: true,
+                        metricName:'AWS-AWSManagedRulesKnownBadInputsRuleSet',
+                    },
+                    overrideAction: {
+                        none: {}
+                    },
+                },
+            ]
+        });
 
         // Security group for FargateService
         const fargateSecurityGroup = new ec2.SecurityGroup(this, "Fargate-SecurityGroup", {
@@ -167,7 +241,12 @@ export class HostStack extends Stack {
             loadBalancer: ALB,
             certificate: aws_certificatemanager.Certificate.fromCertificateArn(this, 'https-certificate', CERTIFICATE_ARN.valueAsString),
             listenerPort: 443,
+        });
 
+        // Attach WAF to ALB
+        const WAFALB = new wafv2.CfnWebACLAssociation(this,'Attach-WAF-ALB', {
+            resourceArn: ALBFargateService.loadBalancer.loadBalancerArn,
+            webAclArn: WAFwebACL.attrArn,
         });
     }
 }

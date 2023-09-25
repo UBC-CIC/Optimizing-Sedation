@@ -2,7 +2,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { EcrStack } from '../lib/cdk-ecr';
 import { HostStack } from '../lib/host-stack';
-import { WAFStack } from '../lib/WAF-stack';
 
 const app = new cdk.App();
 

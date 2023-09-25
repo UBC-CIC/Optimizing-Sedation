@@ -95,6 +95,8 @@ npm install
 
 To store application secrets such as client ID and client secret, we are going to use AWS Secret Manager. Run the following command and make sure to change the information that is in <>.
 
+Note: do not remove the quotation marks ("" or ''), or else, application could not fetch the secrets.
+
 ```bash
 aws secretsmanager create-secret --name SedationSecrets --secret-string '{"REACT_APP_CLIENT_SECRET":"<Your-Sandbox-Client-Secret>", "REACT_APP_CLIENT_ID":"<Your-Sandbox-Client-ID>"}' --profile <Your-profile-name>
 
@@ -169,8 +171,8 @@ If the provided script does not runs, one can do the following
 #### 3. Create Self-Signed SSL Certificate and push to IAM
 Some sandbox requires the app to have an ``https://`` for security purpose. Therefore, we need to add a listener for ```https://``` on port 443. Adding ```https://``` requires a certificate; since we do not use a domain name, we need to add a self-signed SSL certificate and attach that with ALB listener. 
 
-Below are steps to create and upload a certificate following a [Medium post by Francis Yeo](https://medium.com/@francisyzy/create-aws-elb-with-self-signed-ssl-cert-cd1c352331f). 
-Note: please follow the steps below as there are some slight changes from the tutorial.
+Below are steps to create and upload a self-signed certificate. 
+Note: it is not recommended to use self-signed certificate. If this solution deploys as production with a valid URL, please use a proper SSL certificate.
 
 Create a self-signed SSL certificate. Make sure one is in the folder where one wants to save the certificate.
 ```bash
