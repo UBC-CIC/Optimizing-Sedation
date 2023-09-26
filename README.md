@@ -7,7 +7,7 @@ For more information visit the [CIC Website](https://cic.ubc.ca/).
 | :-------------------------------------------------- | :------------------------------------------------------ |
 | [High Level Architecture](#high-level-architecture) | High level overview illustrating component interactions |
 | [User Guide](#user-guide)                           | The working solution                                    |
-| [Developer Guide](#user-guide)                      | Information for further developers                      |
+| [Deployment Guide](#deployment-guide)                      | Information for deploying the application                  |
 | [Test Data Deployment Guide](#test-data-deployment-guide)                      | Information for testing the application                 |
 | [Directories](#directories)                         | Project general directory structure                     |
 | [Changelog](#changelog)                             | Any changes post publish                                |
@@ -24,7 +24,7 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 For instructions on how to navigate the web app interface, refer to the [Web App User Guide](docs/UserGuide.md).
 
-## Developer Guide
+## Deployment Guide
 
 For instructions on how to develop the application, refer to the [Deployment Guide](docs/DeploymentGuide.md).
 
