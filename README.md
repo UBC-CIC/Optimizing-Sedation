@@ -9,6 +9,7 @@ For more information visit the [CIC Website](https://cic.ubc.ca/).
 | [User Guide](#user-guide)                           | The working solution                                    |
 | [Deployment Guide](#deployment-guide)                      | Information for deploying the application                  |
 | [Test Data Deployment Guide](#test-data-deployment-guide)                      | Information for testing the application                 |
+| [Development](#development)                      | Information about the application's development                  |
 | [Directories](#directories)                         | Project general directory structure                     |
 | [Changelog](#changelog)                             | Any changes post publish                                |
 | [Credits](#credits)                                 | Meet the team behind the solution                       |
@@ -26,10 +27,14 @@ For instructions on how to navigate the web app interface, refer to the [Web App
 
 ## Deployment Guide
 
-For instructions on how to develop the application, refer to the [Deployment Guide](docs/DeploymentGuide.md).
+For instructions on how to deploy the application, refer to the [Deployment Guide](docs/DeploymentGuide.md).
 
 ## Test Data Deployment Guide
 For instructions on how to test the application, refer to the [Test Data Deployment Guide](docs/TestDataDeployment.md).
+
+## Development
+
+For information on how the application was developed, refer to the [Development Document](docs/DevelopmentDocument.md).
 
 ## Directories
 
