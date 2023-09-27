@@ -48,14 +48,14 @@ To add a new row to the table on the dashboard, a new object containing all of t
 
 The following is an example to help illustrate this.  
 
-The rows in the table are colour coded to match the entries in the config file that they correspond to. The "EEG" row in the table corresponds to the `searchCodes` object in the yellow box. The "ENT" row in the table corresponds to the `searchCodes` object in the green box. If the object in the yellow box were deleted, the "EEG" row on the table would be deleted. If the object in the green box were deleted, the "ENT" row on the table would be deleted.
+The rows in the table are colour coded to match the objects in the config file that they correspond to. The "EEG" row in the table corresponds to the `searchCodes` object in the yellow box. The "ENT" row in the table corresponds to the `searchCodes` object in the green box. If the object in the yellow box were deleted, the "EEG" row on the table would be deleted. If the object in the green box were deleted, the "ENT" row on the table would be deleted.
 ![alt text](images/configTableRows.png)
 ![alt text](images/configSearchCodesEntries.png)
 
 ### Name
 This property specifies the name of the medical assessment. This name is displayed in the `Type of Assessment` column of the table on the dashboard. 
 
-Using the previous example, the names in the `Type of Assessment` column in the dashboard's table are determined by the `name` property in the config file. The name displayed in the table can be changed by editing the name property in the config file.
+The names in the `Type of Assessment` column in the dashboard's table are determined by the `name` property in the config file. The name displayed in the table can be changed by editing the name property in the config file.
 ![alt text](images/configTableName.png)
 ![alt text](images/configSearchCodesName.png)
 
@@ -70,7 +70,7 @@ The medical codes and keywords found in the `coding` property of the configurati
 #### System
 This property specifies the code system that the codes are part of. 
 
-The `system` can be either be a medical code system or it can be set to `KEYWORDS`. If the system is set to `KEYWORDS`, then the items in the `codes` field will be used to search for data that contains those specific words. 
+The `system` can be either be a medical code system or it can be set to `KEYWORDS`. If the system is set to `KEYWORDS`, then the words in the `codes` field will be used to search for data that contains those specific words. 
 
 The following are examples of the `system` property being set to medical code systems.  
 
@@ -86,18 +86,18 @@ This property is an array of items that are used to search for data. The array c
 
 When searching for data, any pieces of data on the server that have a code or keyword that matches one from the `codes` array will be processed and displayed in the corresponding table row on the dashboard.
 
-The following image is an example of medical codes that were used to search for data to be displayed on the dashboard. 
+The following image is an example of medical codes being used to search for data to be displayed on the dashboard. 
 
 ![alt text](images/configSearchCodesCodesMedical.png)
 
-The following image is an example of keywords that were used to search for data to be displayed on the dashboard. 
+The following image is an example of keywords being used to search for data to be displayed on the dashboard. 
 
 ![alt text](images/configSearchCodesCodesKeywords.png)
 
 ### Resources
-This property is an array of resources that will be searched through. Changing this array will change which resources the codes will search through for data.
+This property is an array of FHIR resources. Each resource in the array will be searched for data. Changing this array will change which FHIR resources will be searched for data.
 
-In the image below, the green box contains just one listed resource, which means that only that particular resource will be searched for data. However, in the yellow box, multiple resources are listed, meaning that a search for data will be conducted across all of these listed resources.
+In the image below, the green box contains just one listed resource, which means that only that particular resource will be searched for data. However, in the yellow box, multiple resources are listed, meaning that a search for data will be conducted across all of the listed resources.
 
 ![alt text](images/configSearchCodesResources.png)
 
