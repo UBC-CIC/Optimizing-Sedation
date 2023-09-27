@@ -18,7 +18,7 @@ For more information visit the [CIC Website](https://cic.ubc.ca/).
 
 The following architecture diagram illustrates the various AWS components utilized to deliver the solution. For an in-depth explanation of the frontend and backend stacks, refer to the [Architecture Design](docs/Network.md).
 
-![Alt text](docs/assets/Architecture-Diagram-Simplify.png)
+![Alt text](docs/assets/GeneralDiagram.png)
 
 ## User Guide
 
