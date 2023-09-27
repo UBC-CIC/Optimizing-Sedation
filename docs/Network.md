@@ -23,7 +23,7 @@ This application is intended to launch from an EHR not as a standalone app. Ther
 ### 2. Hosting Network Schema
 ![Hosting Network Schema](assets/Architecture-Diagram-Simplify.png)
 
-The diagram above shows the network architecture of the application using AWS. A user would request an Application Load Balancer (ALB) at port 443 (or HTTPS). The ALB then checks the health status of an ECS task and forwards the request to a container that runs on AWS Fargate. 
+The diagram above shows the network architecture of the application using AWS. A user would request an Application Load Balancer (ALB) at port 443 (or HTTPS). The ALB then checks the if the request is secure via Web Application Firewall (WAF), check health status of an ECS task, and forwards the request to a container that runs on AWS Fargate. 
 
 When a request is received by the application in a container, it then requests authorization and the FHIR server for data.
 
