@@ -114,16 +114,6 @@ function DropDownTableRow({rowData}){
 }
 
 function DropDownTable({headers, data}){
-    // const [selectStatusType, setSelectStatusType] = useState([]);                     // Current selection for status type
-
-    // Convert input data into current format of this table
-    // if(!Array.isArray(fhirData))
-    //     return (
-    //         <Typography variant={"subtitle1"} component="h6">Error! Unable to parse data!</Typography>
-    //     );
-    
-    // const data = convertData(ImmunizationData, LabData, ObservationData);
-    //console.log("data: ", data);
 
     const style = {
         dropDown: {
