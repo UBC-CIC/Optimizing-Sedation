@@ -1,4 +1,4 @@
-import { Stack, StackProps, aws_elasticloadbalancingv2, aws_certificatemanager,  CfnParameter} from 'aws-cdk-lib';
+import { Stack, StackProps, aws_elasticloadbalancingv2, aws_certificatemanager,  CfnParameter, RemovalPolicy} from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecs from "aws-cdk-lib/aws-ecs";
@@ -129,7 +129,7 @@ export class HostStack extends Stack {
             disableInlineRules: true,
             vpc: vpc,
             securityGroupName: "ALBSecurityGroup",
-            description: "Security group for ALB; Allow only fargateSecurityGroup outbound rule, and only Https:// for inbound."
+            description: "Security group for ALB; Allow only fargateSecurityGroup outbound rule, and Https:// and Http:// for inbound."
         });
 
         // Set fargateSecurityGroup inbound to ALBSecurityGroup as source at port 3000
@@ -161,6 +161,8 @@ export class HostStack extends Stack {
             internetFacing: true,
             loadBalancerName: "FargateService-LoadBalancer",
             securityGroup: ALBSecurityGroup,
+            deletionProtection: true,
+            dropInvalidHeaderFields: true
         });
 
         // Create ECS Cluster which use to run Task on ECS Farget instance
